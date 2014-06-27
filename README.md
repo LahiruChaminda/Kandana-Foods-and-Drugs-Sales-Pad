@@ -1,4 +1,4 @@
-#**Kandana Food & Drugs Sales Pad**#
+#**Kandana Foods & Drugs Sales Pad**#
 Android
 _____
 
