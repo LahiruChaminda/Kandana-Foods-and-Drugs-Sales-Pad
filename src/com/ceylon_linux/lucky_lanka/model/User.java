@@ -19,24 +19,20 @@ import java.util.Date;
  */
 public class User implements Serializable {
 
-	private int positionId;
+	private int userId;
 	private String name;
 	private String address;
-	private String userName;
 	private Long loginTime;
-	private int routineId;
 
-	public User(int positionId) {
-		this.setPositionId(positionId);
+	public User(int userId) {
+		this.userId = userId;
 	}
 
-	public User(int positionId, String name, String address, String userName, Long loginTime, int routineId) {
-		this.positionId = positionId;
+	public User(int userId, String name, String address, Long loginTime) {
+		this.userId = userId;
 		this.name = name;
 		this.address = address;
-		this.userName = userName;
 		this.loginTime = loginTime;
-		this.routineId = routineId;
 	}
 
 	public static User parseUser(JSONObject userJsonInstance) throws JSONException {
@@ -44,21 +40,19 @@ public class User implements Serializable {
 			return null;
 		}
 		return new User(
-			userJsonInstance.getInt("position_id"),
+			userJsonInstance.getInt("userId"),
 			userJsonInstance.getString("name"),
 			userJsonInstance.getString("postal_address"),
-			userJsonInstance.getString("login_name"),
-			new Date().getTime(),
-			userJsonInstance.getInt("session_id")
+			new Date().getTime()
 		);
 	}
 
-	public int getPositionId() {
-		return positionId;
+	public int getUserId() {
+		return userId;
 	}
 
-	public void setPositionId(int positionId) {
-		this.positionId = positionId;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
 	public String getName() {
@@ -77,27 +71,11 @@ public class User implements Serializable {
 		this.address = address;
 	}
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	public Long getLoginTime() {
 		return loginTime;
 	}
 
 	public void setLoginTime(Long loginTime) {
 		this.loginTime = loginTime;
-	}
-
-	public int getRoutineId() {
-		return routineId;
-	}
-
-	public void setRoutineId(int routineId) {
-		this.routineId = routineId;
 	}
 }

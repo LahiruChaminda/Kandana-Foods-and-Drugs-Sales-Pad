@@ -94,9 +94,9 @@ public class LoginActivity extends Activity {
 					if (user != null) {
 						UserController.setAuthorizedUser(LoginActivity.this, user);
 						publishProgress("Authenticated");
-						OutletController.downloadOutlets(LoginActivity.this, user.getPositionId());
+						OutletController.downloadOutlets(LoginActivity.this, user.getUserId());
 						publishProgress("Outlets Downloaded Successfully");
-						ItemController.downloadItems(LoginActivity.this, user.getPositionId());
+						ItemController.downloadItems(LoginActivity.this, user.getUserId());
 						publishProgress("Items Downloaded Successfully");
 					}
 				} catch (IOException e) {

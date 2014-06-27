@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 abstract class WebServiceURL {
 
-	private static final String webServiceURL = "http://gateway.ceylonlinux.com/CL_DISTRIBUTOR/android_service/";
+	private static final String webServiceURL = "http://192.168.1.13/kandana/andr_manager/";
 	//private static final String webServiceURL = "http://220.247.234.226/CL_DISTRIBUTOR/native/";
 
 	protected WebServiceURL() {
@@ -45,7 +45,7 @@ abstract class WebServiceURL {
 			return parameters;
 		}
 
-		public static final String LOGIN = webServiceURL + "login";
+		public static final String LOGIN = webServiceURL + "login.php";
 
 	}
 
