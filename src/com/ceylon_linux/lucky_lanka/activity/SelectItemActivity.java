@@ -251,7 +251,7 @@ public class SelectItemActivity extends Activity {
 			alert.show();
 			return;
 		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity.this).getPositionId(), outlet.getRouteId(), BatteryUtility.getBatteryLevel(SelectItemActivity.this), new Date().getTime(), 80, 6, orderDetails);
+		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity.this).getUserId(), outlet.getRouteId(), BatteryUtility.getBatteryLevel(SelectItemActivity.this), new Date().getTime(), 80, 6, orderDetails);
 		new AsyncTask<Order, Void, Boolean>() {
 			ProgressDialog progressDialog;
 

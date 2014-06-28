@@ -48,8 +48,8 @@ public class Category {
 			}
 		}
 		return (items.size() == 0) ? null : new Category(
-			categoryJsonInstance.getInt("iditem_category_type"),
-			categoryJsonInstance.getString("ict_name"),
+			categoryJsonInstance.getInt("categoryId"),
+			categoryJsonInstance.getString("categoryName"),
 			items
 		);
 	}

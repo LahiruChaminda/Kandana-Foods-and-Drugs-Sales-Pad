@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.lucky_lanka.R;
 import com.ceylon_linux.lucky_lanka.controller.OutletController;
-import com.ceylon_linux.lucky_lanka.controller.UserController;
 import com.ceylon_linux.lucky_lanka.model.Outlet;
 import com.ceylon_linux.lucky_lanka.model.Route;
 
@@ -37,7 +36,6 @@ public class LoadAddInvoiceActivity extends Activity {
 	private Button btnNext;
 	private TextView txtDate;
 	private TextView txtTime;
-	private TextView txtRoutine;
 	private Spinner routeAuto;
 	private Spinner outletAuto;
 	private ArrayList<Route> routes;
@@ -52,7 +50,6 @@ public class LoadAddInvoiceActivity extends Activity {
 		setContentView(R.layout.load_add_invoice_page);
 		initialize();
 
-		txtRoutine.setText(Integer.toString(UserController.getAuthorizedUser(LoadAddInvoiceActivity.this).getRoutineId()));
 		routes = OutletController.loadRoutesFromDb(LoadAddInvoiceActivity.this);
 		ArrayAdapter<Route> routeAdapter = new ArrayAdapter<Route>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, routes);
 		routeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
@@ -88,7 +85,6 @@ public class LoadAddInvoiceActivity extends Activity {
 		btnNext = (Button) findViewById(R.id.btnNext);
 		txtDate = (TextView) findViewById(R.id.txtDate);
 		txtTime = (TextView) findViewById(R.id.txtTime);
-		txtRoutine = (TextView) findViewById(R.id.txtRoutine);
 		routeAuto = (Spinner) findViewById(R.id.routeAuto);
 		outletAuto = (Spinner) findViewById(R.id.outletAuto);
 		btnNext.setOnClickListener(new View.OnClickListener() {

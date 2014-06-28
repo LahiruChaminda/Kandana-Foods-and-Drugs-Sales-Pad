@@ -65,26 +65,6 @@
                 </LinearLayout>
                 <LinearLayout
                         android:orientation="horizontal"
-                        android:layout_width="match_parent" android:padding="5dp"
-                        android:weightSum="5.5"
-                        android:layout_weight="1"
-                        android:layout_height="0dp">
-                    <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1.5"
-                            android:layout_height="wrap_content"
-                            android:text="Routine ID"
-                            android:textSize="25dp"/>
-                    <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="4"
-                            android:textSize="25dp"
-                            android:layout_height="wrap_content"
-                            android:text="Routine ID"
-                            android:id="@+id/txtRoutine"/>
-                </LinearLayout>
-                <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_weight="1"
                         android:weightSum="5.5" android:padding="5dp"

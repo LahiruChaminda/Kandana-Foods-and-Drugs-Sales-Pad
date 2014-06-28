@@ -51,7 +51,7 @@ public class ItemController extends AbstractController {
 		try {
 			database.beginTransaction();
 			String categorySql = "replace into tbl_category(categoryId,categoryDescription) values (?,?)";
-			String itemSql = "replace into tbl_item(itemId,categoryId,itemCode,itemDescription,wholeSalePrice,retailPrice,availableQuantity,loadedQuantity,sixPlusOneAvailability,minimumFreeIssueQuantity,freeIssueQuantity) values (?,?,?,?,?,?,?,?,?,?,?)";
+			String itemSql = "replace into tbl_item(itemId,categoryId,itemCode,itemDescription) values (?,?,?,?)";
 			for (Category category : categories) {
 				Object[] categoryParameters = {
 					category.getCategoryId(),
@@ -63,14 +63,7 @@ public class ItemController extends AbstractController {
 						item.getItemId(),
 						category.getCategoryId(),
 						item.getItemCode(),
-						item.getItemDescription(),
-						item.getWholeSalePrice(),
-						item.getRetailSalePrice(),
-						item.getAvailableQuantity(),
-						item.getLoadedQuantity(),
-						(item.isSixPlusOneAvailability()) ? 1 : 0,
-						item.getMinimumFreeIssueQuantity(),
-						item.getFreeIssueQuantity()
+						item.getItemDescription()
 					};
 					DbHandler.performExecuteInsert(database, itemSql, itemParameters);
 				}
@@ -89,7 +82,7 @@ public class ItemController extends AbstractController {
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		ArrayList<Category> categories = new ArrayList<Category>();
 		String categorySql = "select categoryId,categoryDescription from tbl_category";
-		String itemSql = "select itemId,itemCode,itemDescription,availableQuantity,loadedQuantity,wholeSalePrice,retailPrice,sixPlusOneAvailability,minimumFreeIssueQuantity,freeIssueQuantity from tbl_item where categoryId=?";
+		String itemSql = "select itemId,itemCode,itemDescription from tbl_item where categoryId=?";
 		Cursor categoryCursor = DbHandler.performRawQuery(database, categorySql, null);
 		for (categoryCursor.moveToFirst(); !categoryCursor.isAfterLast(); categoryCursor.moveToNext()) {
 			int categoryId = categoryCursor.getInt(0);
@@ -100,14 +93,7 @@ public class ItemController extends AbstractController {
 				items.add(new Item(
 					itemCursor.getInt(0),
 					itemCursor.getString(1),
-					itemCursor.getString(2),
-					itemCursor.getInt(3),
-					itemCursor.getInt(4),
-					itemCursor.getDouble(5),
-					itemCursor.getDouble(6),
-					(itemCursor.getInt(7) == 1),
-					itemCursor.getInt(8),
-					itemCursor.getInt(9)
+					itemCursor.getString(2)
 				));
 			}
 			itemCursor.close();

@@ -29,7 +29,7 @@ abstract class WebServiceURL {
 
 		public static final HashMap<String, Object> getParameters(int positionId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("position_id", positionId);
+			parameters.put("userId", positionId);
 			return parameters;
 		}
 
@@ -53,11 +53,11 @@ abstract class WebServiceURL {
 
 		public static final HashMap<String, Object> getParameters(int positionId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("position_id", positionId);
+			parameters.put("userId", positionId);
 			return parameters;
 		}
 
-		public static final String GET_OUTLETS = webServiceURL + "getRouteAndOutlets";
+		public static final String GET_OUTLETS = webServiceURL + "getRouteAndOutlets.php";
 	}
 
 	protected static final class OrderURLPack {

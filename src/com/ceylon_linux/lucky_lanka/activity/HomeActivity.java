@@ -40,7 +40,6 @@ public class HomeActivity extends Activity {
 	private Button btnStart;
 	private TextView txtName;
 	private TextView txtAddress;
-	private TextView txtUserName;
 	private Button btnSignOut;
 
 	@Override
@@ -51,7 +50,6 @@ public class HomeActivity extends Activity {
 		User authorizedUser = UserController.getAuthorizedUser(this);
 		txtName.setText(authorizedUser.getName());
 		txtAddress.setText(authorizedUser.getAddress());
-		txtUserName.setText(authorizedUser.getUserName());
 	}
 
 	@Override
@@ -128,7 +126,6 @@ public class HomeActivity extends Activity {
 		btnSignOut = (Button) findViewById(R.id.btnSignOut);
 		txtName = (TextView) findViewById(R.id.txtName);
 		txtAddress = (TextView) findViewById(R.id.txtAddress);
-		txtUserName = (TextView) findViewById(R.id.txtUserName);
 		btnStart.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
