@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 
-	private static final String DATABASE_NAME = "lucky_lanka";
+	private static final String DATABASE_NAME = "kandana_foods_and_drugs";
 	private static final int VERSION = 1;
 	private static volatile SQLiteDatabaseHelper database;
 	private final AssetManager assets;

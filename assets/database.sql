@@ -12,14 +12,7 @@ CREATE TABLE tbl_item (
   itemId                INTEGER PRIMARY KEY,
   categoryId            INTEGER NOT NULL REFERENCES tbl_category(categoryId) ON UPDATE CASCADE,
   itemCode              TEXT,
-  itemDescription       TEXT CHECK (itemDescription != ''),
-  wholeSalePrice        REAL,
-  retailPrice           REAL,
-  availableQuantity     INT,
-  loadedQuantity        INT,
-  sixPlusOneAvailability INT DEFAULT 0,
-  minimumFreeIssueQuantity INT DEFAULT 0,
-  freeIssueQuantity INT DEFAULT 0
+  itemDescription       TEXT CHECK (itemDescription != '')
 );
 CREATE TABLE tbl_route (
   routeId       INTEGER NOT NULL PRIMARY KEY,
@@ -27,7 +20,7 @@ CREATE TABLE tbl_route (
 );
 CREATE TABLE tbl_outlet (
   outletId       INTEGER NOT NULL PRIMARY KEY,
-  routeId INTEGER NOT NULL REFERENCES tbl_route(routeId) ON UPDATE CASCADE ON DELETE CASCADE,
+  routeId INT NOT NULL REFERENCES tbl_route(routeId) ON UPDATE CASCADE ON DELETE CASCADE,
   outletName     TEXT    NOT NULL,
   outletAddress  TEXT    NOT NULL,
   outletType     INT     NOT NULL DEFAULT 0,
