@@ -197,8 +197,6 @@ public class SelectItemActivity extends Activity {
 				int returnQuantity = Integer.parseInt((returnQuantityString.isEmpty()) ? "0" : returnQuantityString);
 				int replaceQuantity = Integer.parseInt((replaceQuantityString.isEmpty()) ? "0" : replaceQuantityString);
 				int sampleQuantity = Integer.parseInt((sampleQuantityString.isEmpty()) ? "0" : sampleQuantityString);
-				OrderDetail orderDetail = OrderDetail.getFreeIssueCalculatedOrderDetail(outlet, item, requestedQuantity, returnQuantity, replaceQuantity, sampleQuantity);
-				txtFreeQuantity.setText(Integer.toString(orderDetail.getFreeIssue()));
 				txtDiscount.setText(Double.toString(outlet.getOutletDiscount()));
 			}
 		});
@@ -213,11 +211,6 @@ public class SelectItemActivity extends Activity {
 				int returnQuantity = Integer.parseInt((returnQuantityString.isEmpty()) ? "0" : returnQuantityString);
 				int replaceQuantity = Integer.parseInt((replaceQuantityString.isEmpty()) ? "0" : replaceQuantityString);
 				int sampleQuantity = Integer.parseInt((sampleQuantityString.isEmpty()) ? "0" : sampleQuantityString);
-				OrderDetail orderDetail = OrderDetail.getFreeIssueCalculatedOrderDetail(outlet, item, requestedQuantity, returnQuantity, replaceQuantity, sampleQuantity);
-				if (orderDetails.contains(orderDetail)) {
-					orderDetails.remove(orderDetail);
-				}
-				orderDetails.add(orderDetail);
 				item.setSelected(true);
 				itemList.collapseGroup(groupPosition);
 				itemList.expandGroup(groupPosition);
@@ -303,11 +296,11 @@ public class SelectItemActivity extends Activity {
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
 		for (OrderDetail orderDetail : orderDetails) {
 			if (orderDetail.getItemId() == item.getItemId()) {
-				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
+				childViewHolder.txtFreeIssue.setText(Integer.toString(0));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
-				childViewHolder.txtReturnQuantity.setText(Integer.toString(orderDetail.getReturnQuantity()));
-				childViewHolder.txtReplaceQuantity.setText(Integer.toString(orderDetail.getReplaceQuantity()));
-				childViewHolder.txtSampleQuantity.setText(Integer.toString(orderDetail.getSampleQuantity()));
+				childViewHolder.txtReturnQuantity.setText(Integer.toString(0));
+				childViewHolder.txtReplaceQuantity.setText(Integer.toString(0));
+				childViewHolder.txtSampleQuantity.setText(Integer.toString(0));
 				return childViewHolder;
 			}
 		}
