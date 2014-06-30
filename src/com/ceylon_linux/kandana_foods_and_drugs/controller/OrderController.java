@@ -4,18 +4,17 @@
  * Created on : Jun 17, 2014, 4:35:16 PM
  */
 
-package com.ceylon_linux.lucky_lanka.controller;
+package com.ceylon_linux.kandana_foods_and_drugs.controller;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import com.ceylon_linux.lucky_lanka.db.DbHandler;
-import com.ceylon_linux.lucky_lanka.db.SQLiteDatabaseHelper;
-import com.ceylon_linux.lucky_lanka.model.Order;
-import com.ceylon_linux.lucky_lanka.model.OrderDetail;
-import com.ceylon_linux.lucky_lanka.model.Outlet;
+import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
+import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
+import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,11 +57,7 @@ public class OrderController extends AbstractController {
 					orderDetail.getItemId(),
 					orderDetail.getPrice(),
 					0,
-					orderDetail.getQuantity(),
-					orderDetail.getFreeIssue(),
-					orderDetail.getReturnQuantity(),
-					orderDetail.getReplaceQuantity(),
-					orderDetail.getSampleQuantity()
+					orderDetail.getQuantity()
 				});
 			}
 			database.setTransactionSuccessful();
@@ -113,12 +108,8 @@ public class OrderController extends AbstractController {
 					int replaceQuantity = orderDetailsCursor.getInt(7);
 					int sampleQuantity = orderDetailsCursor.getInt(8);
 					OrderDetail orderDetail;
-					if (outletType == Outlet.SUPER_MARKET) {
-						orderDetail = new OrderDetail(itemId, itemDescription, quantity, price, returnQuantity, replaceQuantity, sampleQuantity);
-					} else {
-						orderDetail = new OrderDetail(itemId, itemDescription, quantity, freeQuantity, price, returnQuantity, replaceQuantity, sampleQuantity);
-					}
-					orderDetails.add(orderDetail);
+
+					//orderDetails.add(orderDetail);
 				}
 				orderDetailsCursor.close();
 

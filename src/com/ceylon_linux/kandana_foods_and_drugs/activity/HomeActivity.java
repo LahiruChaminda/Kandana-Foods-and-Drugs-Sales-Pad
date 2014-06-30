@@ -4,7 +4,7 @@
  * Created on : Jun 10, 2014, 11:22:52 AM
  */
 
-package com.ceylon_linux.lucky_lanka.activity;
+package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,10 +20,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.ceylon_linux.lucky_lanka.R;
-import com.ceylon_linux.lucky_lanka.controller.OrderController;
-import com.ceylon_linux.lucky_lanka.controller.UserController;
-import com.ceylon_linux.lucky_lanka.model.User;
+import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -118,6 +118,7 @@ public class HomeActivity extends Activity {
 			}
 		});
 		builder.setNegativeButton("Cancel", null);
+		builder.show();
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Initialize">

@@ -4,7 +4,7 @@
  * Created on : Jun 11, 2014, 8:19:33 PM
  */
 
-package com.ceylon_linux.lucky_lanka.db;
+package com.ceylon_linux.kandana_foods_and_drugs.db;
 
 import android.database.Cursor;
 import android.database.SQLException;

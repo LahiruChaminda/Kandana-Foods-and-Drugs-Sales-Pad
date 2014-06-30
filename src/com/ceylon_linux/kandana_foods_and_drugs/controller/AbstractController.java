@@ -4,10 +4,10 @@
  * Created on : May 9, 2014, 10:26:12 PM
  */
 
-package com.ceylon_linux.lucky_lanka.controller;
+package com.ceylon_linux.kandana_foods_and_drugs.controller;
 
 import android.content.Context;
-import com.ceylon_linux.lucky_lanka.util.InternetObserver;
+import com.ceylon_linux.kandana_foods_and_drugs.util.InternetObserver;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

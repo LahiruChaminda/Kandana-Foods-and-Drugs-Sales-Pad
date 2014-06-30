@@ -4,7 +4,7 @@
  * Created on : Jun 13, 2014, 9:03:46 PM
  */
 
-package com.ceylon_linux.lucky_lanka.util;
+package com.ceylon_linux.kandana_foods_and_drugs.util;
 
 import android.app.ProgressDialog;
 import android.content.Context;

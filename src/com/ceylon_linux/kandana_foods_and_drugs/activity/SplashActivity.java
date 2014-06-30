@@ -4,14 +4,14 @@
  * Created on : May 9, 2014, 10:08:12 PM
  */
 
-package com.ceylon_linux.lucky_lanka.activity;
+package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import com.ceylon_linux.lucky_lanka.R;
-import com.ceylon_linux.lucky_lanka.controller.UserController;
-import com.ceylon_linux.lucky_lanka.model.User;
+import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

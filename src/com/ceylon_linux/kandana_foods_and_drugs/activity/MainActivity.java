@@ -4,12 +4,12 @@
  * Created on : May 9, 2014, 10:08:12 PM
  */
 
-package com.ceylon_linux.lucky_lanka.activity;
+package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import com.ceylon_linux.lucky_lanka.R;
+import com.ceylon_linux.kandana_foods_and_drugs.R;
 
 /**
  * MainActivity - Entry point of the Lucky Lanka Sales Pad

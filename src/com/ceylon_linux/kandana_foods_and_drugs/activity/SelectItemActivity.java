@@ -4,7 +4,7 @@
  * Created on : Jun 10, 2014, 12:20:23 PM
  */
 
-package com.ceylon_linux.lucky_lanka.activity;
+package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,13 +20,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.ceylon_linux.lucky_lanka.R;
-import com.ceylon_linux.lucky_lanka.controller.ItemController;
-import com.ceylon_linux.lucky_lanka.controller.OrderController;
-import com.ceylon_linux.lucky_lanka.controller.UserController;
-import com.ceylon_linux.lucky_lanka.model.*;
-import com.ceylon_linux.lucky_lanka.util.BatteryUtility;
-import com.ceylon_linux.lucky_lanka.util.ProgressDialogGenerator;
+import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.*;
+import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
+import com.ceylon_linux.kandana_foods_and_drugs.util.ProgressDialogGenerator;
 import org.json.JSONException;
 
 import java.io.IOException;

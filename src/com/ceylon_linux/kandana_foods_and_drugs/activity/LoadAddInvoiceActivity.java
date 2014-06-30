@@ -4,7 +4,7 @@
  * Created on : Jun 11, 2014, 4:53 PM
  */
 
-package com.ceylon_linux.lucky_lanka.activity;
+package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,10 +14,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.*;
-import com.ceylon_linux.lucky_lanka.R;
-import com.ceylon_linux.lucky_lanka.controller.OutletController;
-import com.ceylon_linux.lucky_lanka.model.Outlet;
-import com.ceylon_linux.lucky_lanka.model.Route;
+import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.OutletController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Route;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

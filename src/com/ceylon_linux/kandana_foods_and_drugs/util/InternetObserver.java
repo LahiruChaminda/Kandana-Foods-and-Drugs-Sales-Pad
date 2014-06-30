@@ -4,7 +4,7 @@
  * Created on : May 9, 2014, 10:12:19 PM
  */
 
-package com.ceylon_linux.lucky_lanka.util;
+package com.ceylon_linux.kandana_foods_and_drugs.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

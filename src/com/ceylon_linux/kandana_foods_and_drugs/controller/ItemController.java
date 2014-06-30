@@ -4,16 +4,16 @@
  * Created on : Jun 10, 2014, 9:42:22 AM
  */
 
-package com.ceylon_linux.lucky_lanka.controller;
+package com.ceylon_linux.kandana_foods_and_drugs.controller;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import com.ceylon_linux.lucky_lanka.db.DbHandler;
-import com.ceylon_linux.lucky_lanka.db.SQLiteDatabaseHelper;
-import com.ceylon_linux.lucky_lanka.model.Category;
-import com.ceylon_linux.lucky_lanka.model.Item;
+import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
+import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import org.json.JSONArray;
 import org.json.JSONException;
 

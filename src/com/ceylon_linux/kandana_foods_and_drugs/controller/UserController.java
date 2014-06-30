@@ -4,11 +4,11 @@
  * Created on : May 13, 2014, 8:36:18 AM
  */
 
-package com.ceylon_linux.lucky_lanka.controller;
+package com.ceylon_linux.kandana_foods_and_drugs.controller;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import com.ceylon_linux.lucky_lanka.model.User;
+import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 

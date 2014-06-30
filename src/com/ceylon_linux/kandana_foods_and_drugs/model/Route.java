@@ -4,7 +4,7 @@
  * Created on : Jun 13, 2014, 3:46:01 PM
  */
 
-package com.ceylon_linux.lucky_lanka.model;
+package com.ceylon_linux.kandana_foods_and_drugs.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;

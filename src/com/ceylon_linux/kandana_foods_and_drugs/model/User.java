@@ -4,7 +4,7 @@
  * Created on : Jun 13, 2014, 11:54:31 AM
  */
 
-package com.ceylon_linux.lucky_lanka.model;
+package com.ceylon_linux.kandana_foods_and_drugs.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,9 +23,15 @@ public class User implements Serializable {
 	private String name;
 	private String address;
 	private Long loginTime;
+	private boolean validUser;
+
+	private User(boolean validUser) {
+		this.validUser = validUser;
+	}
 
 	public User(int userId) {
 		this.userId = userId;
+		this.validUser = true;
 	}
 
 	public User(int userId, String name, String address, Long loginTime) {
@@ -33,16 +39,19 @@ public class User implements Serializable {
 		this.name = name;
 		this.address = address;
 		this.loginTime = loginTime;
+		this.validUser = true;
 	}
 
 	public static User parseUser(JSONObject userJsonInstance) throws JSONException {
-		if (userJsonInstance == null || !userJsonInstance.getBoolean("result")) {
+		if (userJsonInstance == null) {
 			return null;
+		} else if (!userJsonInstance.getBoolean("result")) {
+			return new User(false);
 		}
 		return new User(
 			userJsonInstance.getInt("userId"),
 			userJsonInstance.getString("name"),
-			userJsonInstance.getString("postal_address"),
+			userJsonInstance.getString("postalAddress"),
 			new Date().getTime()
 		);
 	}
@@ -77,5 +86,9 @@ public class User implements Serializable {
 
 	public void setLoginTime(Long loginTime) {
 		this.loginTime = loginTime;
+	}
+
+	public boolean isValidUser() {
+		return validUser;
 	}
 }

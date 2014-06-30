@@ -4,7 +4,7 @@
  * Created on : Jun 10, 2014, 9:19:37 AM
  */
 
-package com.ceylon_linux.lucky_lanka.db;
+package com.ceylon_linux.kandana_foods_and_drugs.db;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 
-	private static final String DATABASE_NAME = "lucky_lanka";
+	private static final String DATABASE_NAME = "kandana_foods_and_drugs";
 	private static final int VERSION = 1;
 	private static volatile SQLiteDatabaseHelper database;
 	private final AssetManager assets;
