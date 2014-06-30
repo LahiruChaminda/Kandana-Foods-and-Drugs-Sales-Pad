@@ -63,7 +63,7 @@ public class OrderDetail {
 
 	public JSONObject getOrderDetailAsJson() {
 		HashMap<String, Object> orderDetailsParams = new HashMap<String, Object>();
-		orderDetailsParams.put("id_item", itemId);
+		orderDetailsParams.put("itemId", itemId);
 		orderDetailsParams.put("qty", quantity);
 		orderDetailsParams.put("price", price);
 		return new JSONObject(orderDetailsParams);

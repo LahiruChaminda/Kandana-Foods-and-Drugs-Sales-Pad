@@ -45,7 +45,7 @@ public class SplashActivity extends Activity {
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					Logger.getLogger(SplashActivity.class.getName()).log(Level.SEVERE, e.getMessage(), e);
 				}

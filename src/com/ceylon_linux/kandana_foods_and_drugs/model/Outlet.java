@@ -18,9 +18,6 @@ import java.io.Serializable;
  */
 public class Outlet implements Serializable {
 
-	public static final int NORMAL_OUTLET = 3;
-	public static final int SIX_PLUS_ONE_OUTLET = 0;
-	public static final int SUPER_MARKET = 1;
 	private int outletId;
 	private int routeId;
 	private String outletName;
@@ -41,26 +38,13 @@ public class Outlet implements Serializable {
 		if (outletJsonInstance == null) {
 			return null;
 		}
-		int outletType = 0;
-		switch (outletJsonInstance.getInt("plus")) {
-			case 0:
-				outletType = Outlet.SIX_PLUS_ONE_OUTLET;
-				break;
-			case 1:
-				if (outletJsonInstance.getInt("idoutlet_category") == Outlet.SUPER_MARKET) {
-					outletType = Outlet.SUPER_MARKET;
-				} else {
-					outletType = Outlet.NORMAL_OUTLET;
-				}
-				break;
-		}
 		return new Outlet(
 			outletJsonInstance.getInt("outletId"),
 			outletJsonInstance.getInt("routeId"),
-			outletJsonInstance.getString("outlet"),
-			outletJsonInstance.getString("o_address"),
-			outletType,
-			outletJsonInstance.getDouble("dis_pre")
+			outletJsonInstance.getString("outletName"),
+			outletJsonInstance.getString("outletAddress"),
+			outletJsonInstance.getInt("outletType"),
+			outletJsonInstance.getDouble("outletDiscount")
 		);
 	}
 
