@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application android:label="@string/app_name" android:theme="@android:style/Theme.Holo.Light" android:screenOrientation="portrait"
                  android:icon="@drawable/logo_blue_pill">
-        <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.SplashActivity"
+        <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.SplashActivity" android:screenOrientation="portrait"
                   android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -16,7 +16,7 @@
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.LoginActivity">
         </activity>
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.HomeActivity" android:screenOrientation="landscape">
-        <!-- android:theme="@android:style/Theme.WithActionBar" -->
+            <!-- android:theme="@android:style/Theme.WithActionBar" -->
         </activity>
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.LoadAddInvoiceActivity" android:screenOrientation="landscape">
         </activity>

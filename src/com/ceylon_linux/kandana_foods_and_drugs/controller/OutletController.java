@@ -47,6 +47,7 @@ public class OutletController extends AbstractController {
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		String routeSql = "replace into tbl_route(routeId, routeName) values (?,?)";
 		String outletSql = "replace into tbl_outlet(outletId, routeId, outletName, outletAddress, outletType, outletDiscount) values (?,?,?,?,?,?)";
+		//String paymentSql="replace into";
 		try {
 			database.beginTransaction();
 			for (Route route : routes) {
@@ -103,43 +104,4 @@ public class OutletController extends AbstractController {
 		databaseHelper.close();
 		return routes;
 	}
-	/*
-
-	public static ArrayList<Route> loadRoutesFromDb(Context context) {
-		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
-		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		String routeQuery = "select routeId, routeName from tbl_route";
-		Cursor routeCursor = DbHandler.performRawQuery(database, routeQuery, null);
-		ArrayList<Route> routes = new ArrayList<Route>();
-		for (routeCursor.moveToFirst(); !routeCursor.isAfterLast(); routeCursor.moveToNext()) {
-			int routeId = routeCursor.getInt(0);
-			String routeName = routeCursor.getString(1);
-			routes.add(new Route(routeId, routeName));
-		}
-		routeCursor.close();
-		databaseHelper.close();
-		return routes;
-	}
-
-	public static ArrayList<Outlet> loadOutletsFromDb(Context context) {
-		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
-		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		String outletSql = "select outletId, routeId, outletName, outletAddress, outletType, outletDiscount from tbl_outlet";
-		ArrayList<Outlet> outlets = new ArrayList<Outlet>();
-		Cursor outletCursor = DbHandler.performRawQuery(database, outletSql, null);
-		for (outletCursor.moveToFirst(); !outletCursor.isAfterLast(); outletCursor.moveToNext()) {
-			outlets.add(new Outlet(
-				outletCursor.getInt(0),
-				outletCursor.getInt(1),
-				outletCursor.getString(2),
-				outletCursor.getString(3),
-				outletCursor.getInt(4),
-				outletCursor.getDouble(5)
-			));
-		}
-		outletCursor.close();
-		databaseHelper.close();
-		return outlets;
-	}
-	*/
 }

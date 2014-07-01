@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.OutletController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
@@ -94,7 +95,7 @@ public class LoginActivity extends Activity {
 					if (user != null && user.isValidUser()) {
 						UserController.setAuthorizedUser(LoginActivity.this, user);
 						publishProgress("Authenticated");
-						//OutletController.downloadOutlets(LoginActivity.this, user.getUserId());
+						OutletController.downloadOutlets(LoginActivity.this, user.getUserId());
 						publishProgress("Outlets Downloaded Successfully");
 						ItemController.downloadItems(LoginActivity.this, user.getUserId());
 						publishProgress("Items Downloaded Successfully");
