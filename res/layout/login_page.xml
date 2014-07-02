@@ -20,7 +20,7 @@
             android:id="@+id/inputUserName"
             android:layout_gravity="center_horizontal"
             android:padding="5dp"
-            android:text="asiri"
+            android:text="Shehan"
             android:hint="User Name"
             android:textSize="25dp"
             android:layout_marginLeft="5dp"

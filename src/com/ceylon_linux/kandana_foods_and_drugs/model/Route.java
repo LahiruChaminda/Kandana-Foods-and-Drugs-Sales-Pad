@@ -43,8 +43,8 @@ public class Route implements Serializable {
 			outlets.add(Outlet.parseOutlet(outletCollection.getJSONObject(i)));
 		}
 		return new Route(
-			routeJsonInstance.getInt("areaId"),
-			routeJsonInstance.getString("area"),
+			routeJsonInstance.getInt("routeId"),
+			routeJsonInstance.getString("routeName"),
 			outlets
 		);
 	}

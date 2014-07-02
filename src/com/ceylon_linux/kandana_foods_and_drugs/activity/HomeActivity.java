@@ -27,8 +27,6 @@ import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -80,10 +78,10 @@ public class HomeActivity extends Activity {
 				try {
 					return OrderController.syncUnSyncedOrders(HomeActivity.this);
 				} catch (IOException ex) {
-					Logger.getLogger(HomeActivity.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+					ex.printStackTrace();
 					return false;
 				} catch (JSONException ex) {
-					Logger.getLogger(HomeActivity.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+					ex.printStackTrace();
 					return false;
 				}
 			}

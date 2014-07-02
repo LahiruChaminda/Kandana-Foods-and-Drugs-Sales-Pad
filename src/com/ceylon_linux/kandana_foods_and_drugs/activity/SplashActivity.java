@@ -13,9 +13,6 @@ import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * SplashActivity - Entry point of the Lucky Lanka Sales Pad
  *
@@ -47,10 +44,10 @@ public class SplashActivity extends Activity {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {
-					Logger.getLogger(SplashActivity.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+					e.printStackTrace();
 				}
 				User authorizedUser = UserController.getAuthorizedUser(SplashActivity.this);
-				if (authorizedUser != null) {
+				/*if (authorizedUser != null) {
 					Intent homeActivity = new Intent(SplashActivity.this, HomeActivity.class);
 					startActivity(homeActivity);
 					finish();
@@ -58,7 +55,10 @@ public class SplashActivity extends Activity {
 					Intent loginActivity = new Intent(SplashActivity.this, LoginActivity.class);
 					startActivity(loginActivity);
 					finish();
-				}
+				}*/
+				Intent loginActivity = new Intent(SplashActivity.this, LoginActivity.class);
+				startActivity(loginActivity);
+				finish();
 			}
 		}.start();
 	}

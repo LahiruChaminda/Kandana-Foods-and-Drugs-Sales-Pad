@@ -20,8 +20,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -62,7 +60,7 @@ public class OrderController extends AbstractController {
 			}
 			database.setTransactionSuccessful();
 		} catch (SQLException ex) {
-			Logger.getLogger(OrderController.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+			ex.printStackTrace();
 		} finally {
 			database.endTransaction();
 		}

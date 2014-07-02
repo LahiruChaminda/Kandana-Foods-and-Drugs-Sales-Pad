@@ -16,11 +16,10 @@ import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Route;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -33,13 +32,16 @@ public class OutletController extends AbstractController {
 	}
 
 	public static void downloadOutlets(Context context, int positionId) throws IOException, JSONException {
-		JSONArray routeJson = getJsonArray(OutletURLPack.GET_OUTLETS, OutletURLPack.getParameters(positionId), context);
-		ArrayList<Route> routes = new ArrayList<Route>();
-		final int ROUTE_LENGTH = routeJson.length();
-		for (int i = 0; i < ROUTE_LENGTH; i++) {
-			routes.add(Route.parseRoute(routeJson.getJSONObject(i)));
+		JSONObject responseJson = getJsonObject(OutletURLPack.GET_OUTLETS, OutletURLPack.getParameters(positionId), context);
+		if (responseJson.getBoolean("result")) {
+			JSONArray routeJson = responseJson.getJSONArray("routes");
+			ArrayList<Route> routes = new ArrayList<Route>();
+			final int ROUTE_LENGTH = routeJson.length();
+			for (int i = 0; i < ROUTE_LENGTH; i++) {
+				routes.add(Route.parseRoute(routeJson.getJSONObject(i)));
+			}
+			saveOutletsToDb(routes, context);
 		}
-		saveOutletsToDb(routes, context);
 	}
 
 	private static void saveOutletsToDb(ArrayList<Route> routes, Context context) {
@@ -47,7 +49,6 @@ public class OutletController extends AbstractController {
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		String routeSql = "replace into tbl_route(routeId, routeName) values (?,?)";
 		String outletSql = "replace into tbl_outlet(outletId, routeId, outletName, outletAddress, outletType, outletDiscount) values (?,?,?,?,?,?)";
-		//String paymentSql="replace into";
 		try {
 			database.beginTransaction();
 			for (Route route : routes) {
@@ -68,7 +69,7 @@ public class OutletController extends AbstractController {
 			}
 			database.setTransactionSuccessful();
 		} catch (SQLException ex) {
-			Logger.getLogger(Outlet.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+			ex.printStackTrace();
 		} finally {
 			database.endTransaction();
 			databaseHelper.close();

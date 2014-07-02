@@ -7,6 +7,7 @@
 package com.ceylon_linux.kandana_foods_and_drugs.controller;
 
 import android.content.Context;
+import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.util.InternetObserver;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -63,7 +64,7 @@ abstract class AbstractController extends WebServiceURL {
 			HttpResponse response = httpClient.execute(postRequest);
 			BufferedReader bufferedReader = null;
 			String lineSeparator = System.getProperty("line.separator");
-			String responseString = "";
+			StringBuilder responseString = new StringBuilder();
 			try {
 				InputStream content;
 				if ((content = response.getEntity().getContent()) == null) {
@@ -74,9 +75,10 @@ abstract class AbstractController extends WebServiceURL {
 				bufferedReader = new BufferedReader(new InputStreamReader(content));
 				String currentLine;
 				while ((currentLine = bufferedReader.readLine()) != null) {
-					responseString = responseString + currentLine + lineSeparator;
+					responseString.append(currentLine + lineSeparator);
 				}
-				return new JSONObject(responseString);
+				Log.i("response", responseString.toString());
+				return new JSONObject(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {
 					bufferedReader.close();
@@ -113,7 +115,7 @@ abstract class AbstractController extends WebServiceURL {
 			HttpResponse response = httpClient.execute(postRequest);
 			BufferedReader bufferedReader = null;
 			String lineSeparator = System.getProperty("line.separator");
-			String responseString = "";
+			StringBuilder responseString = new StringBuilder();
 			try {
 				InputStream content;
 				if ((content = response.getEntity().getContent()) == null) {
@@ -124,9 +126,10 @@ abstract class AbstractController extends WebServiceURL {
 				bufferedReader = new BufferedReader(new InputStreamReader(content));
 				String currentLine;
 				while ((currentLine = bufferedReader.readLine()) != null) {
-					responseString = responseString + currentLine + lineSeparator;
+					responseString.append(currentLine + lineSeparator);
 				}
-				return new JSONArray(responseString);
+				Log.i("response", responseString.toString());
+				return new JSONArray(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {
 					bufferedReader.close();
