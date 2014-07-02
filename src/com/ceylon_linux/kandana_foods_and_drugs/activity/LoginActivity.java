@@ -80,7 +80,7 @@ public class LoginActivity extends Activity {
 				progressDialog = new ProgressDialog(LoginActivity.this);
 				progressDialog.setCanceledOnTouchOutside(false);
 				progressDialog.setCancelable(false);
-				progressDialog.setMessage("Download Data...");
+				progressDialog.setMessage("Downloading Data...");
 				progressDialog.show();
 			}
 
