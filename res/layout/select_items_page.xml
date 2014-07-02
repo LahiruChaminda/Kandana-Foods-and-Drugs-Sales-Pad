@@ -13,7 +13,7 @@
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="5.64"
+                android:layout_weight="6.10"
                 android:text="Item Description"
                 android:textSize="20dp" android:paddingLeft="10dp"/>
 
@@ -28,45 +28,17 @@
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Qty"
+                android:text="Quantity"
                 android:gravity="right"
-                android:layout_weight="0.69"
+                android:layout_weight="1.57"
                 android:textSize="20dp"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Free"
+                android:text="Free Issue"
                 android:gravity="right"
-                android:layout_weight="0.69"
+                android:layout_weight="1.92"
                 android:textSize="20dp"/>
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="Dis"
-                android:layout_weight="0.69"
-                android:textSize="20dp"/>
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="Ret"
-                android:layout_weight="0.69"
-                android:textSize="20dp"/>
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="Rep"
-                android:layout_weight="0.69"
-                android:textSize="20dp"/>
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="Sam"
-                android:layout_weight="0.69"
-                android:textSize="20dp" android:singleLine="false"/>
     </LinearLayout>
     <ExpandableListView
             android:layout_width="match_parent"

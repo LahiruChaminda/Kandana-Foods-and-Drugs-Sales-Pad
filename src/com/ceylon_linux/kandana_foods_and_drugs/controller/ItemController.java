@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
@@ -19,6 +20,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -48,14 +50,14 @@ public class ItemController extends AbstractController {
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		try {
 			database.beginTransaction();
-			String categorySql = "replace into tbl_category(categoryId,categoryDescription) values (?,?)";
-			String itemSql = "replace into tbl_item(itemId,categoryId,itemCode,itemDescription) values (?,?,?,?)";
+			SQLiteStatement categoryStatement = database.compileStatement("replace into tbl_category(categoryId,categoryDescription) values (?,?)");
+			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,categoryId,itemCode,itemDescription) values (?,?,?,?)");
 			for (Category category : categories) {
 				Object[] categoryParameters = {
 					category.getCategoryId(),
 					category.getCategoryDescription()
 				};
-				DbHandler.performExecuteInsert(database, categorySql, categoryParameters);
+				DbHandler.performExecuteInsert(categoryStatement, categoryParameters);
 				for (Item item : category.getItems()) {
 					Object[] itemParameters = {
 						item.getItemId(),
@@ -63,9 +65,10 @@ public class ItemController extends AbstractController {
 						item.getItemCode(),
 						item.getItemDescription()
 					};
-					DbHandler.performExecuteInsert(database, itemSql, itemParameters);
+					DbHandler.performExecuteInsert(itemStatement, itemParameters);
 				}
 			}
+			long end = new Date().getTime();
 			database.setTransactionSuccessful();
 		} catch (SQLException ex) {
 			ex.printStackTrace();

@@ -120,21 +120,15 @@ public class SelectItemActivity extends Activity {
 					view = layoutInflater.inflate(R.layout.category_sub_item, null);
 					childViewHolder = new ChildViewHolder();
 					childViewHolder.txtItemDescription = (TextView) view.findViewById(R.id.txtItemDescription);
-					childViewHolder.txtEachDiscount = (TextView) view.findViewById(R.id.txtEachDiscount);
 					childViewHolder.txtFreeIssue = (TextView) view.findViewById(R.id.txtFreeIssue);
-					childViewHolder.txtEachDiscount = (TextView) view.findViewById(R.id.txtEachDiscount);
 					childViewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkBox);
 					childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
-					childViewHolder.txtReturnQuantity = (TextView) view.findViewById(R.id.txtReturnQuantity);
-					childViewHolder.txtReplaceQuantity = (TextView) view.findViewById(R.id.txtReplaceQuantity);
-					childViewHolder.txtSampleQuantity = (TextView) view.findViewById(R.id.txtSampleQuantity);
 					view.setTag(childViewHolder);
 				} else {
 					childViewHolder = (ChildViewHolder) view.getTag();
 				}
 				Item item = getChild(groupPosition, childPosition);
 				childViewHolder.txtItemDescription.setText(item.getItemDescription());
-				childViewHolder.txtEachDiscount.setText(Double.toString(outlet.getOutletDiscount()));
 				childViewHolder.checkBox.setChecked(item.isSelected());
 				view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 				updateView(childViewHolder, item);
@@ -296,17 +290,11 @@ public class SelectItemActivity extends Activity {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(0));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
-				childViewHolder.txtReturnQuantity.setText(Integer.toString(0));
-				childViewHolder.txtReplaceQuantity.setText(Integer.toString(0));
-				childViewHolder.txtSampleQuantity.setText(Integer.toString(0));
 				return childViewHolder;
 			}
 		}
 		childViewHolder.txtFreeIssue.setText("0");
 		childViewHolder.txtQuantity.setText("0");
-		childViewHolder.txtReturnQuantity.setText("0");
-		childViewHolder.txtReplaceQuantity.setText("0");
-		childViewHolder.txtSampleQuantity.setText("0");
 		return childViewHolder;
 	}
 
@@ -321,9 +309,5 @@ public class SelectItemActivity extends Activity {
 		CheckBox checkBox;
 		TextView txtQuantity;
 		TextView txtFreeIssue;
-		TextView txtEachDiscount;
-		TextView txtReturnQuantity;
-		TextView txtReplaceQuantity;
-		TextView txtSampleQuantity;
 	}
 }

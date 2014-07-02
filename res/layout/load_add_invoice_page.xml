@@ -99,22 +99,6 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/outletAuto" android:spinnerMode="dialog"/>
                 </LinearLayout>
-                <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:gravity="center"
-                        android:text="Pending Details"
-                        android:textSize="25dp"
-                        android:layout_weight="1" android:background="#65aaff"/>
-                <include android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         layout="@layout/pending_details_item" android:layout_gravity="center_horizontal"/>
-                <LinearLayout
-                        android:orientation="vertical"
-                        android:id="@+id/pendingDetailsTable"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
