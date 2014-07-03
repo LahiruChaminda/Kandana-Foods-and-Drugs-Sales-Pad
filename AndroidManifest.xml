@@ -15,7 +15,6 @@
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.LoginActivity" android:screenOrientation="portrait">
         </activity>
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.HomeActivity" android:screenOrientation="portrait">
-            <!-- android:theme="@android:style/Theme.WithActionBar" -->
         </activity>
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.LoadAddInvoiceActivity" android:screenOrientation="portrait">
         </activity>
