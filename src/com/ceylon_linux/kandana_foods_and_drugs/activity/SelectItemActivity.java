@@ -40,10 +40,14 @@ import java.util.Date;
 public class SelectItemActivity extends Activity {
 
 	private ExpandableListView itemList;
+	private EditText inputSearch;
 	private Button finishButton;
 	private Outlet outlet;
 	private ArrayList<Category> categories;
+	private ArrayList<Category> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
+
+	private MyExpandableListAdapter myExpandableListAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,95 +57,31 @@ public class SelectItemActivity extends Activity {
 		outlet = (Outlet) getIntent().getExtras().get("outlet");
 		try {
 			categories = ItemController.loadItemsFromDb(this);
+			fixedCategories = (ArrayList<Category>) categories.clone();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
-		itemList.setAdapter(new BaseExpandableListAdapter() {
-			@Override
-			public int getGroupCount() {
-				return categories.size();
-			}
-
-			@Override
-			public int getChildrenCount(int groupPosition) {
-				return categories.get(groupPosition).getItems().size();
-			}
-
-			@Override
-			public Category getGroup(int groupPosition) {
-				return categories.get(groupPosition);
-			}
-
-			@Override
-			public Item getChild(int groupPosition, int childPosition) {
-				return categories.get(groupPosition).getItems().get(childPosition);
-			}
-
-			@Override
-			public long getGroupId(int groupPosition) {
-				return groupPosition;
-			}
-
-			@Override
-			public long getChildId(int groupPosition, int childPosition) {
-				return childPosition;
-			}
-
-			@Override
-			public boolean hasStableIds() {
-				return false;
-			}
-
-			@Override
-			public View getGroupView(int groupPosition, boolean b, View view, ViewGroup viewGroup) {
-				GroupViewHolder groupViewHolder;
-				if (view == null) {
-					LayoutInflater layoutInflater = (LayoutInflater) SelectItemActivity.this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-					view = layoutInflater.inflate(R.layout.category_item_view, null);
-					groupViewHolder = new GroupViewHolder();
-					groupViewHolder.txtCategory = (TextView) view.findViewById(R.id.txtCategory);
-					view.setTag(groupViewHolder);
-				} else {
-					groupViewHolder = (GroupViewHolder) view.getTag();
-				}
-				groupViewHolder.txtCategory.setText(getGroup(groupPosition).getCategoryDescription());
-				return view;
-			}
-
-			@Override
-			public View getChildView(int groupPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
-				ChildViewHolder childViewHolder;
-				if (view == null) {
-					LayoutInflater layoutInflater = (LayoutInflater) SelectItemActivity.this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-					view = layoutInflater.inflate(R.layout.category_sub_item, null);
-					childViewHolder = new ChildViewHolder();
-					childViewHolder.txtItemDescription = (TextView) view.findViewById(R.id.txtItemDescription);
-					childViewHolder.txtFreeIssue = (TextView) view.findViewById(R.id.txtFreeIssue);
-					childViewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkBox);
-					childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
-					view.setTag(childViewHolder);
-				} else {
-					childViewHolder = (ChildViewHolder) view.getTag();
-				}
-				Item item = getChild(groupPosition, childPosition);
-				childViewHolder.txtItemDescription.setText(item.getItemDescription());
-				childViewHolder.checkBox.setChecked(item.isSelected());
-				view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
-				updateView(childViewHolder, item);
-				return view;
-			}
-
-			@Override
-			public boolean isChildSelectable(int groupPosition, int childPosition) {
-				return true;
-			}
-		});
+		itemList.setAdapter(myExpandableListAdapter = new MyExpandableListAdapter());
 		itemList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 			@Override
 			public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long id) {
 				return itemListOnChildClicked(expandableListView, view, groupPosition, childPosition, id);
+			}
+		});
+		inputSearch.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				myExpandableListAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
 		finishButton.setOnClickListener(new View.OnClickListener() {
@@ -210,9 +150,9 @@ public class SelectItemActivity extends Activity {
 	private void initialize() {
 		itemList = (ExpandableListView) findViewById(R.id.itemList);
 		finishButton = (Button) findViewById(R.id.finishButton);
+		inputSearch = (EditText) findViewById(R.id.inputSearch);
 		orderDetails = new ArrayList<OrderDetail>();
 	}
-	// </editor-fold>
 
 	private void finishButtonClicked(View view) {
 		if (orderDetails.size() == 0) {
@@ -266,6 +206,7 @@ public class SelectItemActivity extends Activity {
 			}
 		}.execute(order);
 	}
+	// </editor-fold>
 
 	@Override
 	public void onBackPressed() {
@@ -298,5 +239,130 @@ public class SelectItemActivity extends Activity {
 		CheckBox checkBox;
 		TextView txtQuantity;
 		TextView txtFreeIssue;
+	}
+
+	private class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
+		MyFilter myFilter;
+
+		@Override
+		public int getGroupCount() {
+			return categories.size();
+		}
+
+		@Override
+		public int getChildrenCount(int groupPosition) {
+			return categories.get(groupPosition).getItems().size();
+		}
+
+		@Override
+		public Category getGroup(int groupPosition) {
+			return categories.get(groupPosition);
+		}
+
+		@Override
+		public Item getChild(int groupPosition, int childPosition) {
+			return categories.get(groupPosition).getItems().get(childPosition);
+		}
+
+		@Override
+		public long getGroupId(int groupPosition) {
+			return groupPosition;
+		}
+
+		@Override
+		public long getChildId(int groupPosition, int childPosition) {
+			return childPosition;
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return false;
+		}
+
+		@Override
+		public View getGroupView(int groupPosition, boolean b, View view, ViewGroup viewGroup) {
+			GroupViewHolder groupViewHolder;
+			if (view == null) {
+				LayoutInflater layoutInflater = (LayoutInflater) SelectItemActivity.this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+				view = layoutInflater.inflate(R.layout.category_item_view, null);
+				groupViewHolder = new GroupViewHolder();
+				groupViewHolder.txtCategory = (TextView) view.findViewById(R.id.txtCategory);
+				view.setTag(groupViewHolder);
+			} else {
+				groupViewHolder = (GroupViewHolder) view.getTag();
+			}
+			groupViewHolder.txtCategory.setText(getGroup(groupPosition).getCategoryDescription());
+			return view;
+		}
+
+		@Override
+		public View getChildView(int groupPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
+			ChildViewHolder childViewHolder;
+			if (view == null) {
+				LayoutInflater layoutInflater = (LayoutInflater) SelectItemActivity.this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+				view = layoutInflater.inflate(R.layout.category_sub_item, null);
+				childViewHolder = new ChildViewHolder();
+				childViewHolder.txtItemDescription = (TextView) view.findViewById(R.id.txtItemDescription);
+				childViewHolder.txtFreeIssue = (TextView) view.findViewById(R.id.txtFreeIssue);
+				childViewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+				childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
+				view.setTag(childViewHolder);
+			} else {
+				childViewHolder = (ChildViewHolder) view.getTag();
+			}
+			Item item = getChild(groupPosition, childPosition);
+			childViewHolder.txtItemDescription.setText(item.getItemDescription());
+			childViewHolder.checkBox.setChecked(item.isSelected());
+			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
+			updateView(childViewHolder, item);
+			return view;
+		}
+
+		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			return true;
+		}
+
+		@Override
+		public Filter getFilter() {
+			if (myFilter == null) {
+				myFilter = new MyFilter();
+			}
+			return myFilter;
+		}
+
+		private class MyFilter extends Filter {
+
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				constraint.toString().toLowerCase();
+				FilterResults result = new FilterResults();
+				ArrayList<Category> filteredCategories = new ArrayList<Category>();
+				if (constraint != null && constraint.toString().length() > 0) {
+					for (Category category : fixedCategories) {
+						ArrayList<Item> items = new ArrayList<Item>();
+						for (Item item : category.getItems()) {
+							if (item.getItemDescription().toLowerCase().contains(constraint)) {
+								items.add(item);
+							}
+						}
+						if (items.size() != 0) {
+							filteredCategories.add(new Category(category.getCategoryId(), category.getCategoryDescription(), items));
+						}
+					}
+				} else {
+					filteredCategories = fixedCategories;
+				}
+				result.count = filteredCategories.size();
+				result.values = filteredCategories;
+				return result;
+			}
+
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+				categories = (ArrayList<Category>) results.values;
+				notifyDataSetChanged();
+			}
+		}
 	}
 }

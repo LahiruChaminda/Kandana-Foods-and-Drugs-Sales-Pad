@@ -5,6 +5,10 @@
               android:weightSum="1"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/inputSearch" android:padding="5dp" android:textSize="25dp" android:hint="Search"/>
     <LinearLayout
             android:orientation="horizontal"
             android:weightSum="10"
