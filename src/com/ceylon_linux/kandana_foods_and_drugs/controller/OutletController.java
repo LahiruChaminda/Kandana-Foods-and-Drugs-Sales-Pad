@@ -32,13 +32,16 @@ public class OutletController extends AbstractController {
 	}
 
 	public static void downloadOutlets(Context context, int positionId) throws IOException, JSONException {
-		JSONObject responseJson = getJsonObject(OutletURLPack.GET_OUTLETS, OutletURLPack.getParameters(positionId), context);
+		JSONObject responseJson = getJsonObject(OutletURLPack.GET_OUTLETS, OutletURLPack.getOutletParameters(positionId), context);
 		if (responseJson.getBoolean("result")) {
 			JSONArray routeJson = responseJson.getJSONArray("routes");
 			ArrayList<Route> routes = new ArrayList<Route>();
 			final int ROUTE_LENGTH = routeJson.length();
 			for (int i = 0; i < ROUTE_LENGTH; i++) {
-				routes.add(Route.parseRoute(routeJson.getJSONObject(i)));
+				Route route = Route.parseRoute(routeJson.getJSONObject(i));
+				if (route != null) {
+					routes.add(route);
+				}
 			}
 			saveOutletsToDb(routes, context);
 		}

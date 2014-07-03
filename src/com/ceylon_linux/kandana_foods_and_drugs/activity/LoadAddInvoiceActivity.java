@@ -8,6 +8,7 @@ package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -158,10 +159,20 @@ public class LoadAddInvoiceActivity extends Activity {
 			alert.show();
 			return;
 		}
+		ProgressDialog progressDialog = new ProgressDialog(LoadAddInvoiceActivity.this);
+		progressDialog.setMessage("Loading items from local database");
+		progressDialog.setCanceledOnTouchOutside(false);
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+
 		Intent selectItemsActivity = new Intent(LoadAddInvoiceActivity.this, SelectItemActivity.class);
 		selectItemsActivity.putExtra("outlet", outlet);
 		startActivity(selectItemsActivity);
 		timer.cancel();
 		finish();
+
+		if (progressDialog.isShowing()) {
+			progressDialog.dismiss();
+		}
 	}
 }

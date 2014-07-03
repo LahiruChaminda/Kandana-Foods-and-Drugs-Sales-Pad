@@ -26,7 +26,6 @@ import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.*;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
-import com.ceylon_linux.kandana_foods_and_drugs.util.ProgressDialogGenerator;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -59,7 +58,6 @@ public class SelectItemActivity extends Activity {
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
-
 		itemList.setAdapter(new BaseExpandableListAdapter() {
 			@Override
 			public int getGroupCount() {
@@ -162,12 +160,8 @@ public class SelectItemActivity extends Activity {
 		Button btnOk = (Button) dialog.findViewById(R.id.btnOk);
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
-		final EditText inputReturnQuantity = (EditText) dialog.findViewById(R.id.inputReturnQuantity);
-		final EditText inputReplaceQuantity = (EditText) dialog.findViewById(R.id.inputReplaceQuantity);
-		final EditText inputSampleQuantity = (EditText) dialog.findViewById(R.id.inputSampleQuantity);
 		final Item item = categories.get(groupPosition).getItems().get(childPosition);
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
-		final TextView txtDiscount = (TextView) dialog.findViewById(R.id.txtDiscount);
 		Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
 		txtItemDescription.setText(item.getItemDescription());
 		inputRequestedQuantity.addTextChangedListener(new TextWatcher() {
@@ -182,30 +176,23 @@ public class SelectItemActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable editable) {
 				String requestedQuantityString = inputRequestedQuantity.getText().toString();
-				String returnQuantityString = inputReturnQuantity.getText().toString();
-				String replaceQuantityString = inputReplaceQuantity.getText().toString();
-				String sampleQuantityString = inputSampleQuantity.getText().toString();
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				int returnQuantity = Integer.parseInt((returnQuantityString.isEmpty()) ? "0" : returnQuantityString);
-				int replaceQuantity = Integer.parseInt((replaceQuantityString.isEmpty()) ? "0" : replaceQuantityString);
-				int sampleQuantity = Integer.parseInt((sampleQuantityString.isEmpty()) ? "0" : sampleQuantityString);
-				txtDiscount.setText(Double.toString(outlet.getOutletDiscount()));
+				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, SelectItemActivity.this);
+				txtFreeQuantity.setText(String.valueOf(orderDetail.getFreeIssue()));
 			}
 		});
 		btnOk.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				String requestedQuantityString = inputRequestedQuantity.getText().toString();
-				String returnQuantityString = inputReturnQuantity.getText().toString();
-				String replaceQuantityString = inputReplaceQuantity.getText().toString();
-				String sampleQuantityString = inputSampleQuantity.getText().toString();
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				int returnQuantity = Integer.parseInt((returnQuantityString.isEmpty()) ? "0" : returnQuantityString);
-				int replaceQuantity = Integer.parseInt((replaceQuantityString.isEmpty()) ? "0" : replaceQuantityString);
-				int sampleQuantity = Integer.parseInt((sampleQuantityString.isEmpty()) ? "0" : sampleQuantityString);
-				item.setSelected(true);
-				itemList.collapseGroup(groupPosition);
-				itemList.expandGroup(groupPosition);
+				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, SelectItemActivity.this);
+				if (orderDetail != null) {
+					orderDetails.add(orderDetail);
+					item.setSelected(true);
+					itemList.collapseGroup(groupPosition);
+					itemList.expandGroup(groupPosition);
+				}
 				dialog.dismiss();
 			}
 		});
@@ -243,7 +230,9 @@ public class SelectItemActivity extends Activity {
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				progressDialog = ProgressDialogGenerator.generateProgressDialog(SelectItemActivity.this, "Sync Order", false);
+				progressDialog = new ProgressDialog(SelectItemActivity.this);
+				progressDialog.setMessage("Syncing Order");
+				progressDialog.setCanceledOnTouchOutside(false);
 				progressDialog.show();
 			}
 
@@ -288,7 +277,7 @@ public class SelectItemActivity extends Activity {
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
 		for (OrderDetail orderDetail : orderDetails) {
 			if (orderDetail.getItemId() == item.getItemId()) {
-				childViewHolder.txtFreeIssue.setText(Integer.toString(0));
+				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
 				return childViewHolder;
 			}

@@ -42,7 +42,7 @@ public class Route implements Serializable {
 		for (int i = 0; i < OUTLET_COUNT; i++) {
 			outlets.add(Outlet.parseOutlet(outletCollection.getJSONObject(i)));
 		}
-		return new Route(
+		return outlets.size() == 0 ? null : new Route(
 			routeJsonInstance.getInt("routeId"),
 			routeJsonInstance.getString("routeName"),
 			outlets

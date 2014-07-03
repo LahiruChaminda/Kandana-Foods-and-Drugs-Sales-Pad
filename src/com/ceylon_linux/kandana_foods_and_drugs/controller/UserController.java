@@ -98,7 +98,7 @@ public class UserController extends AbstractController {
 	}
 
 	public static User authenticate(Context context, String userName, String password) throws IOException, JSONException {
-		JSONObject userJson = getJsonObject(UserURLPack.LOGIN, UserURLPack.getParameters(userName, password), context);
+		JSONObject userJson = getJsonObject(UserURLPack.LOGIN, UserURLPack.getLoginParameters(userName, password), context);
 		return User.parseUser(userJson);
 	}
 }

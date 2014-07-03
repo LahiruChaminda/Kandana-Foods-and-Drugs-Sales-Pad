@@ -68,7 +68,7 @@ public class OrderController extends AbstractController {
 	}
 
 	public static boolean syncOrder(Context context, JSONObject orderJson) throws IOException, JSONException {
-		JSONObject responseJson = getJsonObject(OrderURLPack.INSERT_ORDER, OrderURLPack.getParameters(orderJson, UserController.getAuthorizedUser(context).getUserId()), context);
+		JSONObject responseJson = getJsonObject(OrderURLPack.INSERT_ORDER, OrderURLPack.getInsertOrderParameters(orderJson, UserController.getAuthorizedUser(context).getUserId()), context);
 		return (responseJson != null) && responseJson.getBoolean("result");
 	}
 

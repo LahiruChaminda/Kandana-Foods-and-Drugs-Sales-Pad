@@ -12,7 +12,8 @@ CREATE TABLE tbl_item (
   itemId                INTEGER PRIMARY KEY,
   categoryId            INTEGER NOT NULL REFERENCES tbl_category(categoryId) ON UPDATE CASCADE,
   itemCode              TEXT,
-  itemDescription       TEXT CHECK (itemDescription != '')
+  itemDescription       TEXT CHECK (itemDescription != ''),
+  price decimal(10,2) not null default 0
 );
 CREATE TABLE tbl_route (
   routeId       INTEGER NOT NULL PRIMARY KEY,
@@ -40,11 +41,17 @@ CREATE TABLE tbl_order (
 CREATE TABLE tbl_order_detail (
   orderId      INTEGER NOT NULL REFERENCES tbl_order(orderId) ON UPDATE CASCADE ON DELETE CASCADE,
   itemId       INTEGER NOT NULL REFERENCES tbl_item(itemId) ON UPDATE CASCADE,
-  price        REAL    NOT NULL,
+  price        decimal(10,2)    NOT NULL,
   discount     REAL,
   quantity     INT,
   freeQuantity INT DEFAULT 0,
   returnQuantity INT DEFAULT 0,
   replaceQuantity INT DEFAULT 0,
   sampleQuantity INT DEFAULT 0
+);
+CREATE TABLE tbl_free_issue_ratio (
+  freeIssueId  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  itemId       INTEGER NOT NULL REFERENCES tbl_item(itemId) ON UPDATE CASCADE ON DELETE CASCADE,
+  rangeMinimumQuantity int not null default 0,
+  freeIssueQuantity int not null default 0
 );

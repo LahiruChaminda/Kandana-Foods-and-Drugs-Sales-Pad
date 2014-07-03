@@ -27,42 +27,49 @@ abstract class WebServiceURL {
 
 	protected static final class CategoryURLPack {
 
-		public static final HashMap<String, Object> getParameters(int positionId) {
+		public static final HashMap<String, Object> getCategoryParameters(int positionId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("userId", positionId);
 			return parameters;
 		}
 
+		public static final HashMap<String, Object> getFreeIssueParameters() {
+			//HashMap<String, Object> parameters = new HashMap<String, Object>();
+			//parameters.put("userId", positionId);
+			return null;
+		}
+
 		public static final String GET_ITEMS_AND_CATEGORIES = webServiceURL + "getProducts";
+		public static final String GET_FREE_ISSUE_RATIOS = webServiceURL + "getFreeItem";
 	}
 
 	protected static final class UserURLPack {
 
-		public static final HashMap<String, Object> getParameters(String userName, String password) {
+		public static final HashMap<String, Object> getLoginParameters(String userName, String password) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("username", userName);
 			parameters.put("password", password);
 			return parameters;
 		}
 
-		public static final String LOGIN = webServiceURL + "login.php";
+		public static final String LOGIN = webServiceURL + "login";
 
 	}
 
 	protected static final class OutletURLPack {
 
-		public static final HashMap<String, Object> getParameters(int positionId) {
+		public static final HashMap<String, Object> getOutletParameters(int positionId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("userId", positionId);
 			return parameters;
 		}
 
-		public static final String GET_OUTLETS = webServiceURL + "getRouteAndOutlets.php";
+		public static final String GET_OUTLETS = webServiceURL + "getRouteAndOutlets";
 	}
 
 	protected static final class OrderURLPack {
 
-		public static final HashMap<String, Object> getParameters(JSONObject orderJson, int positionId) {
+		public static final HashMap<String, Object> getInsertOrderParameters(JSONObject orderJson, int positionId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("jsonString", orderJson);
 			parameters.put("position_id", positionId);

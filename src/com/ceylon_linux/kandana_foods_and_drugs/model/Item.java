@@ -23,12 +23,14 @@ public class Item implements Serializable {
 	private int itemId;
 	private String itemCode;
 	private String itemDescription;
+	private double price;
 	private boolean selected;
 
-	public Item(int itemId, String itemCode, String itemDescription) {
+	public Item(int itemId, String itemCode, String itemDescription, double price) {
 		this.itemId = itemId;
 		this.itemCode = itemCode;
 		this.itemDescription = itemDescription;
+		this.price = price;
 	}
 
 	public static final Item parseItem(JSONObject itemJsonInstance) throws JSONException {
@@ -38,7 +40,8 @@ public class Item implements Serializable {
 		return new Item(
 			itemJsonInstance.getInt("itemId"),//int itemId
 			itemJsonInstance.getString("itemCode"),//int itemCode
-			itemJsonInstance.getString("itemName")//itemDescription
+			itemJsonInstance.getString("itemName"),//itemDescription
+			0 //unitPrice
 		);
 	}
 
@@ -72,6 +75,14 @@ public class Item implements Serializable {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class ItemController extends AbstractController {
 	}
 
 	public static void downloadItems(Context context, int positionId) throws IOException, JSONException {
-		JSONArray categoryJson = getJsonArray(CategoryURLPack.GET_ITEMS_AND_CATEGORIES, CategoryURLPack.getParameters(positionId), context);
+		JSONArray categoryJson = getJsonArray(CategoryURLPack.GET_ITEMS_AND_CATEGORIES, CategoryURLPack.getCategoryParameters(positionId), context);
 		ArrayList<Category> categories = new ArrayList<Category>();
 		final int CATEGORY_LENGTH = categoryJson.length();
 		for (int i = 0; i < CATEGORY_LENGTH; i++) {
@@ -51,7 +52,7 @@ public class ItemController extends AbstractController {
 		try {
 			database.beginTransaction();
 			SQLiteStatement categoryStatement = database.compileStatement("replace into tbl_category(categoryId,categoryDescription) values (?,?)");
-			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,categoryId,itemCode,itemDescription) values (?,?,?,?)");
+			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,categoryId,itemCode,itemDescription, price) values (?,?,?,?,?)");
 			for (Category category : categories) {
 				Object[] categoryParameters = {
 					category.getCategoryId(),
@@ -63,7 +64,8 @@ public class ItemController extends AbstractController {
 						item.getItemId(),
 						category.getCategoryId(),
 						item.getItemCode(),
-						item.getItemDescription()
+						item.getItemDescription(),
+						item.getPrice()
 					};
 					DbHandler.performExecuteInsert(itemStatement, itemParameters);
 				}
@@ -83,7 +85,7 @@ public class ItemController extends AbstractController {
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		ArrayList<Category> categories = new ArrayList<Category>();
 		String categorySql = "select categoryId,categoryDescription from tbl_category";
-		String itemSql = "select itemId,itemCode,itemDescription from tbl_item where categoryId=?";
+		String itemSql = "select itemId,itemCode,itemDescription,price from tbl_item where categoryId=?";
 		Cursor categoryCursor = DbHandler.performRawQuery(database, categorySql, null);
 		for (categoryCursor.moveToFirst(); !categoryCursor.isAfterLast(); categoryCursor.moveToNext()) {
 			int categoryId = categoryCursor.getInt(0);
@@ -94,7 +96,8 @@ public class ItemController extends AbstractController {
 				items.add(new Item(
 					itemCursor.getInt(0),
 					itemCursor.getString(1),
-					itemCursor.getString(2)
+					itemCursor.getString(2),
+					itemCursor.getDouble(3)
 				));
 			}
 			itemCursor.close();
@@ -104,5 +107,24 @@ public class ItemController extends AbstractController {
 		databaseHelper.close();
 		return categories;
 	}
+
+	public static void downloadFreeIssues(Context context) throws IOException, JSONException {
+		JSONArray freeIssueJson = getJsonArray(CategoryURLPack.GET_FREE_ISSUE_RATIOS, CategoryURLPack.getFreeIssueParameters(), context);
+		final int FREE_ISSUE_LENGTH = freeIssueJson.length();
+		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
+		SQLiteDatabase database = databaseHelper.getWritableDatabase();
+		SQLiteStatement freeIssueStatement = database.compileStatement("replace into tbl_free_issue_ratio(itemId, rangeMinimumQuantity,freeIssueQuantity) values(?,?,?)");
+		for (int i = 0; i < FREE_ISSUE_LENGTH; i++) {
+			JSONObject freeIssue = freeIssueJson.getJSONObject(i);
+			int productId = freeIssue.getInt("p_id");
+			int minimumQty = freeIssue.getInt("p_purchase_qty");
+			int freeIssueQty = freeIssue.getInt("p_free_qty");
+			DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
+				productId, minimumQty, freeIssueQty
+			});
+		}
+		databaseHelper.close();
+	}
+
 
 }

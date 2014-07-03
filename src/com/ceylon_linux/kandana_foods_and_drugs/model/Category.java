@@ -23,11 +23,6 @@ public class Category {
 	private String categoryDescription;
 	private int categoryId;
 
-	public Category(int categoryId, String categoryDescription) {
-		this.categoryDescription = categoryDescription;
-		this.categoryId = categoryId;
-	}
-
 	public Category(int categoryId, String categoryDescription, ArrayList<Item> items) {
 		this.items = items;
 		this.categoryDescription = categoryDescription;

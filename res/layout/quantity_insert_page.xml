@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
-              android:weightSum="5"
+              android:weightSum="4"
               android:padding="3dp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
@@ -38,63 +38,6 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:weightSum="2"
-            android:layout_weight="1"
-            android:padding="3dp"
-            android:orientation="horizontal">
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Return" android:gravity="center_vertical"/>
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textSize="25dp" android:id="@+id/inputReturnQuantity" android:inputType="number"/>
-    </LinearLayout>
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:weightSum="2"
-            android:layout_weight="1"
-            android:padding="3dp"
-            android:orientation="horizontal">
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Replace" android:gravity="center_vertical"/>
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textSize="25dp" android:id="@+id/inputReplaceQuantity" android:inputType="number"/>
-    </LinearLayout>
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:weightSum="2"
-            android:layout_weight="1"
-            android:padding="3dp"
-            android:orientation="horizontal">
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Sample" android:gravity="center_vertical"/>
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textSize="25dp" android:id="@+id/inputSampleQuantity" android:inputType="number"/>
-    </LinearLayout>
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:padding="3dp"
             android:layout_weight="1"
             android:weightSum="2"
@@ -112,27 +55,6 @@
                 android:layout_weight="1"
                 android:textSize="25dp"
                 android:text="0" android:id="@+id/txtFreeQuantity"/>
-    </LinearLayout>
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:weightSum="2"
-            android:padding="3dp"
-            android:orientation="horizontal">
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Discount" android:gravity="center_vertical"/>
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|right"
-                android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="0" android:id="@+id/txtDiscount"/>
     </LinearLayout>
     <LinearLayout
             android:layout_width="500dp"
