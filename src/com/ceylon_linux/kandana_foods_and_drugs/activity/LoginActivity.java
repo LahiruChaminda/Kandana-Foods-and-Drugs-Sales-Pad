@@ -97,8 +97,6 @@ public class LoginActivity extends Activity {
 						publishProgress("Outlets Downloaded Successfully");
 						ItemController.downloadItems(LoginActivity.this, user.getUserId());
 						publishProgress("Items Downloaded Successfully");
-						//ItemController.downloadFreeIssues(LoginActivity.this);
-						//publishProgress("Free Issues Downloaded Successfully");
 					}
 					return user;
 				} catch (IOException e) {

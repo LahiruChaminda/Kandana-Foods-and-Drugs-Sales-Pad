@@ -9,6 +9,7 @@ package com.ceylon_linux.kandana_foods_and_drugs.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import org.json.JSONObject;
@@ -27,32 +28,36 @@ public class OrderDetail {
 	private int quantity;
 	private int freeIssue;
 	private double price;
+	private int salableReturns;
 
-	public OrderDetail(int itemId, String itemDescription, int quantity, double price, int freeIssue) {
+	public OrderDetail(int itemId, String itemDescription, int quantity, double price, int freeIssue, int salableReturns) {
 		this.itemId = itemId;
 		this.itemDescription = itemDescription;
 		this.quantity = quantity;
 		this.price = price;
 		this.freeIssue = freeIssue;
+		this.salableReturns = salableReturns;
 	}
 
-	public static OrderDetail getOrderDetail(Item item, int quantity, Context context) {
+	public static OrderDetail getOrderDetail(Item item, int quantity, int salableReturns, Context context) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		String freeIssueSql = "select rangeMinimumQuantity,freeIssueQuantity from tbl_free_issue_ratio where itemId=? and rangeMinimumQuantity>? order by rangeMinimumQuantity asc limit 1";
-		Cursor freeIssueCursor = DbHandler.performRawQuery(database, freeIssueSql, new Object[]{item.getItemId()});
+		String freeIssueSql = "select rangeMinimumQuantity,freeIssueQuantity from tbl_free_issue_ratio where itemId=? and rangeMinimumQuantity<=? order by rangeMinimumQuantity asc limit 1";
+		Cursor freeIssueCursor = DbHandler.performRawQuery(database, freeIssueSql, new Object[]{item.getItemId(), quantity});
 		int freeIssue = 0;
 		for (freeIssueCursor.moveToFirst(); !freeIssueCursor.isAfterLast(); freeIssueCursor.moveToNext()) {
 			int rangeMinimumQuantity = freeIssueCursor.getInt(0);
 			int freeIssueQuantity = freeIssueCursor.getInt(1);
 			freeIssue = (quantity / rangeMinimumQuantity) * freeIssueQuantity;
+			Log.i("freeIssue", rangeMinimumQuantity + "-" + quantity + "=" + freeIssueQuantity);
 		}
 		return new OrderDetail(
 			item.getItemId(),
 			item.getItemDescription(),
 			quantity,
 			item.getPrice(),
-			freeIssue
+			freeIssue,
+			salableReturns
 		);
 	}
 
@@ -96,12 +101,21 @@ public class OrderDetail {
 		this.freeIssue = freeIssue;
 	}
 
+	public int getSalableReturns() {
+		return salableReturns;
+	}
+
+	public void setSalableReturns(int salableReturns) {
+		this.salableReturns = salableReturns;
+	}
+
 	public JSONObject getOrderDetailAsJson() {
 		HashMap<String, Object> orderDetailsParams = new HashMap<String, Object>();
 		orderDetailsParams.put("itemId", itemId);
 		orderDetailsParams.put("qty", quantity);
 		orderDetailsParams.put("price", price);
-		orderDetailsParams.put("freeIssue", price);
+		orderDetailsParams.put("freeIssue", freeIssue);
+		orderDetailsParams.put("salableReturns", salableReturns);
 		return new JSONObject(orderDetailsParams);
 	}
 

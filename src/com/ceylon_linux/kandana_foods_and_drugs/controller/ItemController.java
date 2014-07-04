@@ -21,7 +21,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -53,6 +52,7 @@ public class ItemController extends AbstractController {
 			database.beginTransaction();
 			SQLiteStatement categoryStatement = database.compileStatement("replace into tbl_category(categoryId,categoryDescription) values (?,?)");
 			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,categoryId,itemCode,itemDescription, price) values (?,?,?,?,?)");
+			SQLiteStatement freeIssueStatement = database.compileStatement("replace into tbl_free_issue_ratio (itemId, rangeMinimumQuantity,freeIssueQuantity) values(?,?,?)");
 			for (Category category : categories) {
 				Object[] categoryParameters = {
 					category.getCategoryId(),
@@ -60,17 +60,33 @@ public class ItemController extends AbstractController {
 				};
 				DbHandler.performExecuteInsert(categoryStatement, categoryParameters);
 				for (Item item : category.getItems()) {
+					int itemId = item.getItemId();
 					Object[] itemParameters = {
-						item.getItemId(),
+						itemId,
 						category.getCategoryId(),
 						item.getItemCode(),
 						item.getItemDescription(),
 						item.getPrice()
 					};
 					DbHandler.performExecuteInsert(itemStatement, itemParameters);
+					JSONArray freeIssueJsonArray = item.getFreeIssueJsonArray();
+					for (int i = 0, freeIssueLength = freeIssueJsonArray.length(); i < freeIssueLength; i++) {
+						try {
+							JSONObject freeIssue = freeIssueJsonArray.getJSONObject(i);
+							int minimumQty = freeIssue.getInt("p_purchase_qty");
+							int freeIssueQty = freeIssue.getInt("p_free_qty");
+							DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
+								itemId,
+								minimumQty,
+								freeIssueQty
+							});
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
-			long end = new Date().getTime();
+			;
 			database.setTransactionSuccessful();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -107,24 +123,5 @@ public class ItemController extends AbstractController {
 		databaseHelper.close();
 		return categories;
 	}
-
-	public static void downloadFreeIssues(Context context) throws IOException, JSONException {
-		JSONArray freeIssueJson = getJsonArray(CategoryURLPack.GET_FREE_ISSUE_RATIOS, CategoryURLPack.getFreeIssueParameters(), context);
-		final int FREE_ISSUE_LENGTH = freeIssueJson.length();
-		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
-		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		SQLiteStatement freeIssueStatement = database.compileStatement("replace into tbl_free_issue_ratio(itemId, rangeMinimumQuantity,freeIssueQuantity) values(?,?,?)");
-		for (int i = 0; i < FREE_ISSUE_LENGTH; i++) {
-			JSONObject freeIssue = freeIssueJson.getJSONObject(i);
-			int productId = freeIssue.getInt("p_id");
-			int minimumQty = freeIssue.getInt("p_purchase_qty");
-			int freeIssueQty = freeIssue.getInt("p_free_qty");
-			DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
-				productId, minimumQty, freeIssueQty
-			});
-		}
-		databaseHelper.close();
-	}
-
 
 }

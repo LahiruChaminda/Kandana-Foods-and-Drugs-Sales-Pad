@@ -60,5 +60,5 @@
             android:text="Sign Out"
             android:id="@+id/btnSignOut"
             android:textSize="25dp"
-            android:layout_height="wrap_content" style="@android:style/Widget.Button"/>/>
+            android:layout_height="wrap_content" style="@android:style/Widget.Button"/>
 </LinearLayout>
