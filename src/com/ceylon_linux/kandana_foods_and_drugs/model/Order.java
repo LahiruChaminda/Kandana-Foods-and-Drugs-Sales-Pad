@@ -6,6 +6,7 @@
 
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
+import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,27 +34,39 @@ public class Order {
 	private ArrayList<OrderDetail> orderDetails;
 
 	public Order(int outletId, int positionId, int routeId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails) {
-		this.setOutletId(outletId);
-		this.setPositionId(positionId);
-		this.setRouteId(routeId);
-		this.setBatteryLevel(batteryLevel);
-		this.setInvoiceTime(invoiceTime);
-		this.setLongitude(longitude);
-		this.setLatitude(latitude);
-		this.setOrderDetails(orderDetails);
+		this.outletId = outletId;
+		this.positionId = positionId;
+		this.routeId = routeId;
+		this.batteryLevel = batteryLevel;
+		this.invoiceTime = invoiceTime;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.orderDetails = orderDetails;
+	}
+
+	public Order(long orderId, int outletId, int positionId, int routeId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails) {
+		this.orderId = orderId;
+		this.outletId = outletId;
+		this.positionId = positionId;
+		this.routeId = routeId;
+		this.batteryLevel = batteryLevel;
+		this.invoiceTime = invoiceTime;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.orderDetails = orderDetails;
 	}
 
 	public Order(long orderId, int outletId, String outletDescription, int positionId, int routeId, long invoiceTime, double longitude, double latitude, int batteryLevel, ArrayList<OrderDetail> orderDetails) {
-		this.setOrderId(orderId);
-		this.setOutletId(outletId);
-		this.setOutletDescription(outletDescription);
-		this.setPositionId(positionId);
-		this.setRouteId(routeId);
-		this.setInvoiceTime(invoiceTime);
-		this.setLongitude(longitude);
-		this.setLatitude(latitude);
-		this.setBatteryLevel(batteryLevel);
-		this.setOrderDetails(orderDetails);
+		this.orderId = orderId;
+		this.outletDescription = outletDescription;
+		this.outletId = outletId;
+		this.positionId = positionId;
+		this.routeId = routeId;
+		this.batteryLevel = batteryLevel;
+		this.invoiceTime = invoiceTime;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.orderDetails = orderDetails;
 	}
 
 	public JSONObject getOrderAsJson() {
@@ -63,22 +76,23 @@ public class Order {
 		simpleDateFormat.applyPattern("yyyy-MM-dd");
 		Date invoiceDate = new Date(getInvoiceTime());
 		HashMap<String, Object> invoiceParams = new HashMap<String, Object>();
-		invoiceParams.put("outletid", getOutletId());
-		invoiceParams.put("routeid", getRouteId());
-		invoiceParams.put("invtype", 0);
-		invoiceParams.put("invDate", simpleDateFormat.format(invoiceDate));
+		invoiceParams.put("outletId", getOutletId());
+		invoiceParams.put("routeId", getRouteId());
+		invoiceParams.put("invoiceDate", simpleDateFormat.format(invoiceDate));
 		simpleDateFormat.applyPattern("HH:mm:ss");
-		invoiceParams.put("invtime", simpleDateFormat.format(invoiceDate));
-		invoiceParams.put("lon", getLongitude());
-		invoiceParams.put("lat", getLatitude());
-		invoiceParams.put("bat", getBatteryLevel());
+		invoiceParams.put("invoiceTime", simpleDateFormat.format(invoiceDate));
+		invoiceParams.put("longitude", getLongitude());
+		invoiceParams.put("latitude", getLatitude());
+		invoiceParams.put("batteryLevel", getBatteryLevel());
 
 		JSONArray orderDetailsJsonArray = new JSONArray();
 		for (OrderDetail orderDetail : getOrderDetails()) {
 			orderDetailsJsonArray.put(orderDetail.getOrderDetailAsJson());
 		}
-		orderJsonParams.put("invitems", orderDetailsJsonArray);
+		invoiceParams.put("invoiceItems", orderDetailsJsonArray);
 		orderJsonParams.put("Invoice", new JSONObject(invoiceParams));
+		Log.i("response count", getOrderDetails().size() + "");
+		Log.i("response json", new JSONObject(orderJsonParams).toString());
 		return new JSONObject(orderJsonParams);
 	}
 

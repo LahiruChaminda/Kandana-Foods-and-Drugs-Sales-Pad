@@ -69,13 +69,13 @@ abstract class WebServiceURL {
 
 	protected static final class OrderURLPack {
 
-		public static final HashMap<String, Object> getInsertOrderParameters(JSONObject orderJson, int positionId) {
+		public static final HashMap<String, Object> getInsertOrderParameters(JSONObject orderJson, int userId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("jsonString", orderJson);
-			parameters.put("position_id", positionId);
+			parameters.put("userId", userId);
 			return parameters;
 		}
 
-		public static final String INSERT_ORDER = webServiceURL + "insert_order";
+		public static final String INSERT_ORDER = webServiceURL + "insertInvoiceDetails";
 	}
 }

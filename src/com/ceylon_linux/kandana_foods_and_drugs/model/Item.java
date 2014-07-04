@@ -6,6 +6,7 @@
 
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,12 +26,21 @@ public class Item implements Serializable {
 	private String itemDescription;
 	private double price;
 	private boolean selected;
+	private JSONArray freeIssueJsonArray;
 
 	public Item(int itemId, String itemCode, String itemDescription, double price) {
 		this.itemId = itemId;
 		this.itemCode = itemCode;
 		this.itemDescription = itemDescription;
 		this.price = price;
+	}
+
+	public Item(int itemId, String itemCode, String itemDescription, double price, JSONArray freeIssueJsonArray) {
+		this.itemId = itemId;
+		this.itemCode = itemCode;
+		this.itemDescription = itemDescription;
+		this.price = price;
+		this.freeIssueJsonArray = freeIssueJsonArray;
 	}
 
 	public static final Item parseItem(JSONObject itemJsonInstance) throws JSONException {
@@ -41,7 +51,8 @@ public class Item implements Serializable {
 			itemJsonInstance.getInt("itemId"),//int itemId
 			itemJsonInstance.getString("itemCode"),//int itemCode
 			itemJsonInstance.getString("itemName"),//itemDescription
-			0 //unitPrice
+			0, //unitPrice
+			itemJsonInstance.getJSONArray("freeIssues")
 		);
 	}
 
@@ -83,6 +94,10 @@ public class Item implements Serializable {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public JSONArray getFreeIssueJsonArray() {
+		return freeIssueJsonArray;
 	}
 
 	@Override

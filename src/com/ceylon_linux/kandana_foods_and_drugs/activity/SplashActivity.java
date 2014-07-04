@@ -47,7 +47,7 @@ public class SplashActivity extends Activity {
 					e.printStackTrace();
 				}
 				User authorizedUser = UserController.getAuthorizedUser(SplashActivity.this);
-				/*if (authorizedUser != null) {
+				if (authorizedUser != null) {
 					Intent homeActivity = new Intent(SplashActivity.this, HomeActivity.class);
 					startActivity(homeActivity);
 					finish();
@@ -55,10 +55,10 @@ public class SplashActivity extends Activity {
 					Intent loginActivity = new Intent(SplashActivity.this, LoginActivity.class);
 					startActivity(loginActivity);
 					finish();
-				}*/
-				Intent loginActivity = new Intent(SplashActivity.this, LoginActivity.class);
+				}
+				/*Intent loginActivity = new Intent(SplashActivity.this, LoginActivity.class);
 				startActivity(loginActivity);
-				finish();
+				finish();*/
 			}
 		}.start();
 	}

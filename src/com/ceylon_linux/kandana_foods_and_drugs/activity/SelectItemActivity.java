@@ -100,6 +100,7 @@ public class SelectItemActivity extends Activity {
 		Button btnOk = (Button) dialog.findViewById(R.id.btnOk);
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
+		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final Item item = categories.get(groupPosition).getItems().get(childPosition);
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
 		Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
@@ -116,8 +117,10 @@ public class SelectItemActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable editable) {
 				String requestedQuantityString = inputRequestedQuantity.getText().toString();
+				String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
+				int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, SelectItemActivity.this);
+				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, SelectItemActivity.this);
 				txtFreeQuantity.setText(String.valueOf(orderDetail.getFreeIssue()));
 			}
 		});
@@ -125,8 +128,10 @@ public class SelectItemActivity extends Activity {
 			@Override
 			public void onClick(View view) {
 				String requestedQuantityString = inputRequestedQuantity.getText().toString();
+				String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
+				int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, SelectItemActivity.this);
+				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, SelectItemActivity.this);
 				if (orderDetail != null) {
 					orderDetails.add(orderDetail);
 					item.setSelected(true);

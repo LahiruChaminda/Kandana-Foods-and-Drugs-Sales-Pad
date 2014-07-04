@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
@@ -90,28 +91,20 @@ public class OrderController extends AbstractController {
 				int batteryLevel = orderCursor.getInt(6);
 				double longitude = orderCursor.getDouble(7);
 				double latitude = orderCursor.getDouble(8);
-				int outletType = orderCursor.getInt(9);
 				ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
-
-
 				Cursor orderDetailsCursor = DbHandler.performRawQuery(database, orderDetailSelectSql, new Object[]{orderId});
 				for (orderDetailsCursor.moveToFirst(); !orderDetailsCursor.isAfterLast(); orderDetailsCursor.moveToNext()) {
 					int itemId = orderDetailsCursor.getInt(0);
 					double price = orderDetailsCursor.getDouble(1);
-					//double discount = orderDetailsCursor.getDouble(2);
 					int quantity = orderDetailsCursor.getInt(3);
 					int freeQuantity = orderDetailsCursor.getInt(4);
 					String itemDescription = orderDetailsCursor.getString(5);
 					int returnQuantity = orderDetailsCursor.getInt(6);
-					int replaceQuantity = orderDetailsCursor.getInt(7);
-					int sampleQuantity = orderDetailsCursor.getInt(8);
-					OrderDetail orderDetail;
-
-					//orderDetails.add(orderDetail);
+					OrderDetail orderDetail = new OrderDetail(itemId, itemDescription, quantity, price, freeQuantity, returnQuantity);
+					orderDetails.add(orderDetail);
 				}
 				orderDetailsCursor.close();
-
-				Order order = new Order(outletId, positionId, routeId, batteryLevel, invoiceTime, longitude, latitude, orderDetails);
+				Order order = new Order(orderId, outletId, positionId, routeId, batteryLevel, invoiceTime, longitude, latitude, orderDetails);
 				orders.add(order);
 			}
 			orderCursor.close();
@@ -119,6 +112,7 @@ public class OrderController extends AbstractController {
 			SQLiteStatement deleteStatement = database.compileStatement(deleteQuery);
 			for (Order order : orders) {
 				boolean response = syncOrder(context, order.getOrderAsJson());
+				Log.d("response is ", String.valueOf(response) + order.getOrderId());
 				if (response) {
 					DbHandler.performExecuteUpdateDelete(deleteStatement, new Object[]{order.getOrderId()});
 				} else {
