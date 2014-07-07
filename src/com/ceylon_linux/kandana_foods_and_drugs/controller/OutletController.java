@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -101,9 +102,11 @@ public class OutletController extends AbstractController {
 					outletCursor.getDouble(5)
 				));
 			}
+			Collections.sort(outlets);
 			outletCursor.close();
 			routes.add(new Route(routeId, routeName, outlets));
 		}
+		Collections.sort(routes);
 		routeCursor.close();
 		databaseHelper.close();
 		return routes;

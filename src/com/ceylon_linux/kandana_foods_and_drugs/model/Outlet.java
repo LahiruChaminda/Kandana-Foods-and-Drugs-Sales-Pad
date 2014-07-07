@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Outlet implements Serializable {
+public class Outlet implements Serializable, Comparable {
 
 	private int outletId;
 	private int routeId;
@@ -99,5 +99,11 @@ public class Outlet implements Serializable {
 	@Override
 	public String toString() {
 		return outletName;
+	}
+
+	@Override
+	public int compareTo(Object another) {
+		Outlet anotherOutlet = (Outlet) another;
+		return outletName.compareTo(anotherOutlet.getOutletName());
 	}
 }

@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Route implements Serializable {
+public class Route implements Serializable, Comparable {
 
 	private int routeId;
 	private String routeName;
@@ -76,5 +76,11 @@ public class Route implements Serializable {
 	@Override
 	public String toString() {
 		return routeName;
+	}
+
+	@Override
+	public int compareTo(Object another) {
+		Route anotherRoute = (Route) another;
+		return routeName.compareTo(anotherRoute.getRouteName());
 	}
 }

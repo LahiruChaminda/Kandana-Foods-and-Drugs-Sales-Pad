@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Item implements Serializable {
+public class Item implements Serializable, Comparable {
 
 	private int itemId;
 	private String itemCode;
@@ -116,5 +116,11 @@ public class Item implements Serializable {
 	@Override
 	public int hashCode() {
 		return itemId;
+	}
+
+	@Override
+	public int compareTo(Object another) {
+		Item anotherItem = (Item) another;
+		return itemDescription.compareTo(anotherItem.getItemDescription());
 	}
 }
