@@ -28,9 +28,8 @@ proguard/
 /ant.properties
 /local.properties
 /project.properties
-/.idea/
 /proguard-project.txt
-/private/
 /out/
 *.iml
 build.xml
+.idea/
