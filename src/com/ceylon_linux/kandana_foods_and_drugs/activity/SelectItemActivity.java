@@ -12,8 +12,10 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.*;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
+import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -47,7 +50,9 @@ public class SelectItemActivity extends Activity {
 	private ArrayList<Item> items = new ArrayList<Item>();
 	private ArrayList<Item> fixedItems;
 	private ArrayList<OrderDetail> orderDetails;
-
+	private GpsReceiver gpsReceiver;
+	private Thread GPS_CHECKER;
+	private Location location;
 	private MyListAdapter listAdapter;
 
 	@Override
@@ -147,6 +152,25 @@ public class SelectItemActivity extends Activity {
 				finishButtonClicked(view);
 			}
 		});
+		finishButton.setEnabled(false);
+		gpsReceiver = GpsReceiver.getGpsReceiver(SelectItemActivity.this);
+		GPS_CHECKER = new Thread() {
+			private Handler handler = new Handler();
+
+			@Override
+			public void run() {
+				do {
+					location = gpsReceiver.getLastKnownLocation();
+				} while (location == null);
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(SelectItemActivity.this, "GPS Location Received", Toast.LENGTH_LONG).show();
+						finishButton.setEnabled(true);
+					}
+				});
+			}
+		};
 		Toast.makeText(SelectItemActivity.this, fixedItems.size() + " items loaded", Toast.LENGTH_LONG).show();
 	}
 
@@ -167,7 +191,14 @@ public class SelectItemActivity extends Activity {
 			alert.show();
 			return;
 		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity.this).getUserId(), outlet.getRouteId(), BatteryUtility.getBatteryLevel(SelectItemActivity.this), new Date().getTime(), 80, 6, orderDetails);
+		if ((location = gpsReceiver.getLastKnownLocation()) == null) {
+			if (GPS_CHECKER.getState() == Thread.State.TERMINATED) {
+				finishButton.setEnabled(false);
+				GPS_CHECKER.start();
+			}
+			return;
+		}
+		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity.this).getUserId(), outlet.getRouteId(), BatteryUtility.getBatteryLevel(SelectItemActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
 		new AsyncTask<Order, Void, Boolean>() {
 			ProgressDialog progressDialog;
 
