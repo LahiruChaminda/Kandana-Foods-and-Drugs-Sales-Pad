@@ -171,6 +171,7 @@ public class SelectItemActivity extends Activity {
 				});
 			}
 		};
+		GPS_CHECKER.start();
 		Toast.makeText(SelectItemActivity.this, fixedItems.size() + " items loaded", Toast.LENGTH_LONG).show();
 	}
 
@@ -198,7 +199,7 @@ public class SelectItemActivity extends Activity {
 			}
 			return;
 		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity.this).getUserId(), outlet.getRouteId(), BatteryUtility.getBatteryLevel(SelectItemActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
+		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity.this).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(SelectItemActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
 		new AsyncTask<Order, Void, Boolean>() {
 			ProgressDialog progressDialog;
 

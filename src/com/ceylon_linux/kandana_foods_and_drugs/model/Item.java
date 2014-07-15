@@ -51,7 +51,7 @@ public class Item implements Serializable, Comparable {
 			itemJsonInstance.getInt("itemId"),//int itemId
 			itemJsonInstance.getString("itemCode"),//int itemCode
 			itemJsonInstance.getString("itemName"),//itemDescription
-			0, //unitPrice
+			itemJsonInstance.getDouble("price"), //unitPrice
 			itemJsonInstance.getJSONArray("freeIssues")
 		);
 	}

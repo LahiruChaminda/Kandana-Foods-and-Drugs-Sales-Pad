@@ -22,30 +22,32 @@ public class Route implements Serializable, Comparable {
 
 	private int routeId;
 	private String routeName;
-	private ArrayList<Outlet> outlets;
+	private ArrayList<City> cities;
 
 	public Route(int routeId, String routeName) {
 		this.routeId = routeId;
 		this.routeName = routeName;
 	}
 
-	public Route(int routeId, String routeName, ArrayList<Outlet> outlets) {
-		this.setRouteId(routeId);
-		this.setRouteName(routeName);
-		this.setOutlets(outlets);
+	public Route(int routeId, String routeName, ArrayList<City> cities) {
+		this.routeId = routeId;
+		this.routeName = routeName;
+		this.cities = cities;
 	}
 
 	public static final Route parseRoute(JSONObject routeJsonInstance) throws JSONException {
-		ArrayList<Outlet> outlets = new ArrayList<Outlet>();
-		JSONArray outletCollection = routeJsonInstance.getJSONArray("outlets");
-		final int OUTLET_COUNT = outletCollection.length();
-		for (int i = 0; i < OUTLET_COUNT; i++) {
-			outlets.add(Outlet.parseOutlet(outletCollection.getJSONObject(i)));
+		ArrayList<City> cities = new ArrayList<City>();
+		JSONArray cityCollection = routeJsonInstance.getJSONArray("cities");
+		for (int i = 0, CITY_COUNT = cityCollection.length(); i < CITY_COUNT; i++) {
+			City city = (City) City.parseCity(cityCollection.getJSONObject(i));
+			if (city != null) {
+				cities.add(city);
+			}
 		}
-		return outlets.size() == 0 ? null : new Route(
-			routeJsonInstance.getInt("routeId"),
-			routeJsonInstance.getString("routeName"),
-			outlets
+		return cities.size() == 0 ? null : new Route(
+			routeJsonInstance.getInt("ar_id"),
+			routeJsonInstance.getString("ar_name"),
+			cities
 		);
 	}
 
@@ -65,12 +67,12 @@ public class Route implements Serializable, Comparable {
 		this.routeName = routeName;
 	}
 
-	public ArrayList<Outlet> getOutlets() {
-		return outlets;
+	public ArrayList<City> getCities() {
+		return cities;
 	}
 
-	public void setOutlets(ArrayList<Outlet> outlets) {
-		this.outlets = outlets;
+	public void setCities(ArrayList<City> cities) {
+		this.cities = cities;
 	}
 
 	@Override

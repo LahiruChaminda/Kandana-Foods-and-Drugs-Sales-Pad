@@ -13,10 +13,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OutletController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.City;
+import com.ceylon_linux.kandana_foods_and_drugs.model.District;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Route;
 
@@ -33,13 +36,20 @@ import java.util.TimerTask;
  */
 public class LoadAddInvoiceActivity extends Activity {
 
+	private final ArrayList<District> districts = new ArrayList<District>();
+	private final ArrayList<Route> routes = new ArrayList<Route>();
+	private final ArrayList<City> cities = new ArrayList<City>();
 	private final ArrayList<Outlet> outlets = new ArrayList<Outlet>();
+	ArrayAdapter<District> districtAdapter;
+	ArrayAdapter<Route> routeAdapter;
+	ArrayAdapter<City> cityAdapter;
 	private Button btnNext;
 	private TextView txtDate;
 	private TextView txtTime;
+	private Spinner districtAuto;
 	private Spinner routeAuto;
+	private Spinner cityAuto;
 	private Spinner outletAuto;
-	private ArrayList<Route> routes;
 	private Handler handler;
 	private Timer timer;
 	private ArrayAdapter<Outlet> outletAdapter;
@@ -51,13 +61,24 @@ public class LoadAddInvoiceActivity extends Activity {
 		setContentView(R.layout.load_add_invoice_page);
 		initialize();
 
-		routes = OutletController.loadRoutesFromDb(LoadAddInvoiceActivity.this);
-		ArrayAdapter<Route> routeAdapter = new ArrayAdapter<Route>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, routes);
+		districts.clear();
+		districts.addAll(OutletController.loadDistrictsFromDb(LoadAddInvoiceActivity.this));
+
+		districtAdapter = new ArrayAdapter<District>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, districts);
+		districtAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
+		districtAuto.setAdapter(districtAdapter);
+
+		routeAdapter = new ArrayAdapter<Route>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, routes);
 		routeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
 		routeAuto.setAdapter(routeAdapter);
 
+		cityAdapter = new ArrayAdapter<City>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, cities);
+		cityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
+		cityAuto.setAdapter(cityAdapter);
+
 		outletAdapter = new ArrayAdapter<Outlet>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, outlets);
 		outletAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
+		outletAuto.setAdapter(outletAdapter);
 
 		handler = new Handler();
 		final SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
@@ -86,7 +107,9 @@ public class LoadAddInvoiceActivity extends Activity {
 		btnNext = (Button) findViewById(R.id.btnNext);
 		txtDate = (TextView) findViewById(R.id.txtDate);
 		txtTime = (TextView) findViewById(R.id.txtTime);
+		districtAuto = (Spinner) findViewById(R.id.districtAuto);
 		routeAuto = (Spinner) findViewById(R.id.routeAuto);
+		cityAuto = (Spinner) findViewById(R.id.cityAuto);
 		outletAuto = (Spinner) findViewById(R.id.outletAuto);
 		btnNext.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -94,10 +117,32 @@ public class LoadAddInvoiceActivity extends Activity {
 				btnNextClicked(view);
 			}
 		});
+		districtAuto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				districtAutoItemClicked(parent, view, position, id);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
 		routeAuto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				routeAutoItemClicked(parent, view, position, id);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
+		cityAuto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				cityAutoItemClicked(parent, view, position, id);
 			}
 
 			@Override
@@ -127,13 +172,50 @@ public class LoadAddInvoiceActivity extends Activity {
 		finish();
 	}
 
-	private void routeAutoItemClicked(AdapterView<?> adapterView, View view, int position, long id) {
-		Route route = (Route) adapterView.getAdapter().getItem(position);
+	private void districtAutoItemClicked(AdapterView<?> adapterView, View view, int position, long id) {
+		District district = (District) adapterView.getAdapter().getItem(position);
+		routes.clear();
+		routes.addAll(district.getRoutes());
+		routeAdapter.notifyDataSetChanged();
+		routeAuto.setAdapter(routeAdapter);
+
+		cities.clear();
+		cityAdapter.notifyDataSetChanged();
+		cityAuto.setAdapter(cityAdapter);
+
 		outlets.clear();
-		outlets.addAll(route.getOutlets());
 		outletAdapter.notifyDataSetChanged();
 		outletAuto.setAdapter(outletAdapter);
 		outlet = null;
+
+		routeAuto.requestFocus();
+	}
+
+	private void routeAutoItemClicked(AdapterView<?> adapterView, View view, int position, long id) {
+		Route route = (Route) adapterView.getAdapter().getItem(position);
+
+		cities.clear();
+		cities.addAll(route.getCities());
+		cityAdapter.notifyDataSetChanged();
+		cityAuto.setAdapter(cityAdapter);
+
+		outlets.clear();
+		outletAdapter.notifyDataSetChanged();
+		outletAuto.setAdapter(outletAdapter);
+		outlet = null;
+
+		cityAuto.requestFocus();
+	}
+
+	private void cityAutoItemClicked(AdapterView<?> adapterView, View view, int position, long id) {
+		City city = (City) adapterView.getAdapter().getItem(position);
+		Log.i("weda ", city.getOutlets().size() + "");
+		outlets.clear();
+		outlets.addAll(city.getOutlets());
+		outletAdapter.notifyDataSetChanged();
+		outletAuto.setAdapter(outletAdapter);
+		outlet = null;
+
 		outletAuto.requestFocus();
 	}
 

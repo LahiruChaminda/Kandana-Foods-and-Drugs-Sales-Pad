@@ -73,6 +73,24 @@
                             android:layout_width="0dp"
                             android:layout_weight="1.5"
                             android:layout_height="wrap_content"
+                            android:text="District"
+                            android:textSize="25dp"/>
+                    <Spinner
+                            android:layout_width="0dp"
+                            android:layout_weight="4"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/districtAuto" android:spinnerMode="dialog"/>
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:weightSum="5.5" android:padding="5dp"
+                        android:layout_height="0dp">
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.5"
+                            android:layout_height="wrap_content"
                             android:text="Route"
                             android:textSize="25dp"/>
                     <Spinner
@@ -80,6 +98,24 @@
                             android:layout_weight="4"
                             android:layout_height="wrap_content"
                             android:id="@+id/routeAuto" android:spinnerMode="dialog"/>
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:weightSum="5.5" android:padding="5dp"
+                        android:layout_height="0dp">
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.5"
+                            android:layout_height="wrap_content"
+                            android:text="City"
+                            android:textSize="25dp"/>
+                    <Spinner
+                            android:layout_width="0dp"
+                            android:layout_weight="4"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/cityAuto" android:spinnerMode="dialog"/>
                 </LinearLayout>
                 <LinearLayout
                         android:orientation="horizontal"

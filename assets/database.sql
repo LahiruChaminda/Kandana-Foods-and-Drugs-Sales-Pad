@@ -1,7 +1,9 @@
 DROP TABLE IF EXISTS tbl_item;
 DROP TABLE IF EXISTS tbl_category;
 DROP TABLE IF EXISTS tbl_outlet;
+DROP TABLE IF EXISTS tbl_city;
 DROP TABLE IF EXISTS tbl_route;
+DROP TABLE IF EXISTS tbl_district;
 DROP TABLE IF EXISTS tbl_order_detail;
 DROP TABLE IF EXISTS tbl_order;
 DROP TABLE IF EXISTS tbl_free_issue_ratio;
@@ -19,14 +21,26 @@ CREATE TABLE tbl_item (
     price           DECIMAL(10,2)  NOT NULL DEFAULT 0
 );
 
+CREATE TABLE tbl_district (
+    districtId   INTEGER PRIMARY KEY,
+    districtName TEXT    NOT NULL
+);
+
 CREATE TABLE tbl_route ( 
     routeId   INTEGER PRIMARY KEY,
+    districtId INT NOT NULL REFERENCES tbl_district ( districtId ) ON DELETE CASCADE ON UPDATE CASCADE,
     routeName TEXT    NOT NULL 
+);
+
+CREATE TABLE tbl_city (
+    cityId   INTEGER PRIMARY KEY,
+    routeId INT NOT NULL REFERENCES tbl_route ( routeId ) ON DELETE CASCADE ON UPDATE CASCADE,
+    cityName TEXT    NOT NULL
 );
 
 CREATE TABLE tbl_outlet ( 
     outletId       INTEGER PRIMARY KEY,
-    routeId        INT     NOT NULL REFERENCES tbl_route ( routeId ) ON DELETE CASCADE ON UPDATE CASCADE,
+    cityId        INT     NOT NULL REFERENCES tbl_city ( cityId ) ON DELETE CASCADE ON UPDATE CASCADE,
     outletName     TEXT    NOT NULL,
     outletAddress  TEXT    NOT NULL,
     outletType     INT     NOT NULL DEFAULT 0,

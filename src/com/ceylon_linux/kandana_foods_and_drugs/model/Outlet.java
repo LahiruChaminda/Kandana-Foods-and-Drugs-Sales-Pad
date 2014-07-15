@@ -19,28 +19,28 @@ import java.io.Serializable;
 public class Outlet implements Serializable, Comparable {
 
 	private int outletId;
-	private int routeId;
+	private int cityId;
 	private String outletName;
 	private String outletAddress;
 	private int outletType;
 	private double outletDiscount;
 
-	public Outlet(int outletId, int routeId, String outletName, String outletAddress, int outletType, double outletDiscount) {
+	public Outlet(int outletId, int cityId, String outletName, String outletAddress, int outletType, double outletDiscount) {
 		this.outletId = outletId;
-		this.routeId = routeId;
+		this.cityId = cityId;
 		this.outletName = outletName;
 		this.outletAddress = outletAddress;
 		this.outletType = outletType;
 		this.outletDiscount = outletDiscount;
 	}
 
-	public final static Outlet parseOutlet(JSONObject outletJsonInstance) throws JSONException {
+	public final static Outlet parseOutlet(JSONObject outletJsonInstance, int cityId) throws JSONException {
 		if (outletJsonInstance == null) {
 			return null;
 		}
 		return new Outlet(
 			outletJsonInstance.getInt("outletId"),
-			outletJsonInstance.getInt("routeId"),
+			cityId,
 			outletJsonInstance.getString("outletName"),
 			outletJsonInstance.getString("outletAddress"),
 			outletJsonInstance.getInt("outletType"),
@@ -88,12 +88,12 @@ public class Outlet implements Serializable, Comparable {
 		this.outletDiscount = outletDiscount;
 	}
 
-	public int getRouteId() {
-		return routeId;
+	public int getCityId() {
+		return cityId;
 	}
 
-	public void setRouteId(int routeId) {
-		this.routeId = routeId;
+	public void setCityId(int cityId) {
+		this.cityId = cityId;
 	}
 
 	@Override
