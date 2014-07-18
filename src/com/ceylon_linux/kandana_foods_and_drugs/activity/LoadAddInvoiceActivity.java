@@ -247,7 +247,7 @@ public class LoadAddInvoiceActivity extends Activity {
 		progressDialog.setCancelable(false);
 		progressDialog.show();
 
-		Intent selectItemsActivity = new Intent(LoadAddInvoiceActivity.this, SelectItemActivity.class);
+		Intent selectItemsActivity = new Intent(LoadAddInvoiceActivity.this, ItemSelectActivity.class);
 		selectItemsActivity.putExtra("outlet", outlet);
 		startActivity(selectItemsActivity);
 		timer.cancel();

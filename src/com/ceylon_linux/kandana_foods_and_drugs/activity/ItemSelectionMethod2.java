@@ -37,7 +37,7 @@ import java.util.Date;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class SelectItemActivity2 extends Activity {
+public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 
 	private ExpandableListView itemList;
 	private EditText inputSearch;
@@ -50,19 +50,23 @@ public class SelectItemActivity2 extends Activity {
 	private MyExpandableListAdapter myExpandableListAdapter;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.select_items_page_two);
-		initialize();
-		outlet = (Outlet) getIntent().getExtras().get("outlet");
+		outlet = (Outlet) getActivity().getIntent().getExtras().get("outlet");
 		try {
-			categories = ItemController.loadItemsFromDb(this);
+			categories = ItemController.loadItemsFromDb(getActivity());
 			fixedCategories = (ArrayList<Category>) categories.clone();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.select_items_page_two, null);
+		initialize(rootView);
 		itemList.setAdapter(myExpandableListAdapter = new MyExpandableListAdapter());
 		itemList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 			@Override
@@ -90,10 +94,11 @@ public class SelectItemActivity2 extends Activity {
 				finishButtonClicked(view);
 			}
 		});
+		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	private boolean itemListOnChildClicked(ExpandableListView expandableListView, View view, final int groupPosition, int childPosition, long id) {
-		final Dialog dialog = new Dialog(SelectItemActivity2.this);
+		final Dialog dialog = new Dialog(getActivity());
 		dialog.setCanceledOnTouchOutside(false);
 		dialog.setTitle("Please Insert Quantity");
 		dialog.setContentView(R.layout.quantity_insert_page);
@@ -120,7 +125,7 @@ public class SelectItemActivity2 extends Activity {
 				String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
 				int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, SelectItemActivity2.this);
+				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
 				txtFreeQuantity.setText(String.valueOf(orderDetail.getFreeIssue()));
 			}
 		});
@@ -131,7 +136,7 @@ public class SelectItemActivity2 extends Activity {
 				String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
 				int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, SelectItemActivity2.this);
+				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
 				if (orderDetail != null) {
 					orderDetails.add(orderDetail);
 					item.setSelected(true);
@@ -152,30 +157,30 @@ public class SelectItemActivity2 extends Activity {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Initialize">
-	private void initialize() {
-		itemList = (ExpandableListView) findViewById(R.id.itemList);
-		finishButton = (Button) findViewById(R.id.finishButton);
-		inputSearch = (EditText) findViewById(R.id.inputSearch);
+	private void initialize(View rootView) {
+		itemList = (ExpandableListView) rootView.findViewById(R.id.itemList);
+		finishButton = (Button) rootView.findViewById(R.id.finishButton);
+		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
 		orderDetails = new ArrayList<OrderDetail>();
 	}
 
 	private void finishButtonClicked(View view) {
 		if (orderDetails.size() == 0) {
-			final AlertDialog.Builder alert = new AlertDialog.Builder(SelectItemActivity2.this);
+			final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 			alert.setTitle(R.string.app_name);
 			alert.setMessage("Please select at least one item");
 			alert.setPositiveButton("Ok", null);
 			alert.show();
 			return;
 		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity2.this).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(SelectItemActivity2.this), new Date().getTime(), 80, 6, orderDetails);
+		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(getActivity()).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(getActivity()), new Date().getTime(), 80, 6, orderDetails);
 		new AsyncTask<Order, Void, Boolean>() {
 			ProgressDialog progressDialog;
 
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				progressDialog = new ProgressDialog(SelectItemActivity2.this);
+				progressDialog = new ProgressDialog(getActivity());
 				progressDialog.setMessage("Syncing Order");
 				progressDialog.setCanceledOnTouchOutside(false);
 				progressDialog.show();
@@ -185,7 +190,7 @@ public class SelectItemActivity2 extends Activity {
 			protected Boolean doInBackground(Order... params) {
 				Order order = params[0];
 				try {
-					return OrderController.syncOrder(SelectItemActivity2.this, order.getOrderAsJson());
+					return OrderController.syncOrder(getActivity(), order.getOrderAsJson());
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (JSONException e) {
@@ -200,25 +205,18 @@ public class SelectItemActivity2 extends Activity {
 					progressDialog.dismiss();
 				}
 				if (aBoolean) {
-					Toast.makeText(SelectItemActivity2.this, "Order Synced Successfully", Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), "Order Synced Successfully", Toast.LENGTH_LONG).show();
 				} else {
-					OrderController.saveOrderToDb(SelectItemActivity2.this, order);
-					Toast.makeText(SelectItemActivity2.this, "Order placed in local database", Toast.LENGTH_LONG).show();
+					OrderController.saveOrderToDb(getActivity(), order);
+					Toast.makeText(getActivity(), "Order placed in local database", Toast.LENGTH_LONG).show();
 				}
-				Intent homeActivity = new Intent(SelectItemActivity2.this, HomeActivity.class);
+				Intent homeActivity = new Intent(getActivity(), HomeActivity.class);
 				startActivity(homeActivity);
-				finish();
+				getActivity().finish();
 			}
 		}.execute(order);
 	}
 	// </editor-fold>
-
-	@Override
-	public void onBackPressed() {
-		Intent loadAddInvoiceActivity = new Intent(SelectItemActivity2.this, LoadAddInvoiceActivity.class);
-		startActivity(loadAddInvoiceActivity);
-		finish();
-	}
 
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
 		for (OrderDetail orderDetail : orderDetails) {
@@ -288,7 +286,7 @@ public class SelectItemActivity2 extends Activity {
 		public View getGroupView(int groupPosition, boolean b, View view, ViewGroup viewGroup) {
 			GroupViewHolder groupViewHolder;
 			if (view == null) {
-				LayoutInflater layoutInflater = (LayoutInflater) SelectItemActivity2.this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 				view = layoutInflater.inflate(R.layout.category_item_view, null);
 				groupViewHolder = new GroupViewHolder();
 				groupViewHolder.txtCategory = (TextView) view.findViewById(R.id.txtCategory);
@@ -304,7 +302,7 @@ public class SelectItemActivity2 extends Activity {
 		public View getChildView(int groupPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
 			ChildViewHolder childViewHolder;
 			if (view == null) {
-				LayoutInflater layoutInflater = (LayoutInflater) SelectItemActivity2.this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 				view = layoutInflater.inflate(R.layout.category_sub_item, null);
 				childViewHolder = new ChildViewHolder();
 				childViewHolder.txtItemDescription = (TextView) view.findViewById(R.id.txtItemDescription);
