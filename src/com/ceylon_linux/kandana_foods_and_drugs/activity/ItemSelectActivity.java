@@ -108,9 +108,9 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 		};
 
-		addTab("Method 1", actionBar, tabListener);
-		addTab("Method 2", actionBar, tabListener);
-		addTab("Method 3", actionBar, tabListener);
+		addTab("Supplier wise", actionBar, tabListener);
+		addTab("Category wise", actionBar, tabListener);
+		addTab("All", actionBar, tabListener);
 
 		finishButton = (Button) findViewById(R.id.finishButton);
 		finishButton.setOnClickListener(new View.OnClickListener() {
