@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 
+import java.util.List;
+
 /**
  * GpsReceiver - Receive and Provide GPS locations
  *
@@ -33,8 +35,26 @@ public class GpsReceiver extends Service {
 
 	private GpsReceiver(Context applicationContext) {
 		locationManager = (LocationManager) applicationContext.getSystemService(Context.LOCATION_SERVICE);
-		lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, new LocationListenerImpl(), Looper.getMainLooper());
+
+		float bestAccuracy = Float.MAX_VALUE;
+		long bestTime = Long.MIN_VALUE;
+		List<String> matchingProviders = locationManager.getAllProviders();
+		for (String provider : matchingProviders) {
+			Location location = locationManager.getLastKnownLocation(provider);
+			locationManager.requestLocationUpdates(provider, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, LocationListenerImpl.getInstance(), Looper.getMainLooper());
+			if (location != null) {
+				float accuracy = location.getAccuracy();
+				long time = location.getTime();
+				if ((time > MINIMUM_TIME_DIFFERENCE && accuracy < bestAccuracy)) {
+					lastKnownLocation = location;
+					bestAccuracy = accuracy;
+					bestTime = time;
+				} else if (time < MINIMUM_TIME_DIFFERENCE && bestAccuracy == Float.MAX_VALUE && time > bestTime) {
+					lastKnownLocation = location;
+					bestTime = time;
+				}
+			}
+		}
 	}
 
 	public synchronized static GpsReceiver getGpsReceiver(Context applicationContext) {
@@ -78,14 +98,36 @@ public class GpsReceiver extends Service {
 	}
 
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(Intent arg0) {
 		return null;
 	}
 
 	private static class LocationListenerImpl implements LocationListener {
+		private static LocationListenerImpl locationListener;
+
+		private LocationListenerImpl() {
+		}
+
+		public static LocationListenerImpl getInstance() {
+			return (locationListener == null) ? locationListener = new LocationListenerImpl() : locationListener;
+		}
 
 		@Override
 		public void onLocationChanged(Location location) {
+			float bestAccuracy = Float.MAX_VALUE;
+			long bestTime = Long.MIN_VALUE;
+			if (location != null) {
+				float accuracy = location.getAccuracy();
+				long time = location.getTime();
+				if ((time > MINIMUM_TIME_DIFFERENCE && accuracy < bestAccuracy)) {
+					lastKnownLocation = location;
+					bestAccuracy = accuracy;
+					bestTime = time;
+				} else if (time < MINIMUM_TIME_DIFFERENCE && bestAccuracy == Float.MAX_VALUE && time > bestTime) {
+					lastKnownLocation = location;
+					bestTime = time;
+				}
+			}
 			lastKnownLocation = location;
 		}
 
@@ -101,5 +143,4 @@ public class GpsReceiver extends Service {
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 		}
 	}
-
 }
