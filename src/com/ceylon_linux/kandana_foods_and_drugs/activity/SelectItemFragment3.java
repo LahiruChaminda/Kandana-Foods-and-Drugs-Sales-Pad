@@ -7,62 +7,55 @@
 package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
-import com.ceylon_linux.kandana_foods_and_drugs.model.*;
-import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
-import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
+import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class SelectItemActivity extends Activity {
+public class SelectItemFragment3 extends ItemSelectableFragment {
 
 	private ListView itemList;
 	private EditText inputSearch;
-	private Button finishButton;
-	private Outlet outlet;
 	private ArrayList<Item> items = new ArrayList<Item>();
 	private ArrayList<Item> fixedItems;
-	private ArrayList<OrderDetail> orderDetails;
-	private GpsReceiver gpsReceiver;
-	private Thread GPS_CHECKER;
-	private Location location;
 	private MyListAdapter listAdapter;
+	private ArrayList<OrderDetail> orderDetails;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void updateUI() {
+		if (listAdapter != null) {
+			listAdapter.notifyDataSetChanged();
+			itemList.setAdapter(listAdapter);
+		}
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.select_items_page);
-		initialize();
-		outlet = (Outlet) getIntent().getExtras().get("outlet");
+		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
 		try {
-			ArrayList<Category> categories = ItemController.loadItemsFromDb(this);
+			ArrayList<Category> categories = ItemController.loadItemsFromDb(getActivity());
 			for (Category category : categories) {
 				items.addAll(category.getItems());
 			}
@@ -73,11 +66,21 @@ public class SelectItemActivity extends Activity {
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.select_items_page_method_three, null);
+		initialize(rootView);
+		if (listAdapter != null) {
+			listAdapter.notifyDataSetChanged();
+			itemList.setAdapter(listAdapter);
+		}
 		itemList.setAdapter(listAdapter = new MyListAdapter());
 		itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int childPosition, long id) {
-				final Dialog dialog = new Dialog(SelectItemActivity.this);
+				final Dialog dialog = new Dialog(getActivity());
 				dialog.setCanceledOnTouchOutside(false);
 				dialog.setTitle("Please Insert Quantity");
 				dialog.setContentView(R.layout.quantity_insert_page);
@@ -104,7 +107,7 @@ public class SelectItemActivity extends Activity {
 						String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
 						int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 						int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-						OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, SelectItemActivity.this);
+						OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
 						txtFreeQuantity.setText(String.valueOf(orderDetail.getFreeIssue()));
 					}
 				});
@@ -115,10 +118,10 @@ public class SelectItemActivity extends Activity {
 						String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
 						int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 						int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-						OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, SelectItemActivity.this);
+						OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
 						if (orderDetail != null) {
 							orderDetails.add(orderDetail);
-							item.setSelected(true);
+							Log.i("orderdetails-3", orderDetails.size() + "");
 						}
 						dialog.dismiss();
 					}
@@ -146,121 +149,29 @@ public class SelectItemActivity extends Activity {
 				listAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
-		finishButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				finishButtonClicked(view);
-			}
-		});
-		finishButton.setEnabled(false);
-		gpsReceiver = GpsReceiver.getGpsReceiver(SelectItemActivity.this);
-		GPS_CHECKER = new Thread() {
-			private Handler handler = new Handler();
 
-			@Override
-			public void run() {
-				do {
-					location = gpsReceiver.getLastKnownLocation();
-				} while (location == null);
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(SelectItemActivity.this, "GPS Location Received", Toast.LENGTH_LONG).show();
-						finishButton.setEnabled(true);
-					}
-				});
-			}
-		};
-		GPS_CHECKER.start();
-		Toast.makeText(SelectItemActivity.this, fixedItems.size() + " items loaded", Toast.LENGTH_LONG).show();
+		return rootView;
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Initialize">
-	private void initialize() {
-		itemList = (ListView) findViewById(R.id.itemList);
-		finishButton = (Button) findViewById(R.id.finishButton);
-		inputSearch = (EditText) findViewById(R.id.inputSearch);
-		orderDetails = new ArrayList<OrderDetail>();
-	}
-
-	private void finishButtonClicked(View view) {
-		if (orderDetails.size() == 0) {
-			final AlertDialog.Builder alert = new AlertDialog.Builder(SelectItemActivity.this);
-			alert.setTitle(R.string.app_name);
-			alert.setMessage("Please select at least one item");
-			alert.setPositiveButton("Ok", null);
-			alert.show();
-			return;
-		}
-		if ((location = gpsReceiver.getLastKnownLocation()) == null) {
-			if (GPS_CHECKER.getState() == Thread.State.TERMINATED) {
-				finishButton.setEnabled(false);
-				GPS_CHECKER.start();
-			}
-			return;
-		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(SelectItemActivity.this).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(SelectItemActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
-		new AsyncTask<Order, Void, Boolean>() {
-			ProgressDialog progressDialog;
-
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				progressDialog = new ProgressDialog(SelectItemActivity.this);
-				progressDialog.setMessage("Syncing Order");
-				progressDialog.setCanceledOnTouchOutside(false);
-				progressDialog.show();
-			}
-
-			@Override
-			protected Boolean doInBackground(Order... params) {
-				Order order = params[0];
-				try {
-					return OrderController.syncOrder(SelectItemActivity.this, order.getOrderAsJson());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				return false;
-			}
-
-			@Override
-			protected void onPostExecute(Boolean aBoolean) {
-				if (progressDialog != null && progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
-				if (aBoolean) {
-					Toast.makeText(SelectItemActivity.this, "Order Synced Successfully", Toast.LENGTH_LONG).show();
-				} else {
-					OrderController.saveOrderToDb(SelectItemActivity.this, order);
-					Toast.makeText(SelectItemActivity.this, "Order placed in local database", Toast.LENGTH_LONG).show();
-				}
-				Intent homeActivity = new Intent(SelectItemActivity.this, HomeActivity.class);
-				startActivity(homeActivity);
-				finish();
-			}
-		}.execute(order);
+	private void initialize(View rootView) {
+		itemList = (ListView) rootView.findViewById(R.id.itemList);
+		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
 	}
 	// </editor-fold>
-
-	@Override
-	public void onBackPressed() {
-		Intent loadAddInvoiceActivity = new Intent(SelectItemActivity.this, LoadAddInvoiceActivity.class);
-		startActivity(loadAddInvoiceActivity);
-		finish();
-	}
 
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
 		for (OrderDetail orderDetail : orderDetails) {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
+				childViewHolder.checkBox.setChecked(true);
 				return childViewHolder;
 			}
 		}
 		childViewHolder.txtFreeIssue.setText("0");
 		childViewHolder.txtQuantity.setText("0");
+		childViewHolder.checkBox.setChecked(false);
 		return childViewHolder;
 	}
 
@@ -299,7 +210,7 @@ public class SelectItemActivity extends Activity {
 		public View getView(int position, View view, ViewGroup parent) {
 			ChildViewHolder childViewHolder;
 			if (view == null) {
-				LayoutInflater layoutInflater = (LayoutInflater) SelectItemActivity.this.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 				view = layoutInflater.inflate(R.layout.category_sub_item, null);
 				childViewHolder = new ChildViewHolder();
 				childViewHolder.txtItemDescription = (TextView) view.findViewById(R.id.txtItemDescription);
@@ -312,7 +223,6 @@ public class SelectItemActivity extends Activity {
 			}
 			Item item = getItem(position);
 			childViewHolder.txtItemDescription.setText(item.getItemDescription());
-			childViewHolder.checkBox.setChecked(item.isSelected());
 			view.setBackgroundColor((position % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 			updateView(childViewHolder, item);
 			return view;

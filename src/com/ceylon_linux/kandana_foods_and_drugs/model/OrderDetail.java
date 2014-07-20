@@ -14,6 +14,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -21,7 +22,7 @@ import java.util.HashMap;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class OrderDetail {
+public class OrderDetail implements Serializable {
 
 	private int itemId;
 	private String itemDescription;
@@ -129,7 +130,7 @@ public class OrderDetail {
 		if (this == o) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (o == null || o.getClass() != OrderDetail.class) {
 			return false;
 		}
 		OrderDetail that = (OrderDetail) o;

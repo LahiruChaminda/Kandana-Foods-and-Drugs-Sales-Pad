@@ -7,12 +7,8 @@
 package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,27 +18,23 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
-import com.ceylon_linux.kandana_foods_and_drugs.model.*;
-import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
+import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
+public class SelectItemFragment1 extends ItemSelectableFragment {
 
 	private ExpandableListView itemList;
 	private EditText inputSearch;
-	private Button finishButton;
-	private Outlet outlet;
 	private ArrayList<Category> categories;
 	private ArrayList<Category> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
@@ -50,9 +42,17 @@ public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 	private MyExpandableListAdapter myExpandableListAdapter;
 
 	@Override
+	public void updateUI() {
+		if (myExpandableListAdapter != null) {
+			myExpandableListAdapter.notifyDataSetChanged();
+			itemList.setAdapter(myExpandableListAdapter);
+		}
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		outlet = (Outlet) getActivity().getIntent().getExtras().get("outlet");
+		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
 		try {
 			categories = ItemController.loadItemsFromDb(getActivity());
 			fixedCategories = (ArrayList<Category>) categories.clone();
@@ -65,7 +65,7 @@ public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.select_items_page_two, null);
+		View rootView = inflater.inflate(R.layout.select_items_page_method_one, null);
 		initialize(rootView);
 		itemList.setAdapter(myExpandableListAdapter = new MyExpandableListAdapter());
 		itemList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -88,13 +88,7 @@ public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 				myExpandableListAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
-		finishButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				finishButtonClicked(view);
-			}
-		});
-		return super.onCreateView(inflater, container, savedInstanceState);
+		return rootView;
 	}
 
 	private boolean itemListOnChildClicked(ExpandableListView expandableListView, View view, final int groupPosition, int childPosition, long id) {
@@ -139,9 +133,7 @@ public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
 				if (orderDetail != null) {
 					orderDetails.add(orderDetail);
-					item.setSelected(true);
-					itemList.collapseGroup(groupPosition);
-					itemList.expandGroup(groupPosition);
+					myExpandableListAdapter.notifyDataSetChanged();
 				}
 				dialog.dismiss();
 			}
@@ -159,62 +151,7 @@ public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 	// <editor-fold defaultstate="collapsed" desc="Initialize">
 	private void initialize(View rootView) {
 		itemList = (ExpandableListView) rootView.findViewById(R.id.itemList);
-		finishButton = (Button) rootView.findViewById(R.id.finishButton);
 		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
-		orderDetails = new ArrayList<OrderDetail>();
-	}
-
-	private void finishButtonClicked(View view) {
-		if (orderDetails.size() == 0) {
-			final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-			alert.setTitle(R.string.app_name);
-			alert.setMessage("Please select at least one item");
-			alert.setPositiveButton("Ok", null);
-			alert.show();
-			return;
-		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(getActivity()).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(getActivity()), new Date().getTime(), 80, 6, orderDetails);
-		new AsyncTask<Order, Void, Boolean>() {
-			ProgressDialog progressDialog;
-
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				progressDialog = new ProgressDialog(getActivity());
-				progressDialog.setMessage("Syncing Order");
-				progressDialog.setCanceledOnTouchOutside(false);
-				progressDialog.show();
-			}
-
-			@Override
-			protected Boolean doInBackground(Order... params) {
-				Order order = params[0];
-				try {
-					return OrderController.syncOrder(getActivity(), order.getOrderAsJson());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				return false;
-			}
-
-			@Override
-			protected void onPostExecute(Boolean aBoolean) {
-				if (progressDialog != null && progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
-				if (aBoolean) {
-					Toast.makeText(getActivity(), "Order Synced Successfully", Toast.LENGTH_LONG).show();
-				} else {
-					OrderController.saveOrderToDb(getActivity(), order);
-					Toast.makeText(getActivity(), "Order placed in local database", Toast.LENGTH_LONG).show();
-				}
-				Intent homeActivity = new Intent(getActivity(), HomeActivity.class);
-				startActivity(homeActivity);
-				getActivity().finish();
-			}
-		}.execute(order);
 	}
 	// </editor-fold>
 
@@ -223,11 +160,13 @@ public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
+				childViewHolder.checkBox.setChecked(true);
 				return childViewHolder;
 			}
 		}
 		childViewHolder.txtFreeIssue.setText("0");
 		childViewHolder.txtQuantity.setText("0");
+		childViewHolder.checkBox.setChecked(false);
 		return childViewHolder;
 	}
 
@@ -315,7 +254,6 @@ public class ItemSelectionMethod2 extends android.support.v4.app.Fragment {
 			}
 			Item item = getChild(groupPosition, childPosition);
 			childViewHolder.txtItemDescription.setText(item.getItemDescription());
-			childViewHolder.checkBox.setChecked(item.isSelected());
 			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 			updateView(childViewHolder, item);
 			return view;

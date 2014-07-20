@@ -19,7 +19,7 @@
         </activity>
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.LoadAddInvoiceActivity" android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.SelectItemActivity" android:screenOrientation="portrait">
+        <activity android:name=".activity.SelectItemFragment3" android:screenOrientation="portrait">
         </activity>
         <activity android:name="com.ceylon_linux.kandana_foods_and_drugs.activity.ItemSelectActivity" android:screenOrientation="portrait">
         </activity>
