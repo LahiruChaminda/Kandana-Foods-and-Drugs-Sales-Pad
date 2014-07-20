@@ -165,20 +165,20 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
-				childViewHolder.checkBox.setChecked(true);
+				childViewHolder.imageView.setBackgroundResource(R.drawable.right);
 				return childViewHolder;
 			}
 		}
 		childViewHolder.txtFreeIssue.setText("0");
 		childViewHolder.txtQuantity.setText("0");
-		childViewHolder.checkBox.setChecked(false);
+		childViewHolder.imageView.setBackgroundDrawable(null);
 		return childViewHolder;
 	}
 
 	private static class ChildViewHolder {
 
 		TextView txtItemDescription;
-		CheckBox checkBox;
+		ImageView imageView;
 		TextView txtQuantity;
 		TextView txtFreeIssue;
 	}
@@ -215,7 +215,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				childViewHolder = new ChildViewHolder();
 				childViewHolder.txtItemDescription = (TextView) view.findViewById(R.id.txtItemDescription);
 				childViewHolder.txtFreeIssue = (TextView) view.findViewById(R.id.txtFreeIssue);
-				childViewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+				childViewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
 				childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
 				view.setTag(childViewHolder);
 			} else {
