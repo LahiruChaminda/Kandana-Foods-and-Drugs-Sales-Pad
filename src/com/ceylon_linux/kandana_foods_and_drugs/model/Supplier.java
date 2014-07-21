@@ -34,7 +34,7 @@ public class Supplier {
 			return null;
 		}
 		ArrayList<Item> items = new ArrayList<Item>();
-		JSONArray itemCollection = categoryJsonInstance.getJSONArray("items");
+		JSONArray itemCollection = categoryJsonInstance.getJSONArray("products");
 		final int ITEM_COLLECTION_SIZE = itemCollection.length();
 		for (int i = 0; i < ITEM_COLLECTION_SIZE; i++) {
 			Item item = Item.parseItem(itemCollection.getJSONObject(i));
