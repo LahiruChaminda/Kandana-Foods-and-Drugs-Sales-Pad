@@ -13,8 +13,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,19 +33,19 @@ public class ItemController extends AbstractController {
 	}
 
 	public static void downloadItems(Context context, int positionId) throws IOException, JSONException {
-		JSONArray categoryJson = getJsonArray(CategoryURLPack.GET_ITEMS_AND_CATEGORIES, CategoryURLPack.getCategoryParameters(positionId), context);
-		ArrayList<Category> categories = new ArrayList<Category>();
-		final int CATEGORY_LENGTH = categoryJson.length();
-		for (int i = 0; i < CATEGORY_LENGTH; i++) {
-			Category category = Category.parseCategory(categoryJson.getJSONObject(i));
-			if (category != null) {
-				categories.add(category);
+		JSONObject responseJson = getJsonObject(CategoryURLPack.GET_ITEMS_AND_CATEGORIES, CategoryURLPack.getCategoryParameters(positionId), context);
+		JSONArray supplierCategoryJson = responseJson.getJSONArray("supplier_type");
+		ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
+		for (int i = 0, SUPPLIER_CATEGORY_LENGTH = supplierCategoryJson.length(); i < SUPPLIER_CATEGORY_LENGTH; i++) {
+			Supplier supplier = Supplier.parseSupplier(supplierCategoryJson.getJSONObject(i));
+			if (supplier != null) {
+				suppliers.add(supplier);
 			}
 		}
-		saveCategoriesToDb(categories, context);
+		saveCategoriesToDb(suppliers, context);
 	}
 
-	private static void saveCategoriesToDb(ArrayList<Category> categories, Context context) {
+	private static void saveCategoriesToDb(ArrayList<Supplier> categories, Context context) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		try {
@@ -53,17 +53,17 @@ public class ItemController extends AbstractController {
 			SQLiteStatement categoryStatement = database.compileStatement("replace into tbl_category(categoryId,categoryDescription) values (?,?)");
 			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,categoryId,itemCode,itemDescription, price) values (?,?,?,?,?)");
 			SQLiteStatement freeIssueStatement = database.compileStatement("replace into tbl_free_issue_ratio (itemId, rangeMinimumQuantity,freeIssueQuantity) values(?,?,?)");
-			for (Category category : categories) {
+			for (Supplier supplier : categories) {
 				Object[] categoryParameters = {
-					category.getCategoryId(),
-					category.getCategoryDescription()
+					supplier.getCategoryId(),
+					supplier.getCategoryDescription()
 				};
 				DbHandler.performExecuteInsert(categoryStatement, categoryParameters);
-				for (Item item : category.getItems()) {
+				for (Item item : supplier.getItems()) {
 					int itemId = item.getItemId();
 					Object[] itemParameters = {
 						itemId,
-						category.getCategoryId(),
+						supplier.getCategoryId(),
 						item.getItemCode(),
 						item.getItemDescription(),
 						item.getPrice()
@@ -73,8 +73,8 @@ public class ItemController extends AbstractController {
 					for (int i = 0, freeIssueLength = freeIssueJsonArray.length(); i < freeIssueLength; i++) {
 						try {
 							JSONObject freeIssue = freeIssueJsonArray.getJSONObject(i);
-							int minimumQty = freeIssue.getInt("p_purchase_qty");
-							int freeIssueQty = freeIssue.getInt("p_free_qty");
+							int minimumQty = freeIssue.getInt("purchaseQty");
+							int freeIssueQty = freeIssue.getInt("freeQty");
 							DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
 								itemId,
 								minimumQty,
@@ -86,7 +86,6 @@ public class ItemController extends AbstractController {
 					}
 				}
 			}
-			;
 			database.setTransactionSuccessful();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -96,10 +95,10 @@ public class ItemController extends AbstractController {
 		}
 	}
 
-	public static ArrayList<Category> loadItemsFromDb(Context context) throws IOException, JSONException {
+	public static ArrayList<Supplier> loadItemsFromDb(Context context) throws IOException, JSONException {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		ArrayList<Category> categories = new ArrayList<Category>();
+		ArrayList<Supplier> categories = new ArrayList<Supplier>();
 		String categorySql = "select categoryId,categoryDescription from tbl_category";
 		String itemSql = "select itemId,itemCode,itemDescription,price from tbl_item where categoryId=?";
 		Cursor categoryCursor = DbHandler.performRawQuery(database, categorySql, null);
@@ -117,7 +116,7 @@ public class ItemController extends AbstractController {
 				));
 			}
 			itemCursor.close();
-			categories.add(new Category(categoryId, categoryDescription, items));
+			categories.add(new Supplier(categoryId, categoryDescription, items));
 		}
 		categoryCursor.close();
 		databaseHelper.close();

@@ -17,19 +17,19 @@ import java.util.ArrayList;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Category {
+public class Supplier {
 
 	private ArrayList<Item> items;
 	private String categoryDescription;
 	private int categoryId;
 
-	public Category(int categoryId, String categoryDescription, ArrayList<Item> items) {
+	public Supplier(int categoryId, String categoryDescription, ArrayList<Item> items) {
 		this.items = items;
 		this.categoryDescription = categoryDescription;
 		this.categoryId = categoryId;
 	}
 
-	public static final Category parseCategory(JSONObject categoryJsonInstance) throws JSONException {
+	public static final Supplier parseSupplier(JSONObject categoryJsonInstance) throws JSONException {
 		if (categoryJsonInstance == null) {
 			return null;
 		}
@@ -42,7 +42,7 @@ public class Category {
 				items.add(item);
 			}
 		}
-		return (items.size() == 0) ? null : new Category(
+		return (items.size() == 0) ? null : new Supplier(
 			categoryJsonInstance.getInt("categoryId"),
 			categoryJsonInstance.getString("categoryName"),
 			items

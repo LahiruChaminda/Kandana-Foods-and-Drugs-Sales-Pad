@@ -18,9 +18,9 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -35,8 +35,8 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 	private ExpandableListView itemList;
 	private EditText inputSearch;
-	private ArrayList<Category> categories;
-	private ArrayList<Category> fixedCategories;
+	private ArrayList<Supplier> categories;
+	private ArrayList<Supplier> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
 	private MyExpandableListAdapter myExpandableListAdapter;
@@ -55,7 +55,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
 		try {
 			categories = ItemController.loadItemsFromDb(getActivity());
-			fixedCategories = (ArrayList<Category>) categories.clone();
+			fixedCategories = (ArrayList<Supplier>) categories.clone();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (JSONException ex) {
@@ -197,7 +197,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		}
 
 		@Override
-		public Category getGroup(int groupPosition) {
+		public Supplier getGroup(int groupPosition) {
 			return categories.get(groupPosition);
 		}
 
@@ -278,17 +278,17 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				constraint.toString().toLowerCase();
 				FilterResults result = new FilterResults();
-				ArrayList<Category> filteredCategories = new ArrayList<Category>();
+				ArrayList<Supplier> filteredCategories = new ArrayList<Supplier>();
 				if (constraint != null && constraint.toString().length() > 0) {
-					for (Category category : fixedCategories) {
+					for (Supplier supplier : fixedCategories) {
 						ArrayList<Item> items = new ArrayList<Item>();
-						for (Item item : category.getItems()) {
+						for (Item item : supplier.getItems()) {
 							if (item.getItemDescription().toLowerCase().contains(constraint)) {
 								items.add(item);
 							}
 						}
 						if (items.size() != 0) {
-							filteredCategories.add(new Category(category.getCategoryId(), category.getCategoryDescription(), items));
+							filteredCategories.add(new Supplier(supplier.getCategoryId(), supplier.getCategoryDescription(), items));
 						}
 					}
 				} else {
@@ -301,7 +301,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				categories = (ArrayList<Category>) results.values;
+				categories = (ArrayList<Supplier>) results.values;
 				notifyDataSetChanged();
 			}
 		}

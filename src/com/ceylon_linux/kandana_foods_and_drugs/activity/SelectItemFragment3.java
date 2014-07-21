@@ -19,9 +19,9 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -55,9 +55,9 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 		super.onCreate(savedInstanceState);
 		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
 		try {
-			ArrayList<Category> categories = ItemController.loadItemsFromDb(getActivity());
-			for (Category category : categories) {
-				items.addAll(category.getItems());
+			ArrayList<Supplier> categories = ItemController.loadItemsFromDb(getActivity());
+			for (Supplier supplier : categories) {
+				items.addAll(supplier.getItems());
 			}
 			Collections.sort(items);
 			fixedItems = (ArrayList<Item>) items.clone();
