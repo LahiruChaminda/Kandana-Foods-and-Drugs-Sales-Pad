@@ -1,9 +1,8 @@
 /*
  * Intellectual properties of Supun Lakshan Wanigarathna Dissanayake
  * Copyright (c) 2014, Supun Lakshan Wanigarathna Dissanayake. All rights reserved.
- * Created on : Jun 10, 2014, 12:20:23 PM
+ * Created on : Jul 23, 2014, 3:13:48 PM
  */
-
 package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
@@ -17,27 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class SelectItemFragment3 extends ItemSelectableFragment {
+public class SelectedItemsFragment extends ItemSelectableFragment {
 
 	private ListView itemList;
 	private EditText inputSearch;
-	private ArrayList<Item> items = new ArrayList<Item>();
-	private ArrayList<Item> fixedItems;
 	private MyListAdapter listAdapter;
 	private ArrayList<OrderDetail> orderDetails;
 
@@ -53,54 +44,21 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
-		try {
-			ArrayList<Supplier> categories = ItemController.loadItemsFromDb(getActivity());
-			for (Supplier supplier : categories) {
-				items.addAll(supplier.getItems());
-			}
-			Collections.sort(items);
-			fixedItems = (ArrayList<Item>) items.clone();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (JSONException ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.select_items_page_method_three, null);
+		View rootView = inflater.inflate(R.layout.selected_items_page, null);
 		initialize(rootView);
 		if (listAdapter != null) {
 			listAdapter.notifyDataSetChanged();
 			itemList.setAdapter(listAdapter);
 		}
 		itemList.setAdapter(listAdapter = new MyListAdapter());
-		itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int childPosition, long id) {
-				itemListItemClicked(parent, view, childPosition, id);
-			}
-		});
-		inputSearch.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				listAdapter.getFilter().filter(inputSearch.getText());
-			}
-		});
-
 		return rootView;
 	}
 
-	private void itemListItemClicked(AdapterView<?> parent, View view, int childPosition, long id) {
+	private void itemListClicked(int childPosition) {
 		final Dialog dialog = new Dialog(getActivity());
 		dialog.setCanceledOnTouchOutside(false);
 		dialog.setTitle("Please Insert Quantity");
@@ -109,10 +67,10 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
-		final Item item = items.get(childPosition);
+		final OrderDetail orderDetail = orderDetails.get(childPosition);
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
 		Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
-		txtItemDescription.setText(item.getItemDescription());
+		txtItemDescription.setText(orderDetail.getItemDescription());
 		inputRequestedQuantity.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -128,8 +86,8 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
 				int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
-				txtFreeQuantity.setText(String.valueOf(orderDetail.getFreeIssue()));
+				OrderDetail newOrderDetail = OrderDetail.getOrderDetail(orderDetail.getItem(), requestedQuantity, salableReturnQuantity, getActivity());
+				txtFreeQuantity.setText(String.valueOf(newOrderDetail.getFreeIssue()));
 			}
 		});
 		btnOk.setOnClickListener(new View.OnClickListener() {
@@ -139,9 +97,9 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				String salableReturnQuantityString = inputSalableReturnQuantity.getText().toString();
 				int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
-				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
-				if (orderDetail != null) {
-					orderDetails.add(orderDetail);
+				OrderDetail newOrderDetail = OrderDetail.getOrderDetail(orderDetail.getItem(), requestedQuantity, salableReturnQuantity, getActivity());
+				if (newOrderDetail != null) {
+					orderDetails.add(newOrderDetail);
 					listAdapter.notifyDataSetChanged();
 				}
 				dialog.dismiss();
@@ -163,40 +121,24 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 	}
 	// </editor-fold>
 
-	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
-		for (OrderDetail orderDetail : orderDetails) {
-			if (orderDetail.getItemId() == item.getItemId()) {
-				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
-				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
-				childViewHolder.imageView.setBackgroundResource(R.drawable.right);
-				return childViewHolder;
-			}
-		}
-		childViewHolder.txtFreeIssue.setText("0");
-		childViewHolder.txtQuantity.setText("0");
-		childViewHolder.imageView.setBackgroundDrawable(null);
-		return childViewHolder;
-	}
-
 	private static class ChildViewHolder {
-
 		TextView txtItemDescription;
-		ImageView imageView;
+		ImageButton editButton;
 		TextView txtQuantity;
 		TextView txtFreeIssue;
+		ImageButton removeButton;
 	}
 
-	private class MyListAdapter extends BaseAdapter implements Filterable {
-		MyFilter myFilter;
+	private class MyListAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
-			return items.size();
+			return orderDetails.size();
 		}
 
 		@Override
-		public Item getItem(int position) {
-			return items.get(position);
+		public OrderDetail getItem(int position) {
+			return orderDetails.get(position);
 		}
 
 		@Override
@@ -210,61 +152,40 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 		}
 
 		@Override
-		public View getView(int position, View view, ViewGroup parent) {
+		public View getView(final int position, View view, ViewGroup parent) {
 			ChildViewHolder childViewHolder;
 			if (view == null) {
 				LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-				view = layoutInflater.inflate(R.layout.category_sub_item, null);
+				view = layoutInflater.inflate(R.layout.selected_order_detail, null);
 				childViewHolder = new ChildViewHolder();
 				childViewHolder.txtItemDescription = (TextView) view.findViewById(R.id.txtItemDescription);
 				childViewHolder.txtFreeIssue = (TextView) view.findViewById(R.id.txtFreeIssue);
-				childViewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
+				childViewHolder.editButton = (ImageButton) view.findViewById(R.id.editButton);
 				childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
+				childViewHolder.removeButton = (ImageButton) view.findViewById(R.id.deleteButton);
 				view.setTag(childViewHolder);
 			} else {
 				childViewHolder = (ChildViewHolder) view.getTag();
 			}
-			Item item = getItem(position);
-			childViewHolder.txtItemDescription.setText(item.getItemDescription());
-			view.setBackgroundColor((position % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
-			updateView(childViewHolder, item);
-			return view;
-		}
-
-		@Override
-		public Filter getFilter() {
-			if (myFilter == null) {
-				myFilter = new MyFilter();
-			}
-			return myFilter;
-		}
-
-		private class MyFilter extends Filter {
-
-			@Override
-			protected FilterResults performFiltering(CharSequence constraint) {
-				constraint.toString().toLowerCase();
-				FilterResults result = new FilterResults();
-				ArrayList<Item> filteredItems = new ArrayList<Item>();
-				if (constraint != null && constraint.toString().length() > 0) {
-					for (Item item : fixedItems) {
-						if (item.getItemDescription().toLowerCase().contains(constraint)) {
-							filteredItems.add(item);
-						}
-					}
-				} else {
-					filteredItems = fixedItems;
+			final OrderDetail orderDetail = getItem(position);
+			childViewHolder.txtItemDescription.setText(orderDetail.getItemDescription());
+			childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
+			childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
+			childViewHolder.editButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					itemListClicked(position);
 				}
-				result.count = filteredItems.size();
-				result.values = filteredItems;
-				return result;
-			}
-
-			@Override
-			protected void publishResults(CharSequence constraint, FilterResults results) {
-				items = (ArrayList<Item>) results.values;
-				notifyDataSetChanged();
-			}
+			});
+			childViewHolder.removeButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					orderDetails.remove(orderDetail);
+					listAdapter.notifyDataSetChanged();
+				}
+			});
+			view.setBackgroundColor((position % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
+			return view;
 		}
 	}
 }

@@ -77,11 +77,8 @@ public class LoginActivity extends Activity {
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				progressDialog = new ProgressDialog(LoginActivity.this);
-				progressDialog.setCanceledOnTouchOutside(false);
-				progressDialog.setCancelable(false);
-				progressDialog.setMessage("Downloading Data...");
-				progressDialog.show();
+				progressDialog = ProgressDialog.show(LoginActivity.this, null, "Downloading Data...", false);
+				//progressDialog.show();
 			}
 
 			@Override
@@ -101,8 +98,10 @@ public class LoginActivity extends Activity {
 					return user;
 				} catch (IOException e) {
 					e.printStackTrace();
+					UserController.clearAuthentication(LoginActivity.this);
 				} catch (JSONException e) {
 					e.printStackTrace();
+					UserController.clearAuthentication(LoginActivity.this);
 				}
 				return null;
 			}

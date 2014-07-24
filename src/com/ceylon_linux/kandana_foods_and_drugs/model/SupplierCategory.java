@@ -41,8 +41,8 @@ public class SupplierCategory {
 			}
 		}
 		return (suppliers.size() == 0) ? null : new SupplierCategory(
-			jsonInstance.getInt("categoryId"),
-			jsonInstance.getString("categoryName"),
+			jsonInstance.getInt("supplierCategoryId"),
+			jsonInstance.getString("supplierCategory"),
 			suppliers
 		);
 	}

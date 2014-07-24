@@ -51,6 +51,7 @@ public class ItemSelectActivity extends FragmentActivity {
 	private Location location;
 	private Outlet outlet;
 	private Button finishButton;
+	private ProgressDialog progressDialog;
 
 	private ArrayList<ItemSelectableFragment> itemSelectableFragments;
 
@@ -63,7 +64,15 @@ public class ItemSelectActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.item_select_page);
 		viewPager = (ViewPager) findViewById(R.id.viewPager);
-		orderDetails = new ArrayList<OrderDetail>();
+		orderDetails = new ArrayList<OrderDetail>() {
+			@Override
+			public boolean add(OrderDetail object) {
+				if (orderDetails.contains(object)) {
+					orderDetails.remove(object);
+				}
+				return super.add(object);
+			}
+		};
 		actionBar = getActionBar();
 		outlet = (Outlet) getIntent().getExtras().get("outlet");
 		fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -79,9 +88,10 @@ public class ItemSelectActivity extends FragmentActivity {
 		};
 
 		itemSelectableFragments = new ArrayList<ItemSelectableFragment>();
-		itemSelectableFragments.add(new SelectItemFragment1());
+		//itemSelectableFragments.add(new SelectItemFragment1());
 		itemSelectableFragments.add(new SelectItemFragment2());
 		itemSelectableFragments.add(new SelectItemFragment3());
+		itemSelectableFragments.add(new SelectedItemsFragment());
 
 		viewPager.setAdapter(fragmentPagerAdapter);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -108,9 +118,10 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 		};
 
-		addTab("Supplier wise", actionBar, tabListener);
+		//addTab("Supplier wise", actionBar, tabListener);
 		addTab("Category wise", actionBar, tabListener);
 		addTab("All", actionBar, tabListener);
+		addTab("Selected Items", actionBar, tabListener);
 
 		finishButton = (Button) findViewById(R.id.finishButton);
 		finishButton.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +130,6 @@ public class ItemSelectActivity extends FragmentActivity {
 				finishButtonClicked(view);
 			}
 		});
-		finishButton.setEnabled(false);
 		gpsReceiver = GpsReceiver.getGpsReceiver(ItemSelectActivity.this);
 		GPS_CHECKER = new Thread() {
 			private Handler handler = new Handler();
@@ -133,7 +143,9 @@ public class ItemSelectActivity extends FragmentActivity {
 					@Override
 					public void run() {
 						Toast.makeText(ItemSelectActivity.this, "GPS Location Received", Toast.LENGTH_LONG).show();
-						finishButton.setEnabled(true);
+						if (progressDialog != null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
 					}
 				});
 			}
@@ -158,8 +170,9 @@ public class ItemSelectActivity extends FragmentActivity {
 			return;
 		}
 		if ((location = gpsReceiver.getLastKnownLocation()) == null) {
+			progressDialog = ProgressDialog.show(ItemSelectActivity.this, null, "Waiting for GPS...", false);
+			progressDialog.show();
 			if (GPS_CHECKER.getState() == Thread.State.TERMINATED) {
-				finishButton.setEnabled(false);
 				GPS_CHECKER.start();
 			}
 			return;

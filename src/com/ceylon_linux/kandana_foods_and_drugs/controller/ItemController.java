@@ -15,6 +15,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
+import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,17 +36,21 @@ public class ItemController extends AbstractController {
 	public static void downloadItems(Context context, int positionId) throws IOException, JSONException {
 		JSONObject responseJson = getJsonObject(CategoryURLPack.GET_ITEMS_AND_CATEGORIES, CategoryURLPack.getCategoryParameters(positionId), context);
 		JSONArray supplierCategoryJson = responseJson.getJSONArray("supplier_type");
-		ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
+		ArrayList<SupplierCategory> supplierCategories = new ArrayList<SupplierCategory>();
 		for (int i = 0, SUPPLIER_CATEGORY_LENGTH = supplierCategoryJson.length(); i < SUPPLIER_CATEGORY_LENGTH; i++) {
-			Supplier supplier = Supplier.parseSupplier(supplierCategoryJson.getJSONObject(i));
-			if (supplier != null) {
-				suppliers.add(supplier);
+			SupplierCategory supplierCategory = SupplierCategory.parseSupplierCategory(supplierCategoryJson.getJSONObject(i));
+			if (supplierCategory != null) {
+				supplierCategories.add(supplierCategory);
 			}
 		}
-		saveCategoriesToDb(suppliers, context);
+		ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
+		for (SupplierCategory supplierCategory : supplierCategories) {
+			suppliers.addAll(supplierCategory.getSuppliers());
+		}
+		saveSupplierCategoriesToDb(suppliers, context);
 	}
 
-	private static void saveCategoriesToDb(ArrayList<Supplier> categories, Context context) {
+	private static void saveSupplierCategoriesToDb(ArrayList<Supplier> categories, Context context) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		try {

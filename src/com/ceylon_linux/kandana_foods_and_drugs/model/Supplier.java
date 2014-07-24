@@ -43,8 +43,8 @@ public class Supplier {
 			}
 		}
 		return (items.size() == 0) ? null : new Supplier(
-			categoryJsonInstance.getInt("categoryId"),
-			categoryJsonInstance.getString("categoryName"),
+			categoryJsonInstance.getInt("supplierId"),
+			categoryJsonInstance.getString("supplierName"),
 			items
 		);
 	}

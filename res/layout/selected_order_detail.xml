@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:weightSum="10"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6.41"
+            android:text="Item Description"
+            android:textSize="20dp"
+            android:paddingLeft="10dp" android:id="@+id/txtItemDescription"/>
+    <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:id="@+id/editButton" android:background="@drawable/edit" android:layout_weight="0.03"/>
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Quantity"
+            android:gravity="right"
+            android:layout_weight="1.57"
+            android:textSize="20dp" android:id="@+id/txtQuantity"/>
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Free Issue"
+            android:gravity="right"
+            android:layout_weight="1.92"
+            android:textSize="20dp" android:id="@+id/txtFreeIssue"/>
+    <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:id="@+id/deleteButton" android:background="@drawable/delete"/>
+</LinearLayout>

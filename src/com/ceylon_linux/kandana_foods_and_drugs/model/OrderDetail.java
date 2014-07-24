@@ -9,7 +9,6 @@ package com.ceylon_linux.kandana_foods_and_drugs.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import org.json.JSONObject;
@@ -30,12 +29,23 @@ public class OrderDetail implements Serializable {
 	private int freeIssue;
 	private double price;
 	private int salableReturns;
+	private Item item;
 
 	public OrderDetail(int itemId, String itemDescription, int quantity, double price, int freeIssue, int salableReturns) {
 		this.itemId = itemId;
 		this.itemDescription = itemDescription;
 		this.quantity = quantity;
 		this.price = price;
+		this.freeIssue = freeIssue;
+		this.salableReturns = salableReturns;
+	}
+
+	public OrderDetail(Item item, int quantity, int freeIssue, int salableReturns) {
+		this.item = item;
+		this.itemId = item.getItemId();
+		this.itemDescription = item.getItemDescription();
+		this.quantity = quantity;
+		this.price = item.getPrice();
 		this.freeIssue = freeIssue;
 		this.salableReturns = salableReturns;
 	}
@@ -50,16 +60,21 @@ public class OrderDetail implements Serializable {
 			int rangeMinimumQuantity = freeIssueCursor.getInt(0);
 			int freeIssueQuantity = freeIssueCursor.getInt(1);
 			freeIssue = (quantity / rangeMinimumQuantity) * freeIssueQuantity;
-			Log.i("freeIssue", rangeMinimumQuantity + "-" + quantity + "=" + freeIssueQuantity);
 		}
 		return new OrderDetail(
-			item.getItemId(),
-			item.getItemDescription(),
+			item,
 			quantity,
-			item.getPrice(),
 			freeIssue,
 			salableReturns
 		);
+	}
+
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
 	}
 
 	public int getItemId() {

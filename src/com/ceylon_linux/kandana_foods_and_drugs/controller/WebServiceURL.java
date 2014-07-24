@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 abstract class WebServiceURL {
 
-	private static final String webServiceURL = "http://192.168.1.119/kandana/andr_manager/";
+	private static final String webServiceURL = "http://gateway.ceylonlinux.com/KADANA/andr_manager/";
 
 	protected WebServiceURL() {
 	}
@@ -38,7 +38,7 @@ abstract class WebServiceURL {
 			return null;
 		}
 
-		public static final String GET_ITEMS_AND_CATEGORIES = webServiceURL + "getProducts";
+		public static final String GET_ITEMS_AND_CATEGORIES = webServiceURL + "getProducts2";
 		public static final String GET_FREE_ISSUE_RATIOS = webServiceURL + "getFreeItem";
 	}
 
