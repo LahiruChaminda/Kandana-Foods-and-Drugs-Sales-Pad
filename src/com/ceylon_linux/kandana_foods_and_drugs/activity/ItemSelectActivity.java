@@ -11,7 +11,6 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -22,16 +21,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
 import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -178,47 +174,10 @@ public class ItemSelectActivity extends FragmentActivity {
 			return;
 		}
 		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
-		new AsyncTask<Order, Void, Boolean>() {
-			ProgressDialog progressDialog;
-
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				progressDialog = new ProgressDialog(ItemSelectActivity.this);
-				progressDialog.setMessage("Syncing Order");
-				progressDialog.setCanceledOnTouchOutside(false);
-				progressDialog.show();
-			}
-
-			@Override
-			protected Boolean doInBackground(Order... params) {
-				Order order = params[0];
-				try {
-					return OrderController.syncOrder(ItemSelectActivity.this, order.getOrderAsJson());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				return false;
-			}
-
-			@Override
-			protected void onPostExecute(Boolean aBoolean) {
-				if (progressDialog != null && progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
-				if (aBoolean) {
-					Toast.makeText(ItemSelectActivity.this, "Order Synced Successfully", Toast.LENGTH_LONG).show();
-				} else {
-					OrderController.saveOrderToDb(ItemSelectActivity.this, order);
-					Toast.makeText(ItemSelectActivity.this, "Order placed in local database", Toast.LENGTH_LONG).show();
-				}
-				Intent homeActivity = new Intent(ItemSelectActivity.this, HomeActivity.class);
-				startActivity(homeActivity);
-				finish();
-			}
-		}.execute(order);
+		Intent viewInvoiceActivity = new Intent(ItemSelectActivity.this, ViewInvoiceActivity.class);
+		viewInvoiceActivity.putExtra("order", order);
+		startActivity(viewInvoiceActivity);
+		finish();
 	}
 
 	@Override

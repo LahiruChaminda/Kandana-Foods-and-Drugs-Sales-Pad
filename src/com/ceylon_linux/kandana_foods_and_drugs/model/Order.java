@@ -10,6 +10,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,7 @@ import java.util.HashMap;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Order {
+public class Order implements Serializable {
 
 	private long orderId;
 	private int outletId;
@@ -184,7 +185,7 @@ public class Order {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || o.getClass() != Order.class) return false;
 
 		Order order = (Order) o;
 

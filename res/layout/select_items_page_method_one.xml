@@ -17,7 +17,7 @@
             android:orientation="horizontal"
             android:weightSum="10"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" android:background="#ff85f6ff">
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
                 android:textSize="20dp" android:paddingLeft="10dp"/>
 
         <ImageView
-                android:layout_width="30dp"
+                android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@drawable/right"/>
         <TextView
