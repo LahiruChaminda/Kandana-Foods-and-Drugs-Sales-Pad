@@ -8,14 +8,20 @@ DROP TABLE IF EXISTS tbl_order_detail;
 DROP TABLE IF EXISTS tbl_order;
 DROP TABLE IF EXISTS tbl_free_issue_ratio;
 
-CREATE TABLE tbl_category ( 
-    categoryId          INTEGER PRIMARY KEY,
-    categoryDescription TEXT    NOT NULL 
+create table tbl_supplier_category(
+   supplierCategoryId INTEGER PRIMARY KEY,
+   supplierCategory TEXT
+);
+
+CREATE TABLE tbl_supplier (
+    supplierId          INTEGER PRIMARY KEY,
+    supplierCategoryId INTEGER NOT NULL REFERENCES tbl_supplier_category( supplierCategoryId ) ON UPDATE CASCADE,
+    supplierName TEXT    NOT NULL
 );
 
 CREATE TABLE tbl_item ( 
     itemId          INTEGER        PRIMARY KEY,
-    categoryId      INTEGER        NOT NULL REFERENCES tbl_category ( categoryId ) ON UPDATE CASCADE,
+    supplierId      INTEGER        NOT NULL REFERENCES tbl_supplier( supplierId ) ON UPDATE CASCADE,
     itemCode        TEXT,
     itemDescription TEXT           CHECK (itemDescription!=''),
     price           DECIMAL(10,2)  NOT NULL DEFAULT 0
