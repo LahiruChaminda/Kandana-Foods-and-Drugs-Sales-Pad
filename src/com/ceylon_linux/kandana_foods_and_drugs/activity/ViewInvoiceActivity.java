@@ -10,11 +10,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
@@ -32,6 +31,7 @@ import java.util.Date;
  * @email supunlakshan.xfinity@gmail.com
  */
 public class ViewInvoiceActivity extends Activity {
+	public static Order order;
 	private TextView txtOutlet;
 	private TextView txtDate;
 	private TextView txtTime;
@@ -41,7 +41,6 @@ public class ViewInvoiceActivity extends Activity {
 	private Button btnFinish;
 	private Button btnCancel;
 	private Button btnBack;
-	private Order order;
 	private ArrayList<OrderDetail> orderDetails;
 
 	@Override
@@ -49,8 +48,8 @@ public class ViewInvoiceActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_invoice_activity);
 		initialize();
+		//order = (Order) getIntent().getExtras().get("order");
 		orderDetails = order.getOrderDetails();
-		order = (Order) getIntent().getSerializableExtra("order");
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
 		simpleDateFormat.applyPattern("EEEE dd MMM, yyyy");
 		txtDate.setText(simpleDateFormat.format(new Date(order.getInvoiceTime())));
@@ -63,14 +62,14 @@ public class ViewInvoiceActivity extends Activity {
 			invoiceTotal += (orderDetail.getPrice() * orderDetail.getQuantity());
 		}
 		txtInvoiceTotal.setText(String.valueOf(invoiceTotal));
-		/*listView.setAdapter(new BaseAdapter() {
+		listView.setAdapter(new BaseAdapter() {
 			@Override
 			public int getCount() {
 				return orderDetails.size();
 			}
 
 			@Override
-			public Object getItem(int position) {
+			public OrderDetail getItem(int position) {
 				return orderDetails.get(position);
 			}
 
@@ -81,9 +80,25 @@ public class ViewInvoiceActivity extends Activity {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				return null;
+				ChildViewHolder childViewHolder;
+				if (convertView == null) {
+					childViewHolder = new ChildViewHolder();
+					LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+					convertView = inflater.inflate(R.layout.category_sub_item, null);
+					childViewHolder.txtItemDescription = (TextView) convertView.findViewById(R.id.txtItemDescription);
+					childViewHolder.txtFreeIssue = (TextView) convertView.findViewById(R.id.txtFreeIssue);
+					childViewHolder.txtQuantity = (TextView) convertView.findViewById(R.id.txtQuantity);
+					convertView.setTag(childViewHolder);
+				} else {
+					childViewHolder = (ChildViewHolder) convertView.getTag();
+				}
+				OrderDetail orderDetail = getItem(position);
+				childViewHolder.txtItemDescription.setText(orderDetail.getItemDescription());
+				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
+				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
+				return convertView;
 			}
-		});*/
+		});
 	}
 
 	private void initialize() {
@@ -174,6 +189,14 @@ public class ViewInvoiceActivity extends Activity {
 
 	private void btnBackClicked(View v) {
 		onBackPressed();
+	}
+
+	private static class ChildViewHolder {
+
+		TextView txtItemDescription;
+		ImageView imageView;
+		TextView txtQuantity;
+		TextView txtFreeIssue;
 	}
 
 

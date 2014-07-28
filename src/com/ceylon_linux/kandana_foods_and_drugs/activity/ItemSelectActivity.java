@@ -167,15 +167,15 @@ public class ItemSelectActivity extends FragmentActivity {
 		}
 		if ((location = gpsReceiver.getLastKnownLocation()) == null) {
 			progressDialog = ProgressDialog.show(ItemSelectActivity.this, null, "Waiting for GPS...", false);
-			progressDialog.show();
 			if (GPS_CHECKER.getState() == Thread.State.TERMINATED) {
 				GPS_CHECKER.start();
 			}
 			return;
 		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
+		Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
+		order.setOutletDescription(outlet.getOutletName());
 		Intent viewInvoiceActivity = new Intent(ItemSelectActivity.this, ViewInvoiceActivity.class);
-		viewInvoiceActivity.putExtra("order", order);
+		ViewInvoiceActivity.order = order;
 		startActivity(viewInvoiceActivity);
 		finish();
 	}

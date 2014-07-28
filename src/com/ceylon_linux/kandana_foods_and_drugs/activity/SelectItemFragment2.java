@@ -35,6 +35,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 	private ExpandableListView itemList;
 	private EditText inputSearch;
+	private ImageButton btnClear;
 	private ArrayList<Supplier> categories;
 	private ArrayList<Supplier> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
@@ -152,8 +153,19 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 	private void initialize(View rootView) {
 		itemList = (ExpandableListView) rootView.findViewById(R.id.itemList);
 		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+		btnClear = (ImageButton) rootView.findViewById(R.id.btnClear);
+		btnClear.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				btnClearPressed(v);
+			}
+		});
 	}
 	// </editor-fold>
+
+	private void btnClearPressed(View view) {
+		inputSearch.setText("");
+	}
 
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
 		for (OrderDetail orderDetail : orderDetails) {
@@ -276,14 +288,14 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				constraint.toString().toLowerCase();
+				String searchTerm = constraint.toString().toLowerCase();
 				FilterResults result = new FilterResults();
 				ArrayList<Supplier> filteredCategories = new ArrayList<Supplier>();
 				if (constraint != null && constraint.toString().length() > 0) {
 					for (Supplier supplier : fixedCategories) {
 						ArrayList<Item> items = new ArrayList<Item>();
 						for (Item item : supplier.getItems()) {
-							if (item.getItemDescription().toLowerCase().contains(constraint)) {
+							if (item.getItemDescription().toLowerCase().startsWith(searchTerm)) {
 								items.add(item);
 							}
 						}

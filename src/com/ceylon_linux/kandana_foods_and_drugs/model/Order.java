@@ -6,11 +6,11 @@
 
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
-import android.util.Log;
+import android.os.Parcel;
+import android.os.Parcelable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +21,7 @@ import java.util.HashMap;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Order implements Serializable {
+public class Order implements Parcelable {
 
 	private long orderId;
 	private int outletId;
@@ -92,8 +92,6 @@ public class Order implements Serializable {
 		}
 		invoiceParams.put("invoiceItems", orderDetailsJsonArray);
 		orderJsonParams.put("Invoice", new JSONObject(invoiceParams));
-		Log.i("response count", getOrderDetails().size() + "");
-		Log.i("response json", new JSONObject(orderJsonParams).toString());
 		return new JSONObject(orderJsonParams);
 	}
 
@@ -197,5 +195,15 @@ public class Order implements Serializable {
 	@Override
 	public int hashCode() {
 		return (int) (orderId ^ (orderId >>> 32));
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+
 	}
 }

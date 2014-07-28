@@ -8,6 +8,11 @@ DROP TABLE IF EXISTS tbl_order_detail;
 DROP TABLE IF EXISTS tbl_order;
 DROP TABLE IF EXISTS tbl_free_issue_ratio;
 
+create table tbl_distributor(
+   distributorId INTEGER PRIMARY KEY,
+   distributorName TEXT
+);
+
 create table tbl_supplier_category(
    supplierCategoryId INTEGER PRIMARY KEY,
    supplierCategory TEXT
@@ -19,7 +24,7 @@ CREATE TABLE tbl_supplier (
     supplierName TEXT    NOT NULL
 );
 
-CREATE TABLE tbl_item ( 
+CREATE TABLE tbl_item (
     itemId          INTEGER        PRIMARY KEY,
     supplierId      INTEGER        NOT NULL REFERENCES tbl_supplier( supplierId ) ON UPDATE CASCADE,
     itemCode        TEXT,

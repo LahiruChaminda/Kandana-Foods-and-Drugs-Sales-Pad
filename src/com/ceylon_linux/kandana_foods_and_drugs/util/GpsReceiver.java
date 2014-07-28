@@ -34,16 +34,15 @@ public class GpsReceiver extends Service {
 	private GpsReceiver(Context context) {
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-		lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, LocationListenerImpl.getInstance(), Looper.getMainLooper());
 
-		lastKnownLocation = (lastKnownLocation == null) ? locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) : lastKnownLocation;
-		lastKnownLocation = (lastKnownLocation != null && lastKnownLocation != null && lastKnownLocation.getAccuracy() < lastKnownLocation.getAccuracy()) ? lastKnownLocation : lastKnownLocation;
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, LocationListenerImpl.getInstance(), Looper.getMainLooper());
 
-		lastKnownLocation = (lastKnownLocation == null) ? locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER) : lastKnownLocation;
-		lastKnownLocation = (lastKnownLocation != null && lastKnownLocation != null && lastKnownLocation.getAccuracy() < lastKnownLocation.getAccuracy()) ? lastKnownLocation : lastKnownLocation;
 		locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, LocationListenerImpl.getInstance(), Looper.getMainLooper());
+
+		lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	}
 
 	public synchronized static GpsReceiver getGpsReceiver(Context applicationContext) {

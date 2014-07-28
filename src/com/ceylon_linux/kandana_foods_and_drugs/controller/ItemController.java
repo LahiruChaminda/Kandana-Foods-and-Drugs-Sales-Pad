@@ -47,46 +47,53 @@ public class ItemController extends AbstractController {
 		for (SupplierCategory supplierCategory : supplierCategories) {
 			suppliers.addAll(supplierCategory.getSuppliers());
 		}
-		saveSupplierCategoriesToDb(suppliers, context);
+		saveSupplierCategoriesToDb(supplierCategories, context);
 	}
 
-	private static void saveSupplierCategoriesToDb(ArrayList<Supplier> categories, Context context) {
+	private static void saveSupplierCategoriesToDb(ArrayList<SupplierCategory> supplierCategories, Context context) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		try {
 			database.beginTransaction();
-			SQLiteStatement categoryStatement = database.compileStatement("replace into tbl_category(categoryId,categoryDescription) values (?,?)");
-			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,categoryId,itemCode,itemDescription, price) values (?,?,?,?,?)");
+			SQLiteStatement supplierCategoryStatement = database.compileStatement("replace into tbl_supplier_category(supplierCategoryId,supplierCategory) values (?,?)");
+			SQLiteStatement supplierStatement = database.compileStatement("replace into tbl_supplier(supplierId,supplierCategoryId,supplierName) values (?,?,?)");
+			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,supplierId,itemCode,itemDescription, price) values (?,?,?,?,?)");
 			SQLiteStatement freeIssueStatement = database.compileStatement("replace into tbl_free_issue_ratio (itemId, rangeMinimumQuantity,freeIssueQuantity) values(?,?,?)");
-			for (Supplier supplier : categories) {
-				Object[] categoryParameters = {
-					supplier.getCategoryId(),
-					supplier.getCategoryDescription()
-				};
-				DbHandler.performExecuteInsert(categoryStatement, categoryParameters);
-				for (Item item : supplier.getItems()) {
-					int itemId = item.getItemId();
-					Object[] itemParameters = {
-						itemId,
+			for (SupplierCategory supplierCategory : supplierCategories) {
+				DbHandler.performExecuteInsert(supplierCategoryStatement, new Object[]{
+					supplierCategory.getSupplierCategoryId(),
+					supplierCategory.getSupplierCategory()
+				});
+				for (Supplier supplier : supplierCategory.getSuppliers()) {
+					DbHandler.performExecuteInsert(supplierStatement, new Object[]{
 						supplier.getCategoryId(),
-						item.getItemCode(),
-						item.getItemDescription(),
-						item.getPrice()
-					};
-					DbHandler.performExecuteInsert(itemStatement, itemParameters);
-					JSONArray freeIssueJsonArray = item.getFreeIssueJsonArray();
-					for (int i = 0, freeIssueLength = freeIssueJsonArray.length(); i < freeIssueLength; i++) {
-						try {
-							JSONObject freeIssue = freeIssueJsonArray.getJSONObject(i);
-							int minimumQty = freeIssue.getInt("purchaseQty");
-							int freeIssueQty = freeIssue.getInt("freeQty");
-							DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
-								itemId,
-								minimumQty,
-								freeIssueQty
-							});
-						} catch (JSONException e) {
-							e.printStackTrace();
+						supplierCategory.getSupplierCategoryId(),
+						supplier.getCategoryDescription()
+					});
+					for (Item item : supplier.getItems()) {
+						int itemId = item.getItemId();
+						Object[] itemParameters = {
+							itemId,
+							supplier.getCategoryId(),
+							item.getItemCode(),
+							item.getItemDescription(),
+							item.getPrice()
+						};
+						DbHandler.performExecuteInsert(itemStatement, itemParameters);
+						JSONArray freeIssueJsonArray = item.getFreeIssueJsonArray();
+						for (int i = 0, freeIssueLength = freeIssueJsonArray.length(); i < freeIssueLength; i++) {
+							try {
+								JSONObject freeIssue = freeIssueJsonArray.getJSONObject(i);
+								int minimumQty = freeIssue.getInt("purchaseQty");
+								int freeIssueQty = freeIssue.getInt("freeQty");
+								DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
+									itemId,
+									minimumQty,
+									freeIssueQty
+								});
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
