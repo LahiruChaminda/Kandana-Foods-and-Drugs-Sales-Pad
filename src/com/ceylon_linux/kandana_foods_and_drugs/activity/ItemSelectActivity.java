@@ -50,7 +50,7 @@ public class ItemSelectActivity extends FragmentActivity {
 	private Outlet outlet;
 	private Button finishButton;
 	private Handler handler;
-	private ArrayList<SupplierCategory> supplierCategories = new ArrayList<SupplierCategory>();
+	private ArrayList<SupplierCategory> supplierCategories;
 	private ProgressDialog progressDialog;
 
 	private ArrayList<ItemSelectableFragment> itemSelectableFragments;

@@ -43,10 +43,6 @@ public class ItemController extends AbstractController {
 				supplierCategories.add(supplierCategory);
 			}
 		}
-		ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
-		for (SupplierCategory supplierCategory : supplierCategories) {
-			suppliers.addAll(supplierCategory.getSuppliers());
-		}
 		saveSupplierCategoriesToDb(supplierCategories, context);
 	}
 
