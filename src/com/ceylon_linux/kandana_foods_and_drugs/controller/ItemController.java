@@ -107,32 +107,42 @@ public class ItemController extends AbstractController {
 		}
 	}
 
-	public static ArrayList<Supplier> loadItemsFromDb(Context context) throws IOException, JSONException {
+	public static ArrayList<SupplierCategory> loadItemsFromDb(Context context) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		ArrayList<Supplier> categories = new ArrayList<Supplier>();
-		String categorySql = "select categoryId,categoryDescription from tbl_category";
-		String itemSql = "select itemId,itemCode,itemDescription,price from tbl_item where categoryId=?";
-		Cursor categoryCursor = DbHandler.performRawQuery(database, categorySql, null);
-		for (categoryCursor.moveToFirst(); !categoryCursor.isAfterLast(); categoryCursor.moveToNext()) {
-			int categoryId = categoryCursor.getInt(0);
-			String categoryDescription = categoryCursor.getString(1);
-			ArrayList<Item> items = new ArrayList<Item>();
-			Cursor itemCursor = DbHandler.performRawQuery(database, itemSql, new Object[]{categoryId});
-			for (itemCursor.moveToFirst(); !itemCursor.isAfterLast(); itemCursor.moveToNext()) {
-				items.add(new Item(
-					itemCursor.getInt(0),
-					itemCursor.getString(1),
-					itemCursor.getString(2),
-					itemCursor.getDouble(3)
-				));
+		ArrayList<SupplierCategory> supplierCategories = new ArrayList<SupplierCategory>();
+		String supplierCategorySql = "select supplierCategoryId,supplierCategory from tbl_supplier_category";
+		String supplierSql = "select supplierId,supplierName from tbl_supplier where supplierCategoryId=?";
+		String itemSql = "select itemId,itemCode,itemDescription,price from tbl_item where supplierId=?";
+		Cursor supplierCategoryCursor = DbHandler.performRawQuery(database, supplierCategorySql, null);
+		for (supplierCategoryCursor.moveToFirst(); !supplierCategoryCursor.isAfterLast(); supplierCategoryCursor.moveToNext()) {
+			int supplierCategoryId;
+			Cursor supplierCursor = DbHandler.performRawQuery(database, supplierSql, new Object[]{supplierCategoryId = supplierCategoryCursor.getInt(0)});
+			ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
+			for (supplierCursor.moveToFirst(); !supplierCursor.isAfterLast(); supplierCursor.moveToNext()) {
+				int supplierId;
+				String supplierDescription = supplierCursor.getString(1);
+				ArrayList<Item> items = new ArrayList<Item>();
+				Cursor itemCursor = DbHandler.performRawQuery(database, itemSql, new Object[]{supplierId = supplierCursor.getInt(0)});
+				for (itemCursor.moveToFirst(); !itemCursor.isAfterLast(); itemCursor.moveToNext()) {
+					items.add(new Item(
+						itemCursor.getInt(0),
+						itemCursor.getString(1),
+						itemCursor.getString(2),
+						itemCursor.getDouble(3)
+					));
+				}
+				itemCursor.close();
+				suppliers.add(new Supplier(supplierId, supplierDescription, items));
 			}
-			itemCursor.close();
-			categories.add(new Supplier(categoryId, categoryDescription, items));
+			supplierCursor.close();
+			String supplierCategoryDescription = supplierCategoryCursor.getString(1);
+			SupplierCategory supplierCategory = new SupplierCategory(supplierCategoryId, supplierCategoryDescription, suppliers);
+			supplierCategories.add(supplierCategory);
 		}
-		categoryCursor.close();
+		supplierCategoryCursor.close();
 		databaseHelper.close();
-		return categories;
+		return supplierCategories;
 	}
 
 }

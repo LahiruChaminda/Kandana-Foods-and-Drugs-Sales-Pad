@@ -17,13 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import org.json.JSONException;
+import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -34,9 +32,11 @@ import java.util.ArrayList;
 public class SelectItemFragment1 extends ItemSelectableFragment {
 
 	private ExpandableListView itemList;
+	private Spinner supplerSpinner;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Supplier> categories;
+	private ArrayList<SupplierCategory> supplierCategories;
+	private ArrayList<Supplier> categories = new ArrayList<Supplier>();
 	private ArrayList<Supplier> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
@@ -54,14 +54,11 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
-		try {
-			categories = ItemController.loadItemsFromDb(getActivity());
-			fixedCategories = (ArrayList<Supplier>) categories.clone();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (JSONException ex) {
-			ex.printStackTrace();
+		supplierCategories = ((ItemSelectActivity) getActivity()).getSupplierCategories();
+		for (SupplierCategory supplierCategory : supplierCategories) {
+			categories.addAll(supplierCategory.getSuppliers());
 		}
+		fixedCategories = (ArrayList<Supplier>) categories.clone();
 	}
 
 	@Override
@@ -87,6 +84,22 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 			@Override
 			public void afterTextChanged(Editable s) {
 				myExpandableListAdapter.getFilter().filter(inputSearch.getText());
+			}
+		});
+		supplerSpinner.setAdapter(new ArrayAdapter<SupplierCategory>(getActivity(), android.R.layout.simple_list_item_1, supplierCategories));
+		supplerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				SupplierCategory supplierCategory = (SupplierCategory) parent.getAdapter().getItem(position);
+				categories.clear();
+				fixedCategories.clear();
+				categories.addAll(supplierCategory.getSuppliers());
+				fixedCategories.addAll(supplierCategory.getSuppliers());
+				myExpandableListAdapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
 			}
 		});
 		return rootView;
@@ -153,6 +166,7 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 	private void initialize(View rootView) {
 		itemList = (ExpandableListView) rootView.findViewById(R.id.itemList);
 		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+		supplerSpinner = (Spinner) rootView.findViewById(R.id.supplierSpinner);
 		btnClear = (ImageButton) rootView.findViewById(R.id.btnClear);
 		btnClear.setOnClickListener(new View.OnClickListener() {
 			@Override

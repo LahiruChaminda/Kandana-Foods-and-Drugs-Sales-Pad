@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
@@ -112,7 +111,6 @@ public class OrderController extends AbstractController {
 			SQLiteStatement deleteStatement = database.compileStatement(deleteQuery);
 			for (Order order : orders) {
 				boolean response = syncOrder(context, order.getOrderAsJson());
-				Log.d("response is ", String.valueOf(response) + order.getOrderId());
 				if (response) {
 					DbHandler.performExecuteUpdateDelete(deleteStatement, new Object[]{order.getOrderId()});
 				} else {

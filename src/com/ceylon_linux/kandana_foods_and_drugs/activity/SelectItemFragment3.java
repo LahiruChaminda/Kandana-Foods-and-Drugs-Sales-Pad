@@ -17,13 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import org.json.JSONException;
+import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -54,18 +52,14 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
-		try {
-			ArrayList<Supplier> categories = ItemController.loadItemsFromDb(getActivity());
-			for (Supplier supplier : categories) {
+		ArrayList<SupplierCategory> supplierCategories = ((ItemSelectActivity) getActivity()).getSupplierCategories();
+		for (SupplierCategory supplierCategory : supplierCategories) {
+			for (Supplier supplier : supplierCategory.getSuppliers()) {
 				items.addAll(supplier.getItems());
 			}
-			Collections.sort(items);
-			fixedItems = (ArrayList<Item>) items.clone();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (JSONException ex) {
-			ex.printStackTrace();
 		}
+		Collections.sort(items);
+		fixedItems = (ArrayList<Item>) items.clone();
 	}
 
 	@Override

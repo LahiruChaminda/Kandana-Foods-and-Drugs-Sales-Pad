@@ -17,13 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import org.json.JSONException;
+import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -36,7 +34,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 	private ExpandableListView itemList;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Supplier> categories;
+	private ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
 	private ArrayList<Supplier> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
@@ -54,14 +52,11 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
-		try {
-			categories = ItemController.loadItemsFromDb(getActivity());
-			fixedCategories = (ArrayList<Supplier>) categories.clone();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (JSONException ex) {
-			ex.printStackTrace();
+		ArrayList<SupplierCategory> supplierCategories = ((ItemSelectActivity) getActivity()).getSupplierCategories();
+		for (SupplierCategory supplierCategory : supplierCategories) {
+			suppliers.addAll(supplierCategory.getSuppliers());
 		}
+		fixedCategories = (ArrayList<Supplier>) suppliers.clone();
 	}
 
 	@Override
@@ -101,7 +96,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
-		final Item item = categories.get(groupPosition).getItems().get(childPosition);
+		final Item item = suppliers.get(groupPosition).getItems().get(childPosition);
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
 		Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
 		txtItemDescription.setText(item.getItemDescription());
@@ -200,22 +195,22 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 		@Override
 		public int getGroupCount() {
-			return categories.size();
+			return suppliers.size();
 		}
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			return categories.get(groupPosition).getItems().size();
+			return suppliers.get(groupPosition).getItems().size();
 		}
 
 		@Override
 		public Supplier getGroup(int groupPosition) {
-			return categories.get(groupPosition);
+			return suppliers.get(groupPosition);
 		}
 
 		@Override
 		public Item getChild(int groupPosition, int childPosition) {
-			return categories.get(groupPosition).getItems().get(childPosition);
+			return suppliers.get(groupPosition).getItems().get(childPosition);
 		}
 
 		@Override
@@ -313,7 +308,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				categories = (ArrayList<Supplier>) results.values;
+				suppliers = (ArrayList<Supplier>) results.values;
 				notifyDataSetChanged();
 			}
 		}

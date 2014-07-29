@@ -6,11 +6,10 @@
 
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +20,7 @@ import java.util.HashMap;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Order implements Parcelable {
+public class Order implements Serializable {
 
 	private long orderId;
 	private int outletId;
@@ -33,17 +32,6 @@ public class Order implements Parcelable {
 	private double latitude;
 	private int batteryLevel;
 	private ArrayList<OrderDetail> orderDetails;
-
-	public Order(int outletId, int positionId, int routeId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails) {
-		this.outletId = outletId;
-		this.positionId = positionId;
-		this.routeId = routeId;
-		this.batteryLevel = batteryLevel;
-		this.invoiceTime = invoiceTime;
-		this.longitude = longitude;
-		this.latitude = latitude;
-		this.orderDetails = orderDetails;
-	}
 
 	public Order(long orderId, int outletId, int positionId, int routeId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails) {
 		this.orderId = orderId;
@@ -57,12 +45,11 @@ public class Order implements Parcelable {
 		this.orderDetails = orderDetails;
 	}
 
-	public Order(long orderId, int outletId, String outletDescription, int positionId, int routeId, long invoiceTime, double longitude, double latitude, int batteryLevel, ArrayList<OrderDetail> orderDetails) {
-		this.orderId = orderId;
-		this.outletDescription = outletDescription;
-		this.outletId = outletId;
+	public Order(Outlet outlet, int positionId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails) {
+		this.outletId = outlet.getOutletId();
 		this.positionId = positionId;
-		this.routeId = routeId;
+		this.outletDescription = outlet.getOutletName();
+		this.routeId = outlet.getCityId();
 		this.batteryLevel = batteryLevel;
 		this.invoiceTime = invoiceTime;
 		this.longitude = longitude;
@@ -195,15 +182,5 @@ public class Order implements Parcelable {
 	@Override
 	public int hashCode() {
 		return (int) (orderId ^ (orderId >>> 32));
-	}
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-
 	}
 }
