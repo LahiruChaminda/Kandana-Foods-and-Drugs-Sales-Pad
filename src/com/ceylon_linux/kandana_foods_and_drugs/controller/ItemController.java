@@ -43,50 +43,53 @@ public class ItemController extends AbstractController {
 				supplierCategories.add(supplierCategory);
 			}
 		}
-		ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
-		for (SupplierCategory supplierCategory : supplierCategories) {
-			suppliers.addAll(supplierCategory.getSuppliers());
-		}
-		saveSupplierCategoriesToDb(suppliers, context);
+		saveSupplierCategoriesToDb(supplierCategories, context);
 	}
 
-	private static void saveSupplierCategoriesToDb(ArrayList<Supplier> categories, Context context) {
+	private static void saveSupplierCategoriesToDb(ArrayList<SupplierCategory> supplierCategories, Context context) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		try {
 			database.beginTransaction();
-			SQLiteStatement categoryStatement = database.compileStatement("replace into tbl_category(categoryId,categoryDescription) values (?,?)");
-			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,categoryId,itemCode,itemDescription, price) values (?,?,?,?,?)");
+			SQLiteStatement supplierCategoryStatement = database.compileStatement("replace into tbl_supplier_category(supplierCategoryId,supplierCategory) values (?,?)");
+			SQLiteStatement supplierStatement = database.compileStatement("replace into tbl_supplier(supplierId,supplierCategoryId,supplierName) values (?,?,?)");
+			SQLiteStatement itemStatement = database.compileStatement("replace into tbl_item(itemId,supplierId,itemCode,itemDescription, price) values (?,?,?,?,?)");
 			SQLiteStatement freeIssueStatement = database.compileStatement("replace into tbl_free_issue_ratio (itemId, rangeMinimumQuantity,freeIssueQuantity) values(?,?,?)");
-			for (Supplier supplier : categories) {
-				Object[] categoryParameters = {
-					supplier.getCategoryId(),
-					supplier.getCategoryDescription()
-				};
-				DbHandler.performExecuteInsert(categoryStatement, categoryParameters);
-				for (Item item : supplier.getItems()) {
-					int itemId = item.getItemId();
-					Object[] itemParameters = {
-						itemId,
+			for (SupplierCategory supplierCategory : supplierCategories) {
+				DbHandler.performExecuteInsert(supplierCategoryStatement, new Object[]{
+					supplierCategory.getSupplierCategoryId(),
+					supplierCategory.getSupplierCategory()
+				});
+				for (Supplier supplier : supplierCategory.getSuppliers()) {
+					DbHandler.performExecuteInsert(supplierStatement, new Object[]{
 						supplier.getCategoryId(),
-						item.getItemCode(),
-						item.getItemDescription(),
-						item.getPrice()
-					};
-					DbHandler.performExecuteInsert(itemStatement, itemParameters);
-					JSONArray freeIssueJsonArray = item.getFreeIssueJsonArray();
-					for (int i = 0, freeIssueLength = freeIssueJsonArray.length(); i < freeIssueLength; i++) {
-						try {
-							JSONObject freeIssue = freeIssueJsonArray.getJSONObject(i);
-							int minimumQty = freeIssue.getInt("purchaseQty");
-							int freeIssueQty = freeIssue.getInt("freeQty");
-							DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
-								itemId,
-								minimumQty,
-								freeIssueQty
-							});
-						} catch (JSONException e) {
-							e.printStackTrace();
+						supplierCategory.getSupplierCategoryId(),
+						supplier.getCategoryDescription()
+					});
+					for (Item item : supplier.getItems()) {
+						int itemId = item.getItemId();
+						Object[] itemParameters = {
+							itemId,
+							supplier.getCategoryId(),
+							item.getItemCode(),
+							item.getItemDescription(),
+							item.getPrice()
+						};
+						DbHandler.performExecuteInsert(itemStatement, itemParameters);
+						JSONArray freeIssueJsonArray = item.getFreeIssueJsonArray();
+						for (int i = 0, freeIssueLength = freeIssueJsonArray.length(); i < freeIssueLength; i++) {
+							try {
+								JSONObject freeIssue = freeIssueJsonArray.getJSONObject(i);
+								int minimumQty = freeIssue.getInt("purchaseQty");
+								int freeIssueQty = freeIssue.getInt("freeQty");
+								DbHandler.performExecuteInsert(freeIssueStatement, new Object[]{
+									itemId,
+									minimumQty,
+									freeIssueQty
+								});
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
@@ -100,32 +103,42 @@ public class ItemController extends AbstractController {
 		}
 	}
 
-	public static ArrayList<Supplier> loadItemsFromDb(Context context) throws IOException, JSONException {
+	public static ArrayList<SupplierCategory> loadItemsFromDb(Context context) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		ArrayList<Supplier> categories = new ArrayList<Supplier>();
-		String categorySql = "select categoryId,categoryDescription from tbl_category";
-		String itemSql = "select itemId,itemCode,itemDescription,price from tbl_item where categoryId=?";
-		Cursor categoryCursor = DbHandler.performRawQuery(database, categorySql, null);
-		for (categoryCursor.moveToFirst(); !categoryCursor.isAfterLast(); categoryCursor.moveToNext()) {
-			int categoryId = categoryCursor.getInt(0);
-			String categoryDescription = categoryCursor.getString(1);
-			ArrayList<Item> items = new ArrayList<Item>();
-			Cursor itemCursor = DbHandler.performRawQuery(database, itemSql, new Object[]{categoryId});
-			for (itemCursor.moveToFirst(); !itemCursor.isAfterLast(); itemCursor.moveToNext()) {
-				items.add(new Item(
-					itemCursor.getInt(0),
-					itemCursor.getString(1),
-					itemCursor.getString(2),
-					itemCursor.getDouble(3)
-				));
+		ArrayList<SupplierCategory> supplierCategories = new ArrayList<SupplierCategory>();
+		String supplierCategorySql = "select supplierCategoryId,supplierCategory from tbl_supplier_category";
+		String supplierSql = "select supplierId,supplierName from tbl_supplier where supplierCategoryId=?";
+		String itemSql = "select itemId,itemCode,itemDescription,price from tbl_item where supplierId=?";
+		Cursor supplierCategoryCursor = DbHandler.performRawQuery(database, supplierCategorySql, null);
+		for (supplierCategoryCursor.moveToFirst(); !supplierCategoryCursor.isAfterLast(); supplierCategoryCursor.moveToNext()) {
+			int supplierCategoryId;
+			Cursor supplierCursor = DbHandler.performRawQuery(database, supplierSql, new Object[]{supplierCategoryId = supplierCategoryCursor.getInt(0)});
+			ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
+			for (supplierCursor.moveToFirst(); !supplierCursor.isAfterLast(); supplierCursor.moveToNext()) {
+				int supplierId;
+				String supplierDescription = supplierCursor.getString(1);
+				ArrayList<Item> items = new ArrayList<Item>();
+				Cursor itemCursor = DbHandler.performRawQuery(database, itemSql, new Object[]{supplierId = supplierCursor.getInt(0)});
+				for (itemCursor.moveToFirst(); !itemCursor.isAfterLast(); itemCursor.moveToNext()) {
+					items.add(new Item(
+						itemCursor.getInt(0),
+						itemCursor.getString(1),
+						itemCursor.getString(2),
+						itemCursor.getDouble(3)
+					));
+				}
+				itemCursor.close();
+				suppliers.add(new Supplier(supplierId, supplierDescription, items));
 			}
-			itemCursor.close();
-			categories.add(new Supplier(categoryId, categoryDescription, items));
+			supplierCursor.close();
+			String supplierCategoryDescription = supplierCategoryCursor.getString(1);
+			SupplierCategory supplierCategory = new SupplierCategory(supplierCategoryId, supplierCategoryDescription, suppliers);
+			supplierCategories.add(supplierCategory);
 		}
-		categoryCursor.close();
+		supplierCategoryCursor.close();
 		databaseHelper.close();
-		return categories;
+		return supplierCategories;
 	}
 
 }

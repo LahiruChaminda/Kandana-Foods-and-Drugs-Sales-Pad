@@ -59,7 +59,9 @@ public class OrderDetail implements Serializable {
 		for (freeIssueCursor.moveToFirst(); !freeIssueCursor.isAfterLast(); freeIssueCursor.moveToNext()) {
 			int rangeMinimumQuantity = freeIssueCursor.getInt(0);
 			int freeIssueQuantity = freeIssueCursor.getInt(1);
-			freeIssue = (quantity / rangeMinimumQuantity) * freeIssueQuantity;
+			if (rangeMinimumQuantity != 0) {
+				freeIssue = (quantity / rangeMinimumQuantity) * freeIssueQuantity;
+			}
 		}
 		return new OrderDetail(
 			item,

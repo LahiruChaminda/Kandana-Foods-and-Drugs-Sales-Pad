@@ -11,7 +11,6 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -22,16 +21,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
+import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
 import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -51,12 +49,18 @@ public class ItemSelectActivity extends FragmentActivity {
 	private Location location;
 	private Outlet outlet;
 	private Button finishButton;
+	private Handler handler;
+	private ArrayList<SupplierCategory> supplierCategories;
 	private ProgressDialog progressDialog;
 
 	private ArrayList<ItemSelectableFragment> itemSelectableFragments;
 
 	ArrayList<OrderDetail> getOrderDetails() {
 		return orderDetails;
+	}
+
+	ArrayList<SupplierCategory> getSupplierCategories() {
+		return supplierCategories;
 	}
 
 	@Override
@@ -73,6 +77,30 @@ public class ItemSelectActivity extends FragmentActivity {
 				return super.add(object);
 			}
 		};
+		handler = new Handler();
+		supplierCategories = ItemController.loadItemsFromDb(ItemSelectActivity.this);
+		new Thread() {
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog = ProgressDialog.show(ItemSelectActivity.this, null, "Please Wait...");
+					}
+				});
+
+
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (progressDialog != null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+					}
+				});
+			}
+		}.start();
+
 		actionBar = getActionBar();
 		outlet = (Outlet) getIntent().getExtras().get("outlet");
 		fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -88,7 +116,7 @@ public class ItemSelectActivity extends FragmentActivity {
 		};
 
 		itemSelectableFragments = new ArrayList<ItemSelectableFragment>();
-		//itemSelectableFragments.add(new SelectItemFragment1());
+		itemSelectableFragments.add(new SelectItemFragment1());
 		itemSelectableFragments.add(new SelectItemFragment2());
 		itemSelectableFragments.add(new SelectItemFragment3());
 		itemSelectableFragments.add(new SelectedItemsFragment());
@@ -118,7 +146,7 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 		};
 
-		//addTab("Supplier wise", actionBar, tabListener);
+		addTab("Supplier wise", actionBar, tabListener);
 		addTab("Category wise", actionBar, tabListener);
 		addTab("All", actionBar, tabListener);
 		addTab("Selected Items", actionBar, tabListener);
@@ -131,14 +159,15 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 		});
 		gpsReceiver = GpsReceiver.getGpsReceiver(ItemSelectActivity.this);
+
 		GPS_CHECKER = new Thread() {
-			private Handler handler = new Handler();
 
 			@Override
 			public void run() {
 				do {
 					location = gpsReceiver.getLastKnownLocation();
 				} while (location == null);
+				supplierCategories.addAll(ItemController.loadItemsFromDb(ItemSelectActivity.this));
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
@@ -171,54 +200,16 @@ public class ItemSelectActivity extends FragmentActivity {
 		}
 		if ((location = gpsReceiver.getLastKnownLocation()) == null) {
 			progressDialog = ProgressDialog.show(ItemSelectActivity.this, null, "Waiting for GPS...", false);
-			progressDialog.show();
 			if (GPS_CHECKER.getState() == Thread.State.TERMINATED) {
 				GPS_CHECKER.start();
 			}
 			return;
 		}
-		final Order order = new Order(outlet.getOutletId(), UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), outlet.getCityId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
-		new AsyncTask<Order, Void, Boolean>() {
-			ProgressDialog progressDialog;
-
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				progressDialog = new ProgressDialog(ItemSelectActivity.this);
-				progressDialog.setMessage("Syncing Order");
-				progressDialog.setCanceledOnTouchOutside(false);
-				progressDialog.show();
-			}
-
-			@Override
-			protected Boolean doInBackground(Order... params) {
-				Order order = params[0];
-				try {
-					return OrderController.syncOrder(ItemSelectActivity.this, order.getOrderAsJson());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				return false;
-			}
-
-			@Override
-			protected void onPostExecute(Boolean aBoolean) {
-				if (progressDialog != null && progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
-				if (aBoolean) {
-					Toast.makeText(ItemSelectActivity.this, "Order Synced Successfully", Toast.LENGTH_LONG).show();
-				} else {
-					OrderController.saveOrderToDb(ItemSelectActivity.this, order);
-					Toast.makeText(ItemSelectActivity.this, "Order placed in local database", Toast.LENGTH_LONG).show();
-				}
-				Intent homeActivity = new Intent(ItemSelectActivity.this, HomeActivity.class);
-				startActivity(homeActivity);
-				finish();
-			}
-		}.execute(order);
+		Order order = new Order(outlet, UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
+		Intent viewInvoiceActivity = new Intent(ItemSelectActivity.this, ViewInvoiceActivity.class);
+		ViewInvoiceActivity.order = order;
+		startActivity(viewInvoiceActivity);
+		finish();
 	}
 
 	@Override

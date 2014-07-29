@@ -17,13 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import org.json.JSONException;
+import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -36,6 +34,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 
 	private ListView itemList;
 	private EditText inputSearch;
+	private ImageButton btnClear;
 	private ArrayList<Item> items = new ArrayList<Item>();
 	private ArrayList<Item> fixedItems;
 	private MyListAdapter listAdapter;
@@ -53,18 +52,14 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
-		try {
-			ArrayList<Supplier> categories = ItemController.loadItemsFromDb(getActivity());
-			for (Supplier supplier : categories) {
+		ArrayList<SupplierCategory> supplierCategories = ((ItemSelectActivity) getActivity()).getSupplierCategories();
+		for (SupplierCategory supplierCategory : supplierCategories) {
+			for (Supplier supplier : supplierCategory.getSuppliers()) {
 				items.addAll(supplier.getItems());
 			}
-			Collections.sort(items);
-			fixedItems = (ArrayList<Item>) items.clone();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (JSONException ex) {
-			ex.printStackTrace();
 		}
+		Collections.sort(items);
+		fixedItems = (ArrayList<Item>) items.clone();
 	}
 
 	@Override
@@ -160,10 +155,22 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 	private void initialize(View rootView) {
 		itemList = (ListView) rootView.findViewById(R.id.itemList);
 		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+		btnClear = (ImageButton) rootView.findViewById(R.id.btnClear);
+		btnClear.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				btnClearPressed(v);
+			}
+		});
 	}
 	// </editor-fold>
 
+	private void btnClearPressed(View view) {
+		inputSearch.setText("");
+	}
+
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
+		childViewHolder.txtItemDescription.setText(item.getItemDescription());
 		for (OrderDetail orderDetail : orderDetails) {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
@@ -225,7 +232,6 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				childViewHolder = (ChildViewHolder) view.getTag();
 			}
 			Item item = getItem(position);
-			childViewHolder.txtItemDescription.setText(item.getItemDescription());
 			view.setBackgroundColor((position % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 			updateView(childViewHolder, item);
 			return view;
@@ -243,12 +249,12 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				constraint.toString().toLowerCase();
+				String searchTerm = constraint.toString().toLowerCase();
 				FilterResults result = new FilterResults();
 				ArrayList<Item> filteredItems = new ArrayList<Item>();
 				if (constraint != null && constraint.toString().length() > 0) {
 					for (Item item : fixedItems) {
-						if (item.getItemDescription().toLowerCase().contains(constraint)) {
+						if (item.getItemDescription().toLowerCase().startsWith(searchTerm)) {
 							filteredItems.add(item);
 						}
 					}

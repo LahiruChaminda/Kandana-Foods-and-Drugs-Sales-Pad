@@ -109,31 +109,24 @@
                             android:layout_width="0dp"
                             android:layout_weight="1.5"
                             android:layout_height="wrap_content"
-                            android:text="City"
-                            android:textSize="25dp"/>
-                    <Spinner
-                            android:layout_width="0dp"
-                            android:layout_weight="4"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/cityAuto" android:spinnerMode="dialog"/>
-                </LinearLayout>
-                <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:weightSum="5.5" android:padding="5dp"
-                        android:layout_height="0dp">
-                    <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1.5"
-                            android:layout_height="wrap_content"
                             android:text="Outlet"
                             android:textSize="25dp"/>
-                    <Spinner
+                    <LinearLayout
+                            android:orientation="horizontal"
                             android:layout_width="0dp"
                             android:layout_weight="4"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/outletAuto" android:spinnerMode="dialog"/>
+                            android:weightSum="1"
+                            android:layout_height="wrap_content">
+                        <AutoCompleteTextView
+                                android:layout_width="match_parent"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/outletAuto" android:hint="Select Outlet" android:textSize="25dp"/>
+                        <ImageButton
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:id="@+id/btnClear" android:background="@drawable/clean"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
