@@ -19,8 +19,6 @@ import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,10 +30,10 @@ import java.util.Collections;
  */
 public class SelectItemFragment3 extends ItemSelectableFragment {
 
+	public static ArrayList<Item> items;
 	private ListView itemList;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Item> items = new ArrayList<Item>();
 	private ArrayList<Item> fixedItems;
 	private MyListAdapter listAdapter;
 	private ArrayList<OrderDetail> orderDetails;
@@ -51,13 +49,8 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
-		ArrayList<SupplierCategory> supplierCategories = ((ItemSelectActivity) getActivity()).getSupplierCategories();
-		for (SupplierCategory supplierCategory : supplierCategories) {
-			for (Supplier supplier : supplierCategory.getSuppliers()) {
-				items.addAll(supplier.getItems());
-			}
-		}
+		ItemSelectActivity itemSelectActivity = (ItemSelectActivity) getActivity();
+		orderDetails = itemSelectActivity.getOrderDetails();
 		Collections.sort(items);
 		fixedItems = (ArrayList<Item>) items.clone();
 	}
@@ -105,6 +98,8 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final Item item = items.get(childPosition);
+		TextView txtUnitPrice = (TextView) dialog.findViewById(R.id.txtUnitPrice);
+		txtUnitPrice.setText(item.getPrice() + "");
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
 		Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
 		txtItemDescription.setText(item.getItemDescription());
@@ -171,6 +166,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
 		childViewHolder.txtItemDescription.setText(item.getItemDescription());
+		childViewHolder.txtPackSize.setText(item.getPackSize());
 		for (OrderDetail orderDetail : orderDetails) {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
@@ -191,6 +187,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 		ImageView imageView;
 		TextView txtQuantity;
 		TextView txtFreeIssue;
+		TextView txtPackSize;
 	}
 
 	private class MyListAdapter extends BaseAdapter implements Filterable {
@@ -227,6 +224,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				childViewHolder.txtFreeIssue = (TextView) view.findViewById(R.id.txtFreeIssue);
 				childViewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
 				childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
+				childViewHolder.txtPackSize = (TextView) view.findViewById(R.id.txtPackSize);
 				view.setTag(childViewHolder);
 			} else {
 				childViewHolder = (ChildViewHolder) view.getTag();

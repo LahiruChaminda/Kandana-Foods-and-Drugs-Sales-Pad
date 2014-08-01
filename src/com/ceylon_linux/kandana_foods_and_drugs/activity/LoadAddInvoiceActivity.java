@@ -16,11 +16,9 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OutletController;
-import com.ceylon_linux.kandana_foods_and_drugs.model.City;
-import com.ceylon_linux.kandana_foods_and_drugs.model.District;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Route;
+import com.ceylon_linux.kandana_foods_and_drugs.model.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -38,12 +36,14 @@ public class LoadAddInvoiceActivity extends Activity {
 	private ArrayAdapter<District> districtAdapter;
 	private ArrayAdapter<Route> routeAdapter;
 	private ArrayAdapter<Outlet> outletAdapter;
+	private ArrayAdapter<Distributor> distributorAdapter;
 	private Button btnNext;
 	private ImageButton btnClear;
 	private TextView txtDate;
 	private TextView txtTime;
 	private Spinner districtAuto;
 	private Spinner routeAuto;
+	private Spinner distributorAuto;
 	private AutoCompleteTextView outletAuto;
 	private Handler handler;
 	private Timer timer;
@@ -68,6 +68,9 @@ public class LoadAddInvoiceActivity extends Activity {
 
 		outletAdapter = new ArrayAdapter<Outlet>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, outlets);
 		outletAuto.setAdapter(outletAdapter);
+
+		distributorAdapter = new ArrayAdapter<Distributor>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, ItemController.loadDistributorsFromDb(LoadAddInvoiceActivity.this));
+		distributorAuto.setAdapter(distributorAdapter);
 
 		btnClear = (ImageButton) findViewById(R.id.btnClear);
 		btnClear.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +114,7 @@ public class LoadAddInvoiceActivity extends Activity {
 		txtTime = (TextView) findViewById(R.id.txtTime);
 		districtAuto = (Spinner) findViewById(R.id.districtAuto);
 		routeAuto = (Spinner) findViewById(R.id.routeAuto);
+		distributorAuto = (Spinner) findViewById(R.id.distributorAuto);
 		outletAuto = (AutoCompleteTextView) findViewById(R.id.outletAuto);
 		btnNext.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -211,20 +215,35 @@ public class LoadAddInvoiceActivity extends Activity {
 			alert.show();
 			return;
 		}
-		ProgressDialog progressDialog = new ProgressDialog(LoadAddInvoiceActivity.this);
-		progressDialog.setMessage("Loading items from local database");
-		progressDialog.setCanceledOnTouchOutside(false);
-		progressDialog.setCancelable(false);
-		progressDialog.show();
+		new Thread() {
+			private ProgressDialog progressDialog;
+			private Handler handler = new Handler();
 
-		Intent selectItemsActivity = new Intent(LoadAddInvoiceActivity.this, ItemSelectActivity.class);
-		selectItemsActivity.putExtra("outlet", outlet);
-		startActivity(selectItemsActivity);
-		timer.cancel();
-		finish();
-
-		if (progressDialog.isShowing()) {
-			progressDialog.dismiss();
-		}
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog = ProgressDialog.show(LoadAddInvoiceActivity.this, null, "Loading Items...", false);
+					}
+				});
+				int distributorId = ((Distributor) distributorAuto.getSelectedItem()).getDistributorId();
+				SelectItemFragment1.supplierCategories = ItemController.loadSupplierCategoriesFromDb(LoadAddInvoiceActivity.this, distributorId);
+				SelectItemFragment2.suppliers = ItemController.loadSuppliersFromDb(LoadAddInvoiceActivity.this, distributorId);
+				SelectItemFragment3.items = ItemController.loadItemsFromDb(LoadAddInvoiceActivity.this, distributorId);
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog.dismiss();
+						Intent selectItemsActivity = new Intent(LoadAddInvoiceActivity.this, ItemSelectActivity.class);
+						selectItemsActivity.putExtra("outlet", outlet);
+						selectItemsActivity.putExtra("distributor", (Distributor) distributorAuto.getSelectedItem());
+						startActivity(selectItemsActivity);
+						timer.cancel();
+						finish();
+					}
+				});
+			}
+		}.start();
 	}
 }

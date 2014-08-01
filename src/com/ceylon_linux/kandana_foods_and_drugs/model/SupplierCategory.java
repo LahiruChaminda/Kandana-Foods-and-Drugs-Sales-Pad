@@ -10,14 +10,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class SupplierCategory {
+public class SupplierCategory implements Serializable {
 	private int supplierCategoryId;
 	private String supplierCategory;
 	private ArrayList<Supplier> suppliers;
@@ -32,7 +34,7 @@ public class SupplierCategory {
 		if (jsonInstance == null) {
 			return null;
 		}
-		ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
+		HashSet<Supplier> suppliers = new HashSet<Supplier>();
 		JSONArray supplierCollection = jsonInstance.getJSONArray("suppliers");
 		for (int i = 0, SUPPLIER_COLLECTION_SIZE = supplierCollection.length(); i < SUPPLIER_COLLECTION_SIZE; i++) {
 			Supplier supplier = Supplier.parseSupplier(supplierCollection.getJSONObject(i));
@@ -43,7 +45,7 @@ public class SupplierCategory {
 		return (suppliers.size() == 0) ? null : new SupplierCategory(
 			jsonInstance.getInt("supplierCategoryId"),
 			jsonInstance.getString("supplierCategory"),
-			suppliers
+			new ArrayList<Supplier>(suppliers)
 		);
 	}
 
@@ -69,6 +71,20 @@ public class SupplierCategory {
 
 	public void setSuppliers(ArrayList<Supplier> suppliers) {
 		this.suppliers = suppliers;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || SupplierCategory.class != o.getClass()) return false;
+		SupplierCategory that = (SupplierCategory) o;
+		if (supplierCategoryId != that.supplierCategoryId) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return supplierCategoryId;
 	}
 
 	@Override

@@ -10,14 +10,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Supplier {
+public class Supplier implements Serializable {
 
 	private ArrayList<Item> items;
 	private String categoryDescription;
@@ -33,7 +35,7 @@ public class Supplier {
 		if (categoryJsonInstance == null) {
 			return null;
 		}
-		ArrayList<Item> items = new ArrayList<Item>();
+		HashSet<Item> items = new HashSet<Item>();
 		JSONArray itemCollection = categoryJsonInstance.getJSONArray("products");
 		final int ITEM_COLLECTION_SIZE = itemCollection.length();
 		for (int i = 0; i < ITEM_COLLECTION_SIZE; i++) {
@@ -45,7 +47,7 @@ public class Supplier {
 		return (items.size() == 0) ? null : new Supplier(
 			categoryJsonInstance.getInt("supplierId"),
 			categoryJsonInstance.getString("supplierName"),
-			items
+			new ArrayList<Item>(items)
 		);
 	}
 
@@ -71,6 +73,23 @@ public class Supplier {
 
 	public void setCategoryId(int categoryId) {
 		this.categoryId = categoryId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Supplier.class != o.getClass()) return false;
+
+		Supplier supplier = (Supplier) o;
+
+		if (categoryId != supplier.categoryId) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return categoryId;
 	}
 
 	@Override

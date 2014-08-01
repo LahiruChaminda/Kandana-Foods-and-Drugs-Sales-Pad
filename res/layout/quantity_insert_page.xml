@@ -16,6 +16,13 @@
             android:text="Item Description"
             android:id="@+id/txtItemDescription"
             android:gravity="center"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:weightSum="2" android:layout_weight="1" android:padding="3dp"
+                  android:orientation="horizontal">
+        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:textSize="25dp" android:text="Unit Price"
+                  android:gravity="center_vertical"/>
+        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:textSize="25dp"
+                  android:gravity="center_vertical" android:id="@+id/txtUnitPrice"/>
+    </LinearLayout>
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"

@@ -62,7 +62,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 					db.execSQL(trimmedQuery);
 				}
 			}
-			db.execSQL("PRAGMA foreign_keys = ON;");
+			db.execSQL("PRAGMA foreign_keys = ON");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -80,7 +80,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 		}
 		atomicInteger.incrementAndGet();
 		SQLiteDatabase writableDatabase = super.getWritableDatabase();
-		writableDatabase.execSQL("PRAGMA foreign_keys = ON;");
+		writableDatabase.execSQL("PRAGMA foreign_keys = ON");
 		return writableDatabase;
 	}
 

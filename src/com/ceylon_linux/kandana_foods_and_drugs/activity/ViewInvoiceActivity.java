@@ -135,6 +135,8 @@ public class ViewInvoiceActivity extends Activity {
 	public void onBackPressed() {
 		Intent itemSelectActivity = new Intent(ViewInvoiceActivity.this, ItemSelectActivity.class);
 		itemSelectActivity.putExtra("order", order);
+		startActivity(itemSelectActivity);
+		finish();
 	}
 
 	private void btnCancelClicked(View v) {
@@ -180,6 +182,14 @@ public class ViewInvoiceActivity extends Activity {
 					OrderController.saveOrderToDb(ViewInvoiceActivity.this, order);
 					Toast.makeText(ViewInvoiceActivity.this, "Order placed in local database", Toast.LENGTH_LONG).show();
 				}
+
+				//Free Up Unnecessary Memory
+				SelectItemFragment1.supplierCategories = null;
+				SelectItemFragment2.suppliers = null;
+				SelectItemFragment3.items = null;
+				order = null;
+				System.gc();
+
 				Intent homeActivity = new Intent(ViewInvoiceActivity.this, HomeActivity.class);
 				startActivity(homeActivity);
 				finish();

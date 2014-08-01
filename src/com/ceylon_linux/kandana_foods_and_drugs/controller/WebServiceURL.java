@@ -24,7 +24,7 @@ abstract class WebServiceURL {
 	protected WebServiceURL() {
 	}
 
-	protected static final class CategoryURLPack {
+	protected static final class DistributorURLPack {
 
 		public static final HashMap<String, Object> getCategoryParameters(int positionId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -32,14 +32,7 @@ abstract class WebServiceURL {
 			return parameters;
 		}
 
-		public static final HashMap<String, Object> getFreeIssueParameters() {
-			//HashMap<String, Object> parameters = new HashMap<String, Object>();
-			//parameters.put("userId", positionId);
-			return null;
-		}
-
-		public static final String GET_ITEMS_AND_CATEGORIES = webServiceURL + "getProducts2";
-		public static final String GET_FREE_ISSUE_RATIOS = webServiceURL + "getFreeItem";
+		public static final String GET_DISTRIBUTORS = webServiceURL + "getProducts";
 	}
 
 	protected static final class UserURLPack {

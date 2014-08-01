@@ -30,7 +30,7 @@
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
-            android:weightSum="10"
+            android:weightSum="11.57"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:background="#ff85f6ff">
         <TextView
@@ -47,16 +47,23 @@
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Quantity"
+                android:text="Qty"
                 android:gravity="right"
                 android:layout_weight="1.57"
                 android:textSize="20dp"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Free Issue"
+                android:text="F.Qty"
                 android:gravity="right"
                 android:layout_weight="1.92"
+                android:textSize="20dp"/>
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="P.Size"
+                android:gravity="right"
+                android:layout_weight="1.57"
                 android:textSize="20dp"/>
     </LinearLayout>
     <ExpandableListView

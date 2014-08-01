@@ -20,7 +20,6 @@ import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 
 import java.util.ArrayList;
 
@@ -31,10 +30,10 @@ import java.util.ArrayList;
  */
 public class SelectItemFragment2 extends ItemSelectableFragment {
 
+	public static ArrayList<Supplier> suppliers;
 	private ExpandableListView itemList;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Supplier> suppliers = new ArrayList<Supplier>();
 	private ArrayList<Supplier> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
@@ -51,11 +50,8 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		orderDetails = ((ItemSelectActivity) getActivity()).getOrderDetails();
-		ArrayList<SupplierCategory> supplierCategories = ((ItemSelectActivity) getActivity()).getSupplierCategories();
-		for (SupplierCategory supplierCategory : supplierCategories) {
-			suppliers.addAll(supplierCategory.getSuppliers());
-		}
+		ItemSelectActivity itemSelectActivity = (ItemSelectActivity) getActivity();
+		orderDetails = itemSelectActivity.getOrderDetails();
 		fixedCategories = (ArrayList<Supplier>) suppliers.clone();
 	}
 
@@ -97,6 +93,8 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final Item item = suppliers.get(groupPosition).getItems().get(childPosition);
+		TextView txtUnitPrice = (TextView) dialog.findViewById(R.id.txtUnitPrice);
+		txtUnitPrice.setText(item.getPrice() + "");
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
 		Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
 		txtItemDescription.setText(item.getItemDescription());
@@ -188,6 +186,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		ImageView imageView;
 		TextView txtQuantity;
 		TextView txtFreeIssue;
+		TextView txtPackSize;
 	}
 
 	private class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
@@ -255,12 +254,14 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 				childViewHolder.txtFreeIssue = (TextView) view.findViewById(R.id.txtFreeIssue);
 				childViewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
 				childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
+				childViewHolder.txtPackSize = (TextView) view.findViewById(R.id.txtPackSize);
 				view.setTag(childViewHolder);
 			} else {
 				childViewHolder = (ChildViewHolder) view.getTag();
 			}
 			Item item = getChild(groupPosition, childPosition);
 			childViewHolder.txtItemDescription.setText(item.getItemDescription());
+			childViewHolder.txtPackSize.setText(item.getPackSize());
 			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 			updateView(childViewHolder, item);
 			return view;

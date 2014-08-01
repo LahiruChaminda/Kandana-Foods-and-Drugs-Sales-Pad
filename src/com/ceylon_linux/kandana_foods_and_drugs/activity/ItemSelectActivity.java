@@ -21,12 +21,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Distributor;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
-import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
 import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
 
@@ -50,8 +49,8 @@ public class ItemSelectActivity extends FragmentActivity {
 	private Outlet outlet;
 	private Button finishButton;
 	private Handler handler;
-	private ArrayList<SupplierCategory> supplierCategories;
 	private ProgressDialog progressDialog;
+	private Distributor distributor;
 
 	private ArrayList<ItemSelectableFragment> itemSelectableFragments;
 
@@ -59,8 +58,8 @@ public class ItemSelectActivity extends FragmentActivity {
 		return orderDetails;
 	}
 
-	ArrayList<SupplierCategory> getSupplierCategories() {
-		return supplierCategories;
+	Distributor getDistributor() {
+		return distributor;
 	}
 
 	@Override
@@ -78,31 +77,9 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 		};
 		handler = new Handler();
-		supplierCategories = ItemController.loadItemsFromDb(ItemSelectActivity.this);
-		new Thread() {
-			@Override
-			public void run() {
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						progressDialog = ProgressDialog.show(ItemSelectActivity.this, null, "Please Wait...");
-					}
-				});
-
-
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						if (progressDialog != null && progressDialog.isShowing()) {
-							progressDialog.dismiss();
-						}
-					}
-				});
-			}
-		}.start();
-
-		actionBar = getActionBar();
 		outlet = (Outlet) getIntent().getExtras().get("outlet");
+		distributor = (Distributor) getIntent().getExtras().get("distributor");
+		actionBar = getActionBar();
 		fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
 			@Override
 			public Fragment getItem(int position) {
@@ -167,7 +144,6 @@ public class ItemSelectActivity extends FragmentActivity {
 				do {
 					location = gpsReceiver.getLastKnownLocation();
 				} while (location == null);
-				supplierCategories.addAll(ItemController.loadItemsFromDb(ItemSelectActivity.this));
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
@@ -207,6 +183,7 @@ public class ItemSelectActivity extends FragmentActivity {
 		}
 		Order order = new Order(outlet, UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
 		Intent viewInvoiceActivity = new Intent(ItemSelectActivity.this, ViewInvoiceActivity.class);
+		//viewInvoiceActivity.putExtra("order",order);
 		ViewInvoiceActivity.order = order;
 		startActivity(viewInvoiceActivity);
 		finish();

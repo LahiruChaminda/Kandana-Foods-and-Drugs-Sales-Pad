@@ -32,9 +32,9 @@
                     <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1.5"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:text="Date"
-                            android:textSize="25dp"/>
+                            android:textSize="25dp" android:gravity="center_vertical"/>
                     <TextView
                             android:layout_width="0dp"
                             android:layout_weight="4"
@@ -52,9 +52,9 @@
                     <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1.5"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:text="Time"
-                            android:textSize="25dp"/>
+                            android:textSize="25dp" android:gravity="center_vertical"/>
                     <TextView
                             android:layout_width="0dp"
                             android:layout_weight="4"
@@ -72,9 +72,9 @@
                     <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1.5"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:text="District"
-                            android:textSize="25dp"/>
+                            android:textSize="25dp" android:gravity="center_vertical"/>
                     <Spinner
                             android:layout_width="0dp"
                             android:layout_weight="4"
@@ -90,9 +90,9 @@
                     <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1.5"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:text="Route"
-                            android:textSize="25dp"/>
+                            android:textSize="25dp" android:gravity="center_vertical"/>
                     <Spinner
                             android:layout_width="0dp"
                             android:layout_weight="4"
@@ -108,9 +108,9 @@
                     <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1.5"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:text="Outlet"
-                            android:textSize="25dp"/>
+                            android:textSize="25dp" android:gravity="center_vertical"/>
                     <LinearLayout
                             android:orientation="horizontal"
                             android:layout_width="0dp"
@@ -127,6 +127,24 @@
                                 android:layout_height="40dp"
                                 android:id="@+id/btnClear" android:background="@drawable/clean"/>
                     </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent" android:padding="5dp"
+                        android:layout_weight="1"
+                        android:weightSum="5.5"
+                        android:layout_height="0dp">
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.5"
+                            android:layout_height="match_parent"
+                            android:text="Distributor"
+                            android:textSize="25dp" android:gravity="center_vertical"/>
+                    <Spinner
+                            android:layout_width="0dp"
+                            android:layout_weight="4"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/distributorAuto" android:spinnerMode="dialog"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

@@ -20,6 +20,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OutletController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
+import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
 
@@ -78,13 +79,13 @@ public class LoginActivity extends Activity {
 			protected void onPreExecute() {
 				super.onPreExecute();
 				progressDialog = ProgressDialog.show(LoginActivity.this, null, "Downloading Data...", false);
-				//progressDialog.show();
 			}
 
 			@Override
 			protected User doInBackground(Void... voids) {
-				User user = null;
+				User user;
 				try {
+					SQLiteDatabaseHelper.dropDatabase(LoginActivity.this);
 					publishProgress("Authenticating...");
 					user = UserController.authenticate(LoginActivity.this, inputUserName.getText().toString().trim(), inputPassword.getText().toString().trim());
 					if (user != null && user.isValidUser()) {
