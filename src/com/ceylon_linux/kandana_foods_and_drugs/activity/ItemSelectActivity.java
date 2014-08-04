@@ -67,17 +67,22 @@ public class ItemSelectActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.item_select_page);
 		viewPager = (ViewPager) findViewById(R.id.viewPager);
-		orderDetails = new ArrayList<OrderDetail>() {
-			@Override
-			public boolean add(OrderDetail object) {
-				if (orderDetails.contains(object)) {
-					orderDetails.remove(object);
+		if (getIntent().hasExtra("editOrder")) {
+			orderDetails = ViewInvoiceActivity.order.getOrderDetails();
+		} else {
+			orderDetails = new ArrayList<OrderDetail>() {
+				@Override
+				public boolean add(OrderDetail object) {
+					if (orderDetails.contains(object)) {
+						orderDetails.remove(object);
+					}
+					return super.add(object);
 				}
-				return super.add(object);
-			}
-		};
+			};
+		}
 		handler = new Handler();
 		outlet = (Outlet) getIntent().getExtras().get("outlet");
+
 		distributor = (Distributor) getIntent().getExtras().get("distributor");
 		actionBar = getActionBar();
 		fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -181,8 +186,10 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 			return;
 		}
-		Order order = new Order(outlet, UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails);
+		Order order = new Order(outlet, UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails, distributor.getDistributorId());
 		Intent viewInvoiceActivity = new Intent(ItemSelectActivity.this, ViewInvoiceActivity.class);
+		viewInvoiceActivity.putExtra("outlet", outlet);
+		viewInvoiceActivity.putExtra("distributor", distributor);
 		//viewInvoiceActivity.putExtra("order",order);
 		ViewInvoiceActivity.order = order;
 		startActivity(viewInvoiceActivity);

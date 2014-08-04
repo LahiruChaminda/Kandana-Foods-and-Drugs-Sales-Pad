@@ -85,7 +85,8 @@ CREATE TABLE tbl_order (
     total REAL,
     batteryLevel INTEGER NOT NULL,
     longitude REAL NOT NULL,
-    latitude REAL NOT NULL
+    latitude REAL NOT NULL,
+    distributorId INT
 );
 
 CREATE TABLE tbl_order_detail (

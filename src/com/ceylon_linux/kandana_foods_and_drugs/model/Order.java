@@ -32,8 +32,9 @@ public class Order implements Serializable {
 	private double latitude;
 	private int batteryLevel;
 	private ArrayList<OrderDetail> orderDetails;
+	private int distributorId;
 
-	public Order(long orderId, int outletId, int positionId, int routeId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails) {
+	public Order(long orderId, int outletId, int positionId, int routeId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails, int distributorId) {
 		this.orderId = orderId;
 		this.outletId = outletId;
 		this.positionId = positionId;
@@ -43,9 +44,10 @@ public class Order implements Serializable {
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.orderDetails = orderDetails;
+		this.distributorId = distributorId;
 	}
 
-	public Order(Outlet outlet, int positionId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails) {
+	public Order(Outlet outlet, int positionId, int batteryLevel, long invoiceTime, double longitude, double latitude, ArrayList<OrderDetail> orderDetails, int distributorId) {
 		this.outletId = outlet.getOutletId();
 		this.positionId = positionId;
 		this.outletDescription = outlet.getOutletName();
@@ -55,6 +57,7 @@ public class Order implements Serializable {
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.orderDetails = orderDetails;
+		this.distributorId = distributorId;
 	}
 
 	public JSONObject getOrderAsJson() {
@@ -73,6 +76,7 @@ public class Order implements Serializable {
 		invoiceParams.put("latitude", latitude);
 		invoiceParams.put("batteryLevel", batteryLevel);
 		invoiceParams.put("timestamp", invoiceTime);
+		invoiceParams.put("distributorId", distributorId);
 
 		JSONArray orderDetailsJsonArray = new JSONArray();
 		for (OrderDetail orderDetail : getOrderDetails()) {
@@ -161,6 +165,14 @@ public class Order implements Serializable {
 
 	public void setOrderDetails(ArrayList<OrderDetail> orderDetails) {
 		this.orderDetails = orderDetails;
+	}
+
+	public int getDistributorId() {
+		return distributorId;
+	}
+
+	public void setDistributorId(int distributorId) {
+		this.distributorId = distributorId;
 	}
 
 	@Override

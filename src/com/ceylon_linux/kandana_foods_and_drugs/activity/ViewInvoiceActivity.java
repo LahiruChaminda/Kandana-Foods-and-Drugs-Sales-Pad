@@ -16,8 +16,10 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Distributor;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -42,13 +44,18 @@ public class ViewInvoiceActivity extends Activity {
 	private Button btnCancel;
 	private Button btnBack;
 	private ArrayList<OrderDetail> orderDetails;
+	private Distributor distributor;
+	private Outlet outlet;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_invoice_activity);
 		initialize();
-		//order = (Order) getIntent().getExtras().get("order");
+
+		outlet = (Outlet) getIntent().getExtras().get("outlet");
+		distributor = (Distributor) getIntent().getExtras().get("distributor");
+
 		orderDetails = order.getOrderDetails();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
 		simpleDateFormat.applyPattern("EEEE dd MMM, yyyy");
@@ -134,7 +141,9 @@ public class ViewInvoiceActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		Intent itemSelectActivity = new Intent(ViewInvoiceActivity.this, ItemSelectActivity.class);
-		itemSelectActivity.putExtra("order", order);
+		itemSelectActivity.putExtra("editOrder", 1);
+		itemSelectActivity.putExtra("outlet", outlet);
+		itemSelectActivity.putExtra("distributor", distributor);
 		startActivity(itemSelectActivity);
 		finish();
 	}

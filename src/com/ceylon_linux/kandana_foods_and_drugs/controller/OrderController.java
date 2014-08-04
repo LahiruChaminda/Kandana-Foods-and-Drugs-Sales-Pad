@@ -46,7 +46,8 @@ public class OrderController extends AbstractController {
 				0,//total
 				order.getBatteryLevel(),
 				order.getLongitude(),
-				order.getLatitude()
+				order.getLatitude(),
+				order.getDistributorId()
 			});
 			SQLiteStatement orderDetailInsertStatement = database.compileStatement(orderDetailInsertSQL);
 			for (OrderDetail orderDetail : order.getOrderDetails()) {
@@ -76,7 +77,7 @@ public class OrderController extends AbstractController {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		try {
-			String orderSelectSql = "select tbl_order.orderId, tbl_order.outletId, tbl_order.routeId, tbl_order.positionId, tbl_order.invoiceTime, tbl_order.total, tbl_order.batteryLevel, tbl_order.longitude, tbl_order.latitude, tbl_outlet.outletType from tbl_order inner join tbl_outlet on tbl_outlet.outletId=tbl_order.outletId";
+			String orderSelectSql = "select tbl_order.orderId, tbl_order.outletId, tbl_order.routeId, tbl_order.positionId, tbl_order.invoiceTime, tbl_order.total, tbl_order.batteryLevel, tbl_order.longitude, tbl_order.latitude, tbl_outlet.outletType, distributorId from tbl_order inner join tbl_outlet on tbl_outlet.outletId=tbl_order.outletId";
 			String orderDetailSelectSql = "select tbl_order_detail.itemId, tbl_order_detail.price, tbl_order_detail.discount, tbl_order_detail.quantity, tbl_order_detail.freeQuantity, tbl_item.itemDescription, tbl_order_detail.returnQuantity, tbl_order_detail.replaceQuantity, tbl_order_detail.sampleQuantity from tbl_order_detail inner join tbl_item on tbl_item.itemId=tbl_order_detail.itemId where orderId=?";
 			Cursor orderCursor = DbHandler.performRawQuery(database, orderSelectSql, null);
 			ArrayList<Order> orders = new ArrayList<Order>();
@@ -90,6 +91,7 @@ public class OrderController extends AbstractController {
 				int batteryLevel = orderCursor.getInt(6);
 				double longitude = orderCursor.getDouble(7);
 				double latitude = orderCursor.getDouble(8);
+				int distributorId = orderCursor.getInt(9);
 				ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 				Cursor orderDetailsCursor = DbHandler.performRawQuery(database, orderDetailSelectSql, new Object[]{orderId});
 				for (orderDetailsCursor.moveToFirst(); !orderDetailsCursor.isAfterLast(); orderDetailsCursor.moveToNext()) {
@@ -103,7 +105,7 @@ public class OrderController extends AbstractController {
 					orderDetails.add(orderDetail);
 				}
 				orderDetailsCursor.close();
-				Order order = new Order(orderId, outletId, positionId, routeId, batteryLevel, invoiceTime, longitude, latitude, orderDetails);
+				Order order = new Order(orderId, outletId, positionId, routeId, batteryLevel, invoiceTime, longitude, latitude, orderDetails, distributorId);
 				orders.add(order);
 			}
 			orderCursor.close();
