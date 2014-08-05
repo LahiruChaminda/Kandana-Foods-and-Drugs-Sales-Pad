@@ -187,6 +187,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		TextView txtQuantity;
 		TextView txtFreeIssue;
 		TextView txtPackSize;
+		TextView txtStock;
 	}
 
 	private class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
@@ -255,12 +256,14 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 				childViewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
 				childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
 				childViewHolder.txtPackSize = (TextView) view.findViewById(R.id.txtPackSize);
+				childViewHolder.txtStock = (TextView) view.findViewById(R.id.txtStock);
 				view.setTag(childViewHolder);
 			} else {
 				childViewHolder = (ChildViewHolder) view.getTag();
 			}
 			Item item = getChild(groupPosition, childPosition);
 			childViewHolder.txtItemDescription.setText(item.getItemDescription());
+			childViewHolder.txtStock.setText(item.getStock() + "");
 			childViewHolder.txtPackSize.setText(item.getPackSize());
 			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 			updateView(childViewHolder, item);

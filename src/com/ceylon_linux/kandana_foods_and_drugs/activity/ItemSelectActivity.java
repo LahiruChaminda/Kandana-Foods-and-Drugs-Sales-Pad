@@ -190,7 +190,6 @@ public class ItemSelectActivity extends FragmentActivity {
 		Intent viewInvoiceActivity = new Intent(ItemSelectActivity.this, ViewInvoiceActivity.class);
 		viewInvoiceActivity.putExtra("outlet", outlet);
 		viewInvoiceActivity.putExtra("distributor", distributor);
-		//viewInvoiceActivity.putExtra("order",order);
 		ViewInvoiceActivity.order = order;
 		startActivity(viewInvoiceActivity);
 		finish();

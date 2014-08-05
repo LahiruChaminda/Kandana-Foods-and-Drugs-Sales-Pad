@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
-              android:weightSum="11.57"
+              android:weightSum="13.14"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
     <TextView
@@ -40,5 +40,13 @@
             android:gravity="right"
             android:layout_weight="1.57"
             android:id="@+id/txtPackSize"
+            android:textSize="20dp"/>
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:gravity="right"
+            android:layout_weight="1.57"
+            android:id="@+id/txtStock"
             android:textSize="20dp"/>
 </LinearLayout>

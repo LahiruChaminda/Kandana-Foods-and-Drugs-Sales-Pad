@@ -26,7 +26,7 @@
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
-            android:weightSum="11.57"
+            android:weightSum="13.14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:background="#ff85f6ff">
         <TextView
@@ -58,6 +58,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="P.Size"
+                android:gravity="right"
+                android:layout_weight="1.57"
+                android:textSize="20dp"/>
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Stock"
                 android:gravity="right"
                 android:layout_weight="1.57"
                 android:textSize="20dp"/>

@@ -167,6 +167,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
 		childViewHolder.txtItemDescription.setText(item.getItemDescription());
 		childViewHolder.txtPackSize.setText(item.getPackSize());
+		childViewHolder.txtStock.setText(item.getStock() + "");
 		for (OrderDetail orderDetail : orderDetails) {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
@@ -188,6 +189,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 		TextView txtQuantity;
 		TextView txtFreeIssue;
 		TextView txtPackSize;
+		TextView txtStock;
 	}
 
 	private class MyListAdapter extends BaseAdapter implements Filterable {
@@ -225,6 +227,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				childViewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
 				childViewHolder.txtQuantity = (TextView) view.findViewById(R.id.txtQuantity);
 				childViewHolder.txtPackSize = (TextView) view.findViewById(R.id.txtPackSize);
+				childViewHolder.txtStock = (TextView) view.findViewById(R.id.txtStock);
 				view.setTag(childViewHolder);
 			} else {
 				childViewHolder = (ChildViewHolder) view.getTag();
