@@ -1,66 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <TextView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="User Name"
-            android:layout_gravity="center_horizontal"
-            android:padding="5dp"
-            android:textSize="25dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/inputUserName"
-            android:layout_gravity="center_horizontal"
-            android:padding="5dp"
-            android:hint="User Name"
-            android:textSize="25dp"
-            android:layout_marginLeft="5dp"
-            style="@android:style/Widget.EditText"
-            android:layout_marginRight="5dp"/>
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Password"
-            android:padding="5dp"
-            android:textSize="25dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/inputPassword"
-            android:hint="Password"
-            style="@android:style/Widget.EditText"
-            android:padding="5dp"
-            android:textSize="25dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp" android:inputType="textPassword"/>
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Login"
-            android:id="@+id/btnLogin"
-            android:padding="5dp"
-            android:textSize="25dp"
-            style="@android:style/Widget.Button"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Exit"
-            android:id="@+id/btnExit"
-            style="@android:style/Widget.Button"
-            android:padding="5dp"
-            android:textSize="25dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
-</LinearLayout>
+            android:layout_height="match_parent">
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="User Name"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:textSize="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/inputUserName"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:hint="User Name"
+                android:textSize="25dp"
+                android:layout_marginLeft="5dp"
+                style="@android:style/Widget.EditText"
+                android:layout_marginRight="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:padding="5dp"
+                android:textSize="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/inputPassword"
+                android:hint="Password"
+                style="@android:style/Widget.EditText"
+                android:padding="5dp"
+                android:textSize="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp" android:inputType="textPassword"/>
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:id="@+id/btnLogin"
+                android:padding="5dp"
+                android:textSize="25dp"
+                style="@android:style/Widget.Button"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Exit"
+                android:id="@+id/btnExit"
+                style="@android:style/Widget.Button"
+                android:padding="5dp"
+                android:textSize="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
+    </LinearLayout>
+</ScrollView>
