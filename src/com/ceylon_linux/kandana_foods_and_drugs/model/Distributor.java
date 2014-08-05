@@ -24,9 +24,9 @@ import java.util.HashSet;
 public class Distributor implements Serializable {
 	private int distributorId;
 	private String distributorName;
-	private ArrayList<SupplierCategory> supplierCategories;
+	private ArrayList<Supplier> supplierCategories;
 
-	public Distributor(int distributorId, String distributorName, ArrayList<SupplierCategory> supplierCategories) {
+	public Distributor(int distributorId, String distributorName, ArrayList<Supplier> supplierCategories) {
 		this.distributorId = distributorId;
 		this.distributorName = distributorName;
 		this.supplierCategories = supplierCategories;
@@ -38,17 +38,17 @@ public class Distributor implements Serializable {
 	}
 
 	public static final Distributor parseDistributor(JSONObject distributorJsonInstance) throws JSONException, IOException {
-		JSONArray supplierCategoryJson = distributorJsonInstance.getJSONArray("supplier_type");
+		JSONArray supplierJsonCollection = distributorJsonInstance.getJSONArray("supplier");
 		int distributorId = distributorJsonInstance.getInt("u_id");
 		String distributorName = distributorJsonInstance.getString("u_name");
-		HashSet<SupplierCategory> supplierCategories = new HashSet<SupplierCategory>();
-		for (int i = 0, SUPPLIER_CATEGORY_LENGTH = supplierCategoryJson.length(); i < SUPPLIER_CATEGORY_LENGTH; i++) {
-			SupplierCategory supplierCategory = SupplierCategory.parseSupplierCategory(supplierCategoryJson.getJSONObject(i));
-			if (supplierCategory != null) {
-				supplierCategories.add(supplierCategory);
+		HashSet<Supplier> suppliers = new HashSet<Supplier>();
+		for (int i = 0, SUPPLIER_LENGTH = supplierJsonCollection.length(); i < SUPPLIER_LENGTH; i++) {
+			Supplier supplier = Supplier.parseSupplier(supplierJsonCollection.getJSONObject(i));
+			if (supplier != null) {
+				suppliers.add(supplier);
 			}
 		}
-		return (supplierCategories.size() == 0) ? null : new Distributor(distributorId, distributorName, new ArrayList<SupplierCategory>(supplierCategories));
+		return (suppliers.size() == 0) ? null : new Distributor(distributorId, distributorName, new ArrayList<Supplier>(suppliers));
 	}
 
 	public int getDistributorId() {
@@ -67,15 +67,15 @@ public class Distributor implements Serializable {
 		this.distributorName = distributorName;
 	}
 
-	public ArrayList<SupplierCategory> getSupplierCategories() {
+	public ArrayList<Supplier> getSupplierCategories() {
 		return supplierCategories;
 	}
 
-	public void setSupplierCategories(ArrayList<SupplierCategory> supplierCategories) {
+	public void setSupplierCategories(ArrayList<Supplier> supplierCategories) {
 		this.supplierCategories = supplierCategories;
 	}
 
-	public ArrayList<SupplierCategory> getSupplierCategories(Context context) {
+	public ArrayList<Supplier> getSupplierCategories(Context context) {
 		return supplierCategories = ItemController.loadSupplierCategoriesFromDb(context, distributorId);
 	}
 

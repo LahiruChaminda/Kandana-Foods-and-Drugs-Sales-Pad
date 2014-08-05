@@ -17,9 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
 
 import java.util.ArrayList;
 
@@ -30,11 +30,11 @@ import java.util.ArrayList;
  */
 public class SelectItemFragment2 extends ItemSelectableFragment {
 
-	public static ArrayList<Supplier> suppliers;
+	public static ArrayList<Category> categories;
 	private ExpandableListView itemList;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Supplier> fixedCategories;
+	private ArrayList<Category> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
 	private MyExpandableListAdapter myExpandableListAdapter;
@@ -52,7 +52,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		super.onCreate(savedInstanceState);
 		ItemSelectActivity itemSelectActivity = (ItemSelectActivity) getActivity();
 		orderDetails = itemSelectActivity.getOrderDetails();
-		fixedCategories = (ArrayList<Supplier>) suppliers.clone();
+		fixedCategories = (ArrayList<Category>) categories.clone();
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
-		final Item item = suppliers.get(groupPosition).getItems().get(childPosition);
+		final Item item = categories.get(groupPosition).getItems().get(childPosition);
 		TextView txtUnitPrice = (TextView) dialog.findViewById(R.id.txtUnitPrice);
 		txtUnitPrice.setText(item.getPrice() + "");
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
@@ -204,22 +204,22 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 		@Override
 		public int getGroupCount() {
-			return suppliers.size();
+			return categories.size();
 		}
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			return suppliers.get(groupPosition).getItems().size();
+			return categories.get(groupPosition).getItems().size();
 		}
 
 		@Override
-		public Supplier getGroup(int groupPosition) {
-			return suppliers.get(groupPosition);
+		public Category getGroup(int groupPosition) {
+			return categories.get(groupPosition);
 		}
 
 		@Override
 		public Item getChild(int groupPosition, int childPosition) {
-			return suppliers.get(groupPosition).getItems().get(childPosition);
+			return categories.get(groupPosition).getItems().get(childPosition);
 		}
 
 		@Override
@@ -295,17 +295,17 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				String searchTerm = constraint.toString().toLowerCase();
 				FilterResults result = new FilterResults();
-				ArrayList<Supplier> filteredCategories = new ArrayList<Supplier>();
+				ArrayList<Category> filteredCategories = new ArrayList<Category>();
 				if (constraint != null && constraint.toString().length() > 0) {
-					for (Supplier supplier : fixedCategories) {
+					for (Category category : fixedCategories) {
 						ArrayList<Item> items = new ArrayList<Item>();
-						for (Item item : supplier.getItems()) {
+						for (Item item : category.getItems()) {
 							if (item.getItemDescription().toLowerCase().startsWith(searchTerm)) {
 								items.add(item);
 							}
 						}
 						if (items.size() != 0) {
-							filteredCategories.add(new Supplier(supplier.getCategoryId(), supplier.getCategoryDescription(), items));
+							filteredCategories.add(new Category(category.getCategoryId(), category.getCategoryDescription(), items));
 						}
 					}
 				} else {
@@ -318,7 +318,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				suppliers = (ArrayList<Supplier>) results.values;
+				categories = (ArrayList<Category>) results.values;
 				notifyDataSetChanged();
 			}
 		}

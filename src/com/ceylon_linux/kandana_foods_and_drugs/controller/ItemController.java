@@ -61,22 +61,22 @@ public class ItemController extends AbstractController {
 					distributorId = distributor.getDistributorId(),
 					distributor.getDistributorName()
 				});
-				for (SupplierCategory supplierCategory : distributor.getSupplierCategories()) {
+				for (Supplier supplier : distributor.getSupplierCategories()) {
 					int supplierCategoryId;
 					DbHandler.performExecuteInsert(supplierCategoryStatement, new Object[]{
-						supplierCategoryId = supplierCategory.getSupplierCategoryId(),
-						supplierCategory.getSupplierCategory(),
+						supplierCategoryId = supplier.getSupplierCategoryId(),
+						supplier.getSupplierCategory(),
 						distributorId
 					});
-					for (Supplier supplier : supplierCategory.getSuppliers()) {
+					for (Category category : supplier.getCategories()) {
 						int supplierId;
 						DbHandler.performExecuteInsert(supplierStatement, new Object[]{
-							supplierId = supplier.getCategoryId(),
+							supplierId = category.getCategoryId(),
 							supplierCategoryId,
-							supplier.getCategoryDescription(),
+							category.getCategoryDescription(),
 							distributorId
 						});
-						for (Item item : supplier.getItems()) {
+						for (Item item : category.getItems()) {
 							int itemId = item.getItemId();
 							Object[] itemParameters = {
 								itemId,
@@ -118,10 +118,10 @@ public class ItemController extends AbstractController {
 		}
 	}
 
-	public static ArrayList<SupplierCategory> loadSupplierCategoriesFromDb(Context context, int distributorId) {
+	public static ArrayList<Supplier> loadSupplierCategoriesFromDb(Context context, int distributorId) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		HashSet<SupplierCategory> supplierCategories = new HashSet<SupplierCategory>();
+		HashSet<Supplier> supplierCategories = new HashSet<Supplier>();
 		String supplierCategorySql = "select supplierCategoryId,supplierCategory from tbl_supplier_category where distributorId=?";
 		String supplierSql = "select supplierId,supplierName from tbl_supplier where supplierCategoryId=?";
 		String itemSql = "select itemId,itemCode,itemDescription,price,packSize,stock from tbl_item where supplierId=?";
@@ -129,7 +129,7 @@ public class ItemController extends AbstractController {
 		for (supplierCategoryCursor.moveToFirst(); !supplierCategoryCursor.isAfterLast(); supplierCategoryCursor.moveToNext()) {
 			int supplierCategoryId;
 			Cursor supplierCursor = DbHandler.performRawQuery(database, supplierSql, new Object[]{supplierCategoryId = supplierCategoryCursor.getInt(0)});
-			HashSet<Supplier> suppliers = new HashSet<Supplier>();
+			HashSet<Category> categories = new HashSet<Category>();
 			for (supplierCursor.moveToFirst(); !supplierCursor.isAfterLast(); supplierCursor.moveToNext()) {
 				int supplierId;
 				String supplierDescription = supplierCursor.getString(1);
@@ -146,25 +146,25 @@ public class ItemController extends AbstractController {
 					));
 				}
 				itemCursor.close();
-				suppliers.add(new Supplier(supplierId, supplierDescription, new ArrayList<Item>(items)));
+				categories.add(new Category(supplierId, supplierDescription, new ArrayList<Item>(items)));
 			}
 			supplierCursor.close();
 			String supplierCategoryDescription = supplierCategoryCursor.getString(1);
-			SupplierCategory supplierCategory = new SupplierCategory(supplierCategoryId, supplierCategoryDescription, new ArrayList<Supplier>(suppliers));
-			supplierCategories.add(supplierCategory);
+			Supplier supplier = new Supplier(supplierCategoryId, supplierCategoryDescription, new ArrayList<Category>(categories));
+			supplierCategories.add(supplier);
 		}
 		supplierCategoryCursor.close();
 		databaseHelper.close();
-		return new ArrayList<SupplierCategory>(supplierCategories);
+		return new ArrayList<Supplier>(supplierCategories);
 	}
 
-	public static ArrayList<Supplier> loadSuppliersFromDb(Context context, int distributorId) {
+	public static ArrayList<Category> loadSuppliersFromDb(Context context, int distributorId) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		String supplierSql = "select ts.supplierId, ts.supplierName from tbl_supplier as ts inner join tbl_supplier_category as tsc on ts.distributorId = tsc.distributorId where tsc.distributorId=?";
 		String itemSql = "select itemId,itemCode,itemDescription,price,packSize,stock from tbl_item where supplierId=?";
 		Cursor supplierCursor = DbHandler.performRawQuery(database, supplierSql, new Object[]{distributorId});
-		HashSet<Supplier> suppliers = new HashSet<Supplier>();
+		HashSet<Category> categories = new HashSet<Category>();
 		for (supplierCursor.moveToFirst(); !supplierCursor.isAfterLast(); supplierCursor.moveToNext()) {
 			int supplierId;
 			String supplierDescription = supplierCursor.getString(1);
@@ -181,11 +181,11 @@ public class ItemController extends AbstractController {
 				));
 			}
 			itemCursor.close();
-			suppliers.add(new Supplier(supplierId, supplierDescription, new ArrayList<Item>(items)));
+			categories.add(new Category(supplierId, supplierDescription, new ArrayList<Item>(items)));
 		}
 		supplierCursor.close();
 		databaseHelper.close();
-		return new ArrayList<Supplier>(suppliers);
+		return new ArrayList<Category>(categories);
 	}
 
 	public static ArrayList<Item> loadItemsFromDb(Context context, int distributorId) {
