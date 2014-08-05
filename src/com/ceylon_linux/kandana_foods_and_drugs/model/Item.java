@@ -32,6 +32,7 @@ public class Item implements Serializable, Comparable {
 		}
 	}
 
+	private final int FIXED_STOCK;
 	private int itemId;
 	private String itemCode;
 	private String itemDescription;
@@ -48,6 +49,7 @@ public class Item implements Serializable, Comparable {
 		this.price = price;
 		this.packSize = packSize;
 		this.stock = stock;
+		this.FIXED_STOCK = stock;
 	}
 
 	public Item(int itemId, String itemCode, String itemDescription, double price, JSONArray freeIssueJsonArray, String packSize, int stock) {
@@ -58,6 +60,7 @@ public class Item implements Serializable, Comparable {
 		this.freeIssueJsonArrayString = freeIssueJsonArray.toString();
 		this.packSize = packSize;
 		this.stock = stock;
+		this.FIXED_STOCK = stock;
 	}
 
 	public static final Item parseItem(JSONObject itemJsonInstance) throws JSONException {
@@ -153,6 +156,10 @@ public class Item implements Serializable, Comparable {
 
 	public void setStock(int stock) {
 		this.stock = stock;
+	}
+
+	public int getFIXED_STOCK() {
+		return FIXED_STOCK;
 	}
 
 	@Override

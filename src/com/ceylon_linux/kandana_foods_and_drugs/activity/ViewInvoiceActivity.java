@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Distributor;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Order;
@@ -95,12 +96,16 @@ public class ViewInvoiceActivity extends Activity {
 					childViewHolder.txtItemDescription = (TextView) convertView.findViewById(R.id.txtItemDescription);
 					childViewHolder.txtFreeIssue = (TextView) convertView.findViewById(R.id.txtFreeIssue);
 					childViewHolder.txtQuantity = (TextView) convertView.findViewById(R.id.txtQuantity);
+					childViewHolder.txtStock = (TextView) convertView.findViewById(R.id.txtStock);
+					childViewHolder.txtPackSize = (TextView) convertView.findViewById(R.id.txtPackSize);
 					convertView.setTag(childViewHolder);
 				} else {
 					childViewHolder = (ChildViewHolder) convertView.getTag();
 				}
 				OrderDetail orderDetail = getItem(position);
+				childViewHolder.txtStock.setText(orderDetail.getItem().getStock() + "");
 				childViewHolder.txtItemDescription.setText(orderDetail.getItemDescription());
+				childViewHolder.txtPackSize.setText(orderDetail.getItem().getPackSize());
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
 				return convertView;
@@ -191,7 +196,7 @@ public class ViewInvoiceActivity extends Activity {
 					OrderController.saveOrderToDb(ViewInvoiceActivity.this, order);
 					Toast.makeText(ViewInvoiceActivity.this, "Order placed in local database", Toast.LENGTH_LONG).show();
 				}
-
+				ItemController.updateStock(ViewInvoiceActivity.this, orderDetails);
 				//Free Up Unnecessary Memory
 				SelectItemFragment1.supplierCategories = null;
 				SelectItemFragment2.suppliers = null;
@@ -213,10 +218,9 @@ public class ViewInvoiceActivity extends Activity {
 	private static class ChildViewHolder {
 
 		TextView txtItemDescription;
-		ImageView imageView;
 		TextView txtQuantity;
 		TextView txtFreeIssue;
+		TextView txtStock;
+		TextView txtPackSize;
 	}
-
-
 }

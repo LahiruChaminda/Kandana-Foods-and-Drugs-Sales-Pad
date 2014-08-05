@@ -126,8 +126,13 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
 				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
 				if (orderDetail != null) {
-					orderDetails.add(orderDetail);
-					myExpandableListAdapter.notifyDataSetChanged();
+					if (item.getFIXED_STOCK() > (orderDetail.getQuantity() + orderDetail.getFreeIssue())) {
+						orderDetails.add(orderDetail);
+						item.setStock(item.getFIXED_STOCK() - orderDetail.getQuantity() + orderDetail.getFreeIssue());
+						myExpandableListAdapter.notifyDataSetChanged();
+					} else {
+						Toast.makeText(getActivity(), "Out of Quantity", Toast.LENGTH_LONG).show();
+					}
 				}
 				dialog.dismiss();
 			}
@@ -161,15 +166,19 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 	}
 
 	private ChildViewHolder updateView(ChildViewHolder childViewHolder, Item item) {
+		childViewHolder.txtItemDescription.setText(item.getItemDescription());
+		childViewHolder.txtPackSize.setText(item.getPackSize());
 		for (OrderDetail orderDetail : orderDetails) {
 			if (orderDetail.getItemId() == item.getItemId()) {
 				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
 				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
+				childViewHolder.txtStock.setText(item.getFIXED_STOCK() - (orderDetail.getFreeIssue() + orderDetail.getQuantity()) + "");
 				childViewHolder.imageView.setBackgroundResource(R.drawable.right);
 				return childViewHolder;
 			}
 		}
 		childViewHolder.txtFreeIssue.setText("0");
+		childViewHolder.txtStock.setText(item.getFIXED_STOCK() + "");
 		childViewHolder.txtQuantity.setText("0");
 		childViewHolder.imageView.setBackgroundDrawable(null);
 		return childViewHolder;
@@ -262,9 +271,6 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 				childViewHolder = (ChildViewHolder) view.getTag();
 			}
 			Item item = getChild(groupPosition, childPosition);
-			childViewHolder.txtItemDescription.setText(item.getItemDescription());
-			childViewHolder.txtStock.setText(item.getStock() + "");
-			childViewHolder.txtPackSize.setText(item.getPackSize());
 			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 			updateView(childViewHolder, item);
 			return view;

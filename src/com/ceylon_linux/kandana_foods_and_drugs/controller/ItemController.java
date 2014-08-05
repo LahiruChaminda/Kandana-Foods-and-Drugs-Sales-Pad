@@ -13,10 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Distributor;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
-import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
+import com.ceylon_linux.kandana_foods_and_drugs.model.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -227,6 +224,20 @@ public class ItemController extends AbstractController {
 		distributorCursor.close();
 		databaseHelper.close();
 		return distributors;
+	}
+
+	public static void updateStock(Context context, ArrayList<OrderDetail> orderDetails) {
+		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
+		SQLiteDatabase database = databaseHelper.getWritableDatabase();
+		SQLiteStatement statement = database.compileStatement("update tbl_item set stock=(stock - ?) where itemId = ?");
+		for (OrderDetail orderDetail : orderDetails) {
+			DbHandler.performExecute(statement, new Object[]{
+				orderDetail.getQuantity(),
+				orderDetail.getItemId()
+			});
+		}
+		statement.close();
+		database.close();
 	}
 
 }
