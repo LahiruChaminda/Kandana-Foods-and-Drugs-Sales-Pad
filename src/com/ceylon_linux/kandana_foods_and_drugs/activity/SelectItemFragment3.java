@@ -240,6 +240,9 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 			}
 			Item item = getItem(position);
 			view.setBackgroundColor((position % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
+			if (item.getFIXED_STOCK() == 0) {
+				view.setBackgroundColor(Color.parseColor("#FF0000"));
+			}
 			updateView(childViewHolder, item);
 			return view;
 		}

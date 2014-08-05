@@ -17,10 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
+import com.ceylon_linux.kandana_foods_and_drugs.model.SupplierCategory;
 
 import java.util.ArrayList;
 
@@ -31,13 +31,13 @@ import java.util.ArrayList;
  */
 public class SelectItemFragment1 extends ItemSelectableFragment {
 
-	public static ArrayList<Supplier> supplierCategories;
+	public static ArrayList<SupplierCategory> supplierCategories;
 	private ExpandableListView itemList;
 	private Spinner supplerSpinner;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Category> categories = new ArrayList<Category>();
-	private ArrayList<Category> fixedCategories;
+	private ArrayList<Supplier> categories = new ArrayList<Supplier>();
+	private ArrayList<Supplier> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
 	private MyExpandableListAdapter myExpandableListAdapter;
@@ -55,7 +55,7 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 		super.onCreate(savedInstanceState);
 		ItemSelectActivity itemSelectActivity = (ItemSelectActivity) getActivity();
 		orderDetails = itemSelectActivity.getOrderDetails();
-		fixedCategories = (ArrayList<Category>) categories.clone();
+		fixedCategories = (ArrayList<Supplier>) categories.clone();
 	}
 
 	@Override
@@ -83,15 +83,15 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 				myExpandableListAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
-		supplerSpinner.setAdapter(new ArrayAdapter<Supplier>(getActivity(), android.R.layout.simple_list_item_1, supplierCategories));
+		supplerSpinner.setAdapter(new ArrayAdapter<SupplierCategory>(getActivity(), android.R.layout.simple_list_item_1, supplierCategories));
 		supplerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				Supplier supplier = (Supplier) parent.getAdapter().getItem(position);
+				SupplierCategory supplierCategory = (SupplierCategory) parent.getAdapter().getItem(position);
 				categories.clear();
 				fixedCategories.clear();
-				categories.addAll(supplier.getCategories());
-				fixedCategories.addAll(supplier.getCategories());
+				categories.addAll(supplierCategory.getSuppliers());
+				fixedCategories.addAll(supplierCategory.getSuppliers());
 				myExpandableListAdapter.notifyDataSetChanged();
 			}
 
@@ -233,7 +233,7 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 		}
 
 		@Override
-		public Category getGroup(int groupPosition) {
+		public Supplier getGroup(int groupPosition) {
 			return categories.get(groupPosition);
 		}
 
@@ -292,6 +292,9 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 			}
 			Item item = getChild(groupPosition, childPosition);
 			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
+			if (item.getFIXED_STOCK() == 0) {
+				view.setBackgroundColor(Color.parseColor("#FF0000"));
+			}
 			updateView(childViewHolder, item);
 			return view;
 		}
@@ -315,17 +318,17 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				String searchTerm;
 				FilterResults result = new FilterResults();
-				ArrayList<Category> filteredCategories = new ArrayList<Category>();
+				ArrayList<Supplier> filteredCategories = new ArrayList<Supplier>();
 				if (constraint != null && !(searchTerm = constraint.toString().toLowerCase()).isEmpty()) {
-					for (Category category : fixedCategories) {
+					for (Supplier supplier : fixedCategories) {
 						ArrayList<Item> items = new ArrayList<Item>();
-						for (Item item : category.getItems()) {
+						for (Item item : supplier.getItems()) {
 							if (item.getItemDescription().toLowerCase().startsWith(searchTerm)) {
 								items.add(item);
 							}
 						}
 						if (items.size() != 0) {
-							filteredCategories.add(new Category(category.getCategoryId(), category.getCategoryDescription(), items));
+							filteredCategories.add(new Supplier(supplier.getCategoryId(), supplier.getCategoryDescription(), items));
 						}
 					}
 				} else {
@@ -338,7 +341,7 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				categories = (ArrayList<Category>) results.values;
+				categories = (ArrayList<Supplier>) results.values;
 				notifyDataSetChanged();
 			}
 		}

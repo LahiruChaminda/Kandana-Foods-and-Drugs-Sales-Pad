@@ -28,7 +28,7 @@ CREATE TABLE tbl_distributor (
 CREATE TABLE tbl_supplier_category (
     supplierCategoryId INTEGER,
     distributorId INTEGER,
-    supplier TEXT
+    supplierCategory TEXT
 );
 
 CREATE TABLE tbl_supplier (

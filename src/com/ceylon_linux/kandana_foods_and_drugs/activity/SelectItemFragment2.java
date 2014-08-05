@@ -17,9 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
 
 import java.util.ArrayList;
 
@@ -30,11 +30,11 @@ import java.util.ArrayList;
  */
 public class SelectItemFragment2 extends ItemSelectableFragment {
 
-	public static ArrayList<Category> categories;
+	public static ArrayList<Supplier> suppliers;
 	private ExpandableListView itemList;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Category> fixedCategories;
+	private ArrayList<Supplier> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
 	private MyExpandableListAdapter myExpandableListAdapter;
@@ -52,7 +52,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		super.onCreate(savedInstanceState);
 		ItemSelectActivity itemSelectActivity = (ItemSelectActivity) getActivity();
 		orderDetails = itemSelectActivity.getOrderDetails();
-		fixedCategories = (ArrayList<Category>) categories.clone();
+		fixedCategories = (ArrayList<Supplier>) suppliers.clone();
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
-		final Item item = categories.get(groupPosition).getItems().get(childPosition);
+		final Item item = suppliers.get(groupPosition).getItems().get(childPosition);
 		TextView txtUnitPrice = (TextView) dialog.findViewById(R.id.txtUnitPrice);
 		txtUnitPrice.setText(item.getPrice() + "");
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
@@ -204,22 +204,22 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 		@Override
 		public int getGroupCount() {
-			return categories.size();
+			return suppliers.size();
 		}
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			return categories.get(groupPosition).getItems().size();
+			return suppliers.get(groupPosition).getItems().size();
 		}
 
 		@Override
-		public Category getGroup(int groupPosition) {
-			return categories.get(groupPosition);
+		public Supplier getGroup(int groupPosition) {
+			return suppliers.get(groupPosition);
 		}
 
 		@Override
 		public Item getChild(int groupPosition, int childPosition) {
-			return categories.get(groupPosition).getItems().get(childPosition);
+			return suppliers.get(groupPosition).getItems().get(childPosition);
 		}
 
 		@Override
@@ -272,6 +272,9 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 			}
 			Item item = getChild(groupPosition, childPosition);
 			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
+			if (item.getFIXED_STOCK() == 0) {
+				view.setBackgroundColor(Color.parseColor("#FF0000"));
+			}
 			updateView(childViewHolder, item);
 			return view;
 		}
@@ -295,17 +298,17 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				String searchTerm = constraint.toString().toLowerCase();
 				FilterResults result = new FilterResults();
-				ArrayList<Category> filteredCategories = new ArrayList<Category>();
+				ArrayList<Supplier> filteredCategories = new ArrayList<Supplier>();
 				if (constraint != null && constraint.toString().length() > 0) {
-					for (Category category : fixedCategories) {
+					for (Supplier supplier : fixedCategories) {
 						ArrayList<Item> items = new ArrayList<Item>();
-						for (Item item : category.getItems()) {
+						for (Item item : supplier.getItems()) {
 							if (item.getItemDescription().toLowerCase().startsWith(searchTerm)) {
 								items.add(item);
 							}
 						}
 						if (items.size() != 0) {
-							filteredCategories.add(new Category(category.getCategoryId(), category.getCategoryDescription(), items));
+							filteredCategories.add(new Supplier(supplier.getCategoryId(), supplier.getCategoryDescription(), items));
 						}
 					}
 				} else {
@@ -318,7 +321,7 @@ public class SelectItemFragment2 extends ItemSelectableFragment {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				categories = (ArrayList<Category>) results.values;
+				suppliers = (ArrayList<Supplier>) results.values;
 				notifyDataSetChanged();
 			}
 		}
