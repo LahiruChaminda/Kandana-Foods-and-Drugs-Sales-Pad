@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS tbl_item;
 
-DROP TABLE IF EXISTS tbl_supplier;
+DROP TABLE IF EXISTS tbl_category;
 
-DROP TABLE IF EXISTS tbl_supplier_category;
+DROP TABLE IF EXISTS tbl_supplier;
 
 DROP TABLE IF EXISTS tbl_distributor;
 
@@ -22,27 +22,27 @@ DROP TABLE IF EXISTS tbl_free_issue_ratio;
 
 CREATE TABLE tbl_distributor (
     distributorId INTEGER PRIMARY KEY,
-    distributorName TEXT
-);
-
-CREATE TABLE tbl_supplier_category (
-    supplierCategoryId INTEGER,
-    distributorId INTEGER,
-    supplier TEXT
+    distributorName TEXT UNIQUE
 );
 
 CREATE TABLE tbl_supplier (
     supplierId INTEGER,
     distributorId INTEGER,
-    supplierCategoryId INTEGER,
-    supplierName TEXT NOT NULL
+    supplierName TEXT
+);
+
+CREATE TABLE tbl_category (
+    categoryId INTEGER,
+    supplierId INTEGER,
+    distributorId INTEGER,
+    categoryName TEXT NOT NULL
 );
 
 CREATE TABLE tbl_item (
     itemId INTEGER,
     distributorId INTEGER,
-    supplierCategoryId INTEGER,
-    supplierId INTEGER not null,
+    supplierId INTEGER,
+    categoryId INTEGER not null,
     itemCode TEXT,
     itemDescription TEXT CHECK (itemDescription != ''),
     price DECIMAL(10 , 2) NOT NULL DEFAULT 0,

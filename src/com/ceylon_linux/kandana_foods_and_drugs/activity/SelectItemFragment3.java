@@ -84,7 +84,6 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				listAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
-
 		return rootView;
 	}
 

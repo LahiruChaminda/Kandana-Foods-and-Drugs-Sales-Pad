@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -19,7 +20,7 @@ import java.util.HashSet;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Supplier implements Serializable {
+public class Supplier implements Serializable, Comparable {
 	private int supplierId;
 	private String supplierName;
 	private ArrayList<Category> categories;
@@ -28,6 +29,7 @@ public class Supplier implements Serializable {
 		this.supplierId = supplierCategoryId;
 		this.supplierName = supplierName;
 		this.categories = categories;
+		Collections.sort(this.categories);
 	}
 
 	public static final Supplier parseSupplier(JSONObject jsonInstance) throws IOException, JSONException {
@@ -71,6 +73,7 @@ public class Supplier implements Serializable {
 
 	public void setCategories(ArrayList<Category> categories) {
 		this.categories = categories;
+		Collections.sort(this.categories);
 	}
 
 	@Override
@@ -90,5 +93,11 @@ public class Supplier implements Serializable {
 	@Override
 	public String toString() {
 		return supplierName;
+	}
+
+	@Override
+	public int compareTo(Object another) {
+		Supplier anotherItem = (Supplier) another;
+		return supplierName.compareTo(anotherItem.getSupplierName());
 	}
 }

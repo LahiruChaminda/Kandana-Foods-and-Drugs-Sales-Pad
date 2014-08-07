@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -30,6 +31,7 @@ public class Distributor implements Serializable {
 		this.distributorId = distributorId;
 		this.distributorName = distributorName;
 		this.suppliers = supplierCategories;
+		Collections.sort(this.suppliers);
 	}
 
 	public Distributor(int distributorId, String distributorName) {
@@ -73,10 +75,12 @@ public class Distributor implements Serializable {
 
 	public void setSupplierCategories(ArrayList<Supplier> supplierCategories) {
 		this.suppliers = supplierCategories;
+		Collections.sort(this.suppliers);
 	}
 
 	public ArrayList<Supplier> getSupplierCategories(Context context) {
-		return suppliers = ItemController.loadSupplierCategoriesFromDb(context, distributorId);
+		Collections.sort(this.suppliers = ItemController.loadSuppliersFromDb(context, distributorId));
+		return suppliers;
 	}
 
 	@Override

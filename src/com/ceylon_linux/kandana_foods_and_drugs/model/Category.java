@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -19,7 +20,7 @@ import java.util.HashSet;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Category implements Serializable {
+public class Category implements Serializable, Comparable {
 
 	private ArrayList<Item> items;
 	private String categoryDescription;
@@ -27,6 +28,7 @@ public class Category implements Serializable {
 
 	public Category(int categoryId, String categoryDescription, ArrayList<Item> items) {
 		this.items = items;
+		Collections.sort(this.items);
 		this.categoryDescription = categoryDescription;
 		this.categoryId = categoryId;
 	}
@@ -56,6 +58,7 @@ public class Category implements Serializable {
 
 	public void setItems(ArrayList<Item> items) {
 		this.items = items;
+		Collections.sort(this.items);
 	}
 
 	public String getCategoryDescription() {
@@ -94,5 +97,11 @@ public class Category implements Serializable {
 	@Override
 	public String toString() {
 		return categoryDescription;
+	}
+
+	@Override
+	public int compareTo(Object another) {
+		Category anotherItem = (Category) another;
+		return categoryDescription.compareTo(anotherItem.getCategoryDescription());
 	}
 }
