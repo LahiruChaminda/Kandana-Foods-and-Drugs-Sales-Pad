@@ -32,7 +32,7 @@ abstract class WebServiceURL {
 			return parameters;
 		}
 
-		public static final String GET_DISTRIBUTORS = webServiceURL + "getProducts";
+		public static final String GET_DISTRIBUTORS = webServiceURL + "getProductsNew";
 	}
 
 	protected static final class UserURLPack {

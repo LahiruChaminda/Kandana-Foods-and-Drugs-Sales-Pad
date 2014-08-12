@@ -84,7 +84,6 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 				listAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
-
 		return rootView;
 	}
 
@@ -183,7 +182,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 		}
 		childViewHolder.txtFreeIssue.setText("0");
 		childViewHolder.txtQuantity.setText("0");
-		childViewHolder.txtStock.setText(item.getFIXED_STOCK() + "");
+		childViewHolder.txtStock.setText(String.valueOf(item.getFIXED_STOCK()));
 		childViewHolder.imageView.setBackgroundDrawable(null);
 		return childViewHolder;
 	}
@@ -249,10 +248,7 @@ public class SelectItemFragment3 extends ItemSelectableFragment {
 
 		@Override
 		public Filter getFilter() {
-			if (myFilter == null) {
-				myFilter = new MyFilter();
-			}
-			return myFilter;
+			return (myFilter == null) ? myFilter = new MyFilter() : myFilter;
 		}
 
 		private class MyFilter extends Filter {

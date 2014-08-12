@@ -7,7 +7,6 @@
 package com.ceylon_linux.kandana_foods_and_drugs.controller;
 
 import android.content.Context;
-import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.util.InternetObserver;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -77,7 +76,7 @@ abstract class AbstractController extends WebServiceURL {
 				while ((currentLine = bufferedReader.readLine()) != null) {
 					responseString.append(currentLine + lineSeparator);
 				}
-				Log.i("response", responseString.toString());
+				System.out.println("response " + responseString);
 				return new JSONObject(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {
@@ -128,7 +127,7 @@ abstract class AbstractController extends WebServiceURL {
 				while ((currentLine = bufferedReader.readLine()) != null) {
 					responseString.append(currentLine + lineSeparator);
 				}
-				Log.i("response", responseString.toString());
+				System.out.println("response " + responseString);
 				return new JSONArray(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {

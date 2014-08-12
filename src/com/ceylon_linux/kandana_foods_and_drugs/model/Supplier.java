@@ -1,17 +1,18 @@
 /*
  * Intellectual properties of Supun Lakshan Wanigarathna Dissanayake
  * Copyright (c) 2014, Supun Lakshan Wanigarathna Dissanayake. All rights reserved.
- * Created on : Jun 10, 2014, 12:27:01 PM
+ * Created on : Jul 21, 2014, 1:27:42 PM
  */
-
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -19,81 +20,84 @@ import java.util.HashSet;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class Supplier implements Serializable {
+public class Supplier implements Serializable, Comparable {
+	private int supplierId;
+	private String supplierName;
+	private ArrayList<Category> categories;
 
-	private ArrayList<Item> items;
-	private String categoryDescription;
-	private int categoryId;
-
-	public Supplier(int categoryId, String categoryDescription, ArrayList<Item> items) {
-		this.items = items;
-		this.categoryDescription = categoryDescription;
-		this.categoryId = categoryId;
+	public Supplier(int supplierCategoryId, String supplierName, ArrayList<Category> categories) {
+		this.supplierId = supplierCategoryId;
+		this.supplierName = supplierName;
+		this.categories = categories;
+		Collections.sort(this.categories);
 	}
 
-	public static final Supplier parseSupplier(JSONObject categoryJsonInstance) throws JSONException {
-		if (categoryJsonInstance == null) {
+	public static final Supplier parseSupplier(JSONObject jsonInstance) throws IOException, JSONException {
+		if (jsonInstance == null) {
 			return null;
 		}
-		HashSet<Item> items = new HashSet<Item>();
-		JSONArray itemCollection = categoryJsonInstance.getJSONArray("products");
-		final int ITEM_COLLECTION_SIZE = itemCollection.length();
-		for (int i = 0; i < ITEM_COLLECTION_SIZE; i++) {
-			Item item = Item.parseItem(itemCollection.getJSONObject(i));
-			if (item != null) {
-				items.add(item);
+		HashSet<Category> categories = new HashSet<Category>();
+		JSONArray categoryJsonCollection = jsonInstance.getJSONArray("category");
+		for (int i = 0, CATEGORY_SIZE = categoryJsonCollection.length(); i < CATEGORY_SIZE; i++) {
+			Category category = Category.parseCategory(categoryJsonCollection.getJSONObject(i));
+			if (category != null) {
+				categories.add(category);
 			}
 		}
-		return (items.size() == 0) ? null : new Supplier(
-			categoryJsonInstance.getInt("supplierId"),
-			categoryJsonInstance.getString("supplierName"),
-			new ArrayList<Item>(items)
+		return (categories.size() == 0) ? null : new Supplier(
+			jsonInstance.getInt("supplierId"),
+			jsonInstance.getString("supplierName"),
+			new ArrayList<Category>(categories)
 		);
 	}
 
-	public ArrayList<Item> getItems() {
-		return items;
+	public int getSupplierId() {
+		return supplierId;
 	}
 
-	public void setItems(ArrayList<Item> items) {
-		this.items = items;
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
 	}
 
-	public String getCategoryDescription() {
-		return categoryDescription;
+	public String getSupplierName() {
+		return supplierName;
 	}
 
-	public void setCategoryDescription(String categoryDescription) {
-		this.categoryDescription = categoryDescription;
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
 	}
 
-	public int getCategoryId() {
-		return categoryId;
+	public ArrayList<Category> getCategories() {
+		return categories;
 	}
 
-	public void setCategoryId(int categoryId) {
-		this.categoryId = categoryId;
+	public void setCategories(ArrayList<Category> categories) {
+		this.categories = categories;
+		Collections.sort(this.categories);
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Supplier.class != o.getClass()) return false;
-
-		Supplier supplier = (Supplier) o;
-
-		if (categoryId != supplier.categoryId) return false;
-
+		Supplier that = (Supplier) o;
+		if (supplierId != that.supplierId) return false;
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return categoryId;
+		return supplierId;
 	}
 
 	@Override
 	public String toString() {
-		return categoryDescription;
+		return supplierName;
+	}
+
+	@Override
+	public int compareTo(Object another) {
+		Supplier anotherItem = (Supplier) another;
+		return supplierName.compareTo(anotherItem.getSupplierName());
 	}
 }
