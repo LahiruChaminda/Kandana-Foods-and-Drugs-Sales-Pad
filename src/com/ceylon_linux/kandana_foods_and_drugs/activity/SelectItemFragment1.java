@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 public class SelectItemFragment1 extends ItemSelectableFragment {
 
-	public static ArrayList<Supplier> supplierCategories;
+	public static ArrayList<Supplier> suppliers;
 	private ExpandableListView itemList;
 	private Spinner supplerSpinner;
 	private EditText inputSearch;
@@ -83,7 +83,7 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 				myExpandableListAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
-		supplerSpinner.setAdapter(new ArrayAdapter<Supplier>(getActivity(), android.R.layout.simple_list_item_1, supplierCategories));
+		supplerSpinner.setAdapter(new ArrayAdapter<Supplier>(getActivity(), android.R.layout.simple_list_item_1, suppliers));
 		supplerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -341,7 +341,8 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				categories = (ArrayList<Category>) results.values;
+				categories.clear();
+				categories.addAll((ArrayList<Category>) results.values);
 				notifyDataSetChanged();
 			}
 		}

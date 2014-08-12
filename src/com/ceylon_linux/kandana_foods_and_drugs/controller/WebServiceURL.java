@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 abstract class WebServiceURL {
 
-	private static final String webServiceURL = "http://192.168.1.119/kandana/andr_manager/";
+	private static final String webServiceURL = "http://123.231.15.146/andr_manager/";
 
 	protected WebServiceURL() {
 	}
@@ -32,7 +32,7 @@ abstract class WebServiceURL {
 			return parameters;
 		}
 
-		public static final String GET_DISTRIBUTORS = webServiceURL + "getProducts";
+		public static final String GET_DISTRIBUTORS = webServiceURL + "getProductsNew";
 	}
 
 	protected static final class UserURLPack {

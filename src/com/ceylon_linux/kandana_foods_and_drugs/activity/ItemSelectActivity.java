@@ -128,7 +128,7 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 		};
 
-		addTab("Category wise", actionBar, tabListener);
+		addTab("Supplier wise", actionBar, tabListener);
 		addTab("Category wise", actionBar, tabListener);
 		addTab("All", actionBar, tabListener);
 		addTab("Selected Items", actionBar, tabListener);
