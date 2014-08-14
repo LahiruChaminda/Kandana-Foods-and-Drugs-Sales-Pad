@@ -26,9 +26,10 @@ CREATE TABLE tbl_distributor (
 );
 
 CREATE TABLE tbl_supplier (
-    supplierId INTEGER,
+    supplierId INTEGER PRIMARY KEY,
     distributorId INTEGER,
-    supplierName TEXT
+    supplierName TEXT,
+    unique (supplierId,supplierName)
 );
 
 CREATE TABLE tbl_category (

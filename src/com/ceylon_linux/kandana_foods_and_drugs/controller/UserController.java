@@ -9,6 +9,7 @@ package com.ceylon_linux.kandana_foods_and_drugs.controller;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 
@@ -100,5 +102,15 @@ public class UserController extends AbstractController {
 	public static User authenticate(Context context, String userName, String password) throws IOException, JSONException {
 		JSONObject userJson = getJsonObject(UserURLPack.LOGIN, UserURLPack.getLoginParameters(userName, password), context);
 		return User.parseUser(userJson);
+	}
+
+	public static ArrayList<String> getMessages(Context context) throws IOException, JSONException {
+		ArrayList<String> messages = new ArrayList<String>();
+		JSONArray jsonArray = getJsonArray(UserURLPack.MESSAGE_BROADCAST, UserURLPack.getMessageBroadcastParameters(getAuthorizedUser(context).getUserId()), context);
+		for (int i = 0, MESSAGES_LENGTH = jsonArray.length(); i < MESSAGES_LENGTH; i++) {
+			String message = jsonArray.getString(i);
+			messages.add(message);
+		}
+		return messages;
 	}
 }

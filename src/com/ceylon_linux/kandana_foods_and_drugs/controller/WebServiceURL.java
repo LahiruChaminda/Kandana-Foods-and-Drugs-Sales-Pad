@@ -26,9 +26,9 @@ abstract class WebServiceURL {
 
 	protected static final class DistributorURLPack {
 
-		public static final HashMap<String, Object> getCategoryParameters(int positionId) {
+		public static final HashMap<String, Object> getCategoryParameters(int userId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("userId", positionId);
+			parameters.put("userId", userId);
 			return parameters;
 		}
 
@@ -44,7 +44,16 @@ abstract class WebServiceURL {
 			return parameters;
 		}
 
+		public static final HashMap<String, Object> getMessageBroadcastParameters(int userId) {
+			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("userId", userId);
+			return parameters;
+		}
+
 		public static final String LOGIN = webServiceURL + "login";
+
+
+		public static final String MESSAGE_BROADCAST = webServiceURL + "messages";
 
 	}
 

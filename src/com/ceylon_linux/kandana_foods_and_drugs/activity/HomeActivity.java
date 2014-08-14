@@ -13,11 +13,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.os.Handler;
+import android.view.*;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -27,6 +26,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -39,6 +39,7 @@ public class HomeActivity extends Activity {
 	private TextView txtName;
 	private TextView txtAddress;
 	private Button btnSignOut;
+	private LinearLayout newsFeed;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +126,7 @@ public class HomeActivity extends Activity {
 		btnSignOut = (Button) findViewById(R.id.btnSignOut);
 		txtName = (TextView) findViewById(R.id.txtName);
 		txtAddress = (TextView) findViewById(R.id.txtAddress);
+		newsFeed = (LinearLayout) findViewById(R.id.newsFeed);
 		btnStart.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -144,6 +146,50 @@ public class HomeActivity extends Activity {
 		Intent loadAddInvoiceActivity = new Intent(HomeActivity.this, LoadAddInvoiceActivity.class);
 		startActivity(loadAddInvoiceActivity);
 		finish();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		new Thread() {
+			private Handler handler = new Handler();
+			private ProgressDialog progressDialog;
+			private ArrayList<String> messages;
+
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog = ProgressDialog.show(HomeActivity.this, null, "Loading Messages", false);
+					}
+				});
+				try {
+					messages = UserController.getMessages(HomeActivity.this);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (progressDialog != null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+						if (messages != null) {
+							newsFeed.removeAllViews();
+							LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+							for (String message : messages) {
+								TextView textView = (TextView) layoutInflater.inflate(R.layout.message_layout, null);
+								textView.setText(message);
+								newsFeed.addView(textView);
+							}
+						}
+					}
+				});
+			}
+		}.start();
 	}
 
 	private void btnSignOutClicked(View view) {
