@@ -7,7 +7,6 @@ package com.ceylon_linux.kandana_foods_and_drugs.model;
 
 import android.content.Context;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -31,7 +29,9 @@ public class Distributor implements Serializable {
 		this.distributorId = distributorId;
 		this.distributorName = distributorName;
 		this.suppliers = supplierCategories;
-		Collections.sort(this.suppliers);
+		if (this.suppliers != null) {
+			Collections.sort(this.suppliers);
+		}
 	}
 
 	public Distributor(int distributorId, String distributorName) {
@@ -40,17 +40,9 @@ public class Distributor implements Serializable {
 	}
 
 	public static final Distributor parseDistributor(JSONObject distributorJsonInstance) throws JSONException, IOException {
-		JSONArray supplierJsonCollection = distributorJsonInstance.getJSONArray("supplier");
 		int distributorId = distributorJsonInstance.getInt("u_id");
 		String distributorName = distributorJsonInstance.getString("u_name");
-		HashSet<Supplier> suppliers = new HashSet<Supplier>();
-		for (int i = 0, SUPPLIER_LENGTH = supplierJsonCollection.length(); i < SUPPLIER_LENGTH; i++) {
-			Supplier supplier = Supplier.parseSupplier(supplierJsonCollection.getJSONObject(i));
-			if (supplier != null) {
-				suppliers.add(supplier);
-			}
-		}
-		return (suppliers.size() == 0) ? null : new Distributor(distributorId, distributorName, new ArrayList<Supplier>(suppliers));
+		return new Distributor(distributorId, distributorName, null);
 	}
 
 	public int getDistributorId() {

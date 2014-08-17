@@ -5,7 +5,6 @@
  */
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -29,25 +27,19 @@ public class Supplier implements Serializable, Comparable {
 		this.supplierId = supplierCategoryId;
 		this.supplierName = supplierName;
 		this.categories = categories;
-		Collections.sort(this.categories);
+		if (this.categories != null) {
+			Collections.sort(this.categories);
+		}
 	}
 
 	public static final Supplier parseSupplier(JSONObject jsonInstance) throws IOException, JSONException {
 		if (jsonInstance == null) {
 			return null;
 		}
-		HashSet<Category> categories = new HashSet<Category>();
-		JSONArray categoryJsonCollection = jsonInstance.getJSONArray("category");
-		for (int i = 0, CATEGORY_SIZE = categoryJsonCollection.length(); i < CATEGORY_SIZE; i++) {
-			Category category = Category.parseCategory(categoryJsonCollection.getJSONObject(i));
-			if (category != null) {
-				categories.add(category);
-			}
-		}
-		return (categories.size() == 0) ? null : new Supplier(
+		return new Supplier(
 			jsonInstance.getInt("supplierId"),
 			jsonInstance.getString("supplierName"),
-			new ArrayList<Category>(categories)
+			null
 		);
 	}
 

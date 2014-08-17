@@ -32,14 +32,56 @@ public class ItemController extends AbstractController {
 	private ItemController() {
 	}
 
-	public static void downloadItems(Context context, int positionId) throws IOException, JSONException {
-		JSONObject responseJson = getJsonObject(DistributorURLPack.GET_DISTRIBUTORS, DistributorURLPack.getCategoryParameters(positionId), context);
+	public static void downloadItems(Context context, int userId) throws IOException, JSONException {
+		JSONObject responseJson = getJsonObject(DistributorURLPack.GET_DISTRIBUTORS, null, context);
 		JSONArray distributorJsonArray = responseJson.getJSONArray("distributor");
 		ArrayList<Distributor> distributors = new ArrayList<Distributor>();
 		for (int i = 0, DISTRIBUTOR_LENGTH = distributorJsonArray.length(); i < DISTRIBUTOR_LENGTH; i++) {
 			Distributor distributor = Distributor.parseDistributor(distributorJsonArray.getJSONObject(i));
 			if (distributor != null) {
 				distributors.add(distributor);
+			}
+		}
+		for (Distributor distributor : distributors) {
+			JSONObject distributorJsonInstance = getJsonObject(DistributorURLPack.GET_SUPPLIERS, DistributorURLPack.getSuppliersParameters(userId), context);
+			if (distributorJsonInstance.getBoolean("result")) {
+				JSONArray supplierJsonCollection = distributorJsonInstance.getJSONArray("supplier");
+				HashSet<Supplier> suppliers = new HashSet<Supplier>();
+				for (int i = 0, SUPPLIER_LENGTH = supplierJsonCollection.length(); i < SUPPLIER_LENGTH; i++) {
+					Supplier supplier = Supplier.parseSupplier(supplierJsonCollection.getJSONObject(i));
+					if (supplier != null) {
+						suppliers.add(supplier);
+					}
+				}
+				for (Supplier supplier : suppliers) {
+					JSONObject categoryJsonInstance = getJsonObject(DistributorURLPack.GET_CATEGORIES, DistributorURLPack.getCategoryParameters(supplier.getSupplierId()), context);
+					HashSet<Category> categories = new HashSet<Category>();
+					if (categoryJsonInstance.getBoolean("result")) {
+						JSONArray categoryJsonCollection = categoryJsonInstance.getJSONArray("category");
+						for (int i = 0, CATEGORY_SIZE = categoryJsonCollection.length(); i < CATEGORY_SIZE; i++) {
+							Category category = Category.parseCategory(categoryJsonCollection.getJSONObject(i));
+							if (category != null) {
+								categories.add(category);
+							}
+						}
+						supplier.setCategories(new ArrayList<Category>(categories));
+					}
+					for (Category category : categories) {
+						JSONObject itemJsonInstance = getJsonObject(DistributorURLPack.GET_ITEMS, DistributorURLPack.getProductsParameters(category.getCategoryId(), distributor.getDistributorId()), context);
+						HashSet<Item> items = new HashSet<Item>();
+						if (itemJsonInstance.getBoolean("result")) {
+							JSONArray itemCollection = itemJsonInstance.getJSONArray("product");
+							for (int i = 0, ITEM_SIZE = itemCollection.length(); i < ITEM_SIZE; i++) {
+								Item item = Item.parseItem(itemCollection.getJSONObject(i));
+								if (item != null) {
+									items.add(item);
+								}
+							}
+							category.setItems(new ArrayList<Item>(items));
+						}
+					}
+				}
+				distributor.setSupplierCategories(new ArrayList<Supplier>(suppliers));
 			}
 		}
 		saveDistributorsToDb(distributors, context);

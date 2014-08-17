@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -58,18 +59,18 @@ public class LoadAddInvoiceActivity extends Activity {
 		districts.clear();
 		districts.addAll(OutletController.loadDistrictsFromDb(LoadAddInvoiceActivity.this));
 
-		districtAdapter = new ArrayAdapter<District>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, districts);
+		districtAdapter = new ArrayAdapter<District>(LoadAddInvoiceActivity.this, android.R.layout.simple_list_item_1, districts);
 		districtAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
 		districtAuto.setAdapter(districtAdapter);
 
-		routeAdapter = new ArrayAdapter<Route>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, routes);
+		routeAdapter = new ArrayAdapter<Route>(LoadAddInvoiceActivity.this, android.R.layout.simple_list_item_1, routes);
 		routeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
 		routeAuto.setAdapter(routeAdapter);
 
-		outletAdapter = new ArrayAdapter<Outlet>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, outlets);
+		outletAdapter = new ArrayAdapter<Outlet>(LoadAddInvoiceActivity.this, android.R.layout.simple_list_item_1, outlets);
 		outletAuto.setAdapter(outletAdapter);
 
-		distributorAdapter = new ArrayAdapter<Distributor>(LoadAddInvoiceActivity.this, R.layout.spinner_layout, ItemController.loadDistributorsFromDb(LoadAddInvoiceActivity.this));
+		distributorAdapter = new ArrayAdapter<Distributor>(LoadAddInvoiceActivity.this, android.R.layout.simple_list_item_1, ItemController.loadDistributorsFromDb(LoadAddInvoiceActivity.this));
 		distributorAuto.setAdapter(distributorAdapter);
 
 		btnClear = (ImageButton) findViewById(R.id.btnClear);
@@ -228,9 +229,13 @@ public class LoadAddInvoiceActivity extends Activity {
 					}
 				});
 				int distributorId = ((Distributor) distributorAuto.getSelectedItem()).getDistributorId();
+				Log.i("loading", "0");
 				SelectItemFragment1.suppliers = ItemController.loadSuppliersFromDb(LoadAddInvoiceActivity.this, distributorId);
+				Log.i("loading", "1");
 				SelectItemFragment2.categories = ItemController.loadCategoriesFromDb(LoadAddInvoiceActivity.this, distributorId);
+				Log.i("loading", "2");
 				SelectItemFragment3.items = ItemController.loadItemsFromDb(LoadAddInvoiceActivity.this, distributorId);
+				Log.i("loading", "3");
 				handler.post(new Runnable() {
 					@Override
 					public void run() {

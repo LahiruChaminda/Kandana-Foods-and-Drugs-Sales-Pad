@@ -150,4 +150,26 @@ public class OutletController extends AbstractController {
 		databaseHelper.close();
 		return districts;
 	}
+
+	public static ArrayList<Outlet> getOutlets(Context context) {
+		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
+		SQLiteDatabase database = databaseHelper.getWritableDatabase();
+		String outletQuery = "select outletId, cityId, outletName, outletAddress, outletType, outletDiscount from tbl_outlet";
+		Cursor outletCursor = DbHandler.performRawQuery(database, outletQuery, null);
+		ArrayList<Outlet> outlets = new ArrayList<Outlet>();
+		for (outletCursor.moveToFirst(); !outletCursor.isAfterLast(); outletCursor.moveToNext()) {
+			outlets.add(new Outlet(
+				outletCursor.getInt(0),
+				outletCursor.getInt(1),
+				outletCursor.getString(2),
+				outletCursor.getString(3),
+				outletCursor.getInt(4),
+				outletCursor.getDouble(5)
+			));
+		}
+		Collections.sort(outlets);
+		outletCursor.close();
+		databaseHelper.close();
+		return outlets;
+	}
 }

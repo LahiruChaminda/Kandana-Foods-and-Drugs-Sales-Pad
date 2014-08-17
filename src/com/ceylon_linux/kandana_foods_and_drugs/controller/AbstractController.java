@@ -41,7 +41,7 @@ abstract class AbstractController extends WebServiceURL {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(url);
 			// Uncomment following line to use gzip
-			// postRequest.addHeader("Accept-Encoding", "gzip");
+			//postRequest.addHeader("Accept-Encoding", "gzip");
 			if (parameters != null) {
 				MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 				for (String parameter : parameters.keySet()) {
@@ -70,13 +70,12 @@ abstract class AbstractController extends WebServiceURL {
 					return null;
 				}
 				// Uncomment following line to use gzip
-				// bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(content)));
+				//bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(content)));
 				bufferedReader = new BufferedReader(new InputStreamReader(content));
 				String currentLine;
 				while ((currentLine = bufferedReader.readLine()) != null) {
 					responseString.append(currentLine + lineSeparator);
 				}
-				System.out.println("response " + responseString);
 				return new JSONObject(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {
@@ -127,7 +126,6 @@ abstract class AbstractController extends WebServiceURL {
 				while ((currentLine = bufferedReader.readLine()) != null) {
 					responseString.append(currentLine + lineSeparator);
 				}
-				System.out.println("response " + responseString);
 				return new JSONArray(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {

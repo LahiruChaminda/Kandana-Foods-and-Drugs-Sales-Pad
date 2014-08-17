@@ -19,20 +19,36 @@ import java.util.HashMap;
  */
 abstract class WebServiceURL {
 
-	private static final String webServiceURL = "http://123.231.15.146/andr_manager/";
+	private static final String webServiceURL = "http://192.168.1.119/kandana/andr_manager/";
 
 	protected WebServiceURL() {
 	}
 
 	protected static final class DistributorURLPack {
 
-		public static final HashMap<String, Object> getCategoryParameters(int userId) {
+		public static final HashMap<String, Object> getSuppliersParameters(int userId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("userId", userId);
 			return parameters;
 		}
 
-		public static final String GET_DISTRIBUTORS = webServiceURL + "getProductsNew";
+		public static final HashMap<String, Object> getCategoryParameters(int supplierId) {
+			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("supplierId", supplierId);
+			return parameters;
+		}
+
+		public static final HashMap<String, Object> getProductsParameters(int categoryId, int distributorId) {
+			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("categoryId", categoryId);
+			parameters.put("disId", distributorId);
+			return parameters;
+		}
+
+		public static final String GET_DISTRIBUTORS = webServiceURL + "getDistributors.php";
+		public static final String GET_SUPPLIERS = webServiceURL + "getSuppliers";
+		public static final String GET_CATEGORIES = webServiceURL + "getItemCategory.php?supplierId=5";
+		public static final String GET_ITEMS = webServiceURL + "getProducts";
 	}
 
 	protected static final class UserURLPack {
@@ -78,5 +94,17 @@ abstract class WebServiceURL {
 		}
 
 		public static final String INSERT_ORDER = webServiceURL + "insertInvoiceDetails";
+	}
+
+	protected static final class UnProductiveCallURLPack {
+
+		public static final HashMap<String, Object> getUnProductiveCallParameters(JSONObject unProductiveCallJson, int userId) {
+			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("unproductiveCall", unProductiveCallJson);
+			parameters.put("userId", userId);
+			return parameters;
+		}
+
+		public static final String SYNC_UN_PRODUCTIVE_CALL = webServiceURL + "insertInvoiceDetails";
 	}
 }

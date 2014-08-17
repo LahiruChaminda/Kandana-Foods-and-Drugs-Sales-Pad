@@ -22,9 +22,6 @@ import com.ceylon_linux.kandana_foods_and_drugs.controller.OutletController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
-import org.json.JSONException;
-
-import java.io.IOException;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -97,12 +94,9 @@ public class LoginActivity extends Activity {
 						publishProgress("Items Downloaded Successfully");
 					}
 					return user;
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
 					UserController.clearAuthentication(LoginActivity.this);
-				} catch (JSONException e) {
 					e.printStackTrace();
-					UserController.clearAuthentication(LoginActivity.this);
 				}
 				return null;
 			}

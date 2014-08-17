@@ -122,7 +122,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_weight="1"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/outletAuto" android:hint="Select Outlet" android:textSize="25dp"/>
+                                    android:id="@+id/outletAuto" android:hint="Select Outlet" android:textSize="20dp"/>
                             <ImageButton
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"

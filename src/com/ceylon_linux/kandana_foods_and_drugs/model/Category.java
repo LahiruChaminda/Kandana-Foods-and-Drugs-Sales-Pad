@@ -6,14 +6,12 @@
 
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -28,7 +26,9 @@ public class Category implements Serializable, Comparable {
 
 	public Category(int categoryId, String categoryDescription, ArrayList<Item> items) {
 		this.items = items;
-		Collections.sort(this.items);
+		if (this.items != null) {
+			Collections.sort(this.items);
+		}
 		this.categoryDescription = categoryDescription;
 		this.categoryId = categoryId;
 	}
@@ -37,18 +37,10 @@ public class Category implements Serializable, Comparable {
 		if (categoryJsonInstance == null) {
 			return null;
 		}
-		HashSet<Item> items = new HashSet<Item>();
-		JSONArray itemCollection = categoryJsonInstance.getJSONArray("product");
-		for (int i = 0, ITEM_SIZE = itemCollection.length(); i < ITEM_SIZE; i++) {
-			Item item = Item.parseItem(itemCollection.getJSONObject(i));
-			if (item != null) {
-				items.add(item);
-			}
-		}
-		return (items.size() == 0) ? null : new Category(
+		return new Category(
 			categoryJsonInstance.getInt("categoryId"),
 			categoryJsonInstance.getString("categoryName"),
-			new ArrayList<Item>(items)
+			null
 		);
 	}
 

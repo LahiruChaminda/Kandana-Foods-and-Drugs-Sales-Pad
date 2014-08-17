@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -180,9 +181,11 @@ public class HomeActivity extends Activity {
 						if (messages != null) {
 							newsFeed.removeAllViews();
 							LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+							boolean colour = false;
 							for (String message : messages) {
 								TextView textView = (TextView) layoutInflater.inflate(R.layout.message_layout, null);
 								textView.setText(message);
+								textView.setBackgroundColor((colour = !colour) ? Color.parseColor("#B2B2FF") : Color.parseColor("#E6E6FF"));
 								newsFeed.addView(textView);
 							}
 						}
