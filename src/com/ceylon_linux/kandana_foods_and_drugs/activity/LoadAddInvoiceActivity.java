@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -229,13 +228,9 @@ public class LoadAddInvoiceActivity extends Activity {
 					}
 				});
 				int distributorId = ((Distributor) distributorAuto.getSelectedItem()).getDistributorId();
-				Log.i("loading", "0");
 				SelectItemFragment1.suppliers = ItemController.loadSuppliersFromDb(LoadAddInvoiceActivity.this, distributorId);
-				Log.i("loading", "1");
 				SelectItemFragment2.categories = ItemController.loadCategoriesFromDb(LoadAddInvoiceActivity.this, distributorId);
-				Log.i("loading", "2");
 				SelectItemFragment3.items = ItemController.loadItemsFromDb(LoadAddInvoiceActivity.this, distributorId);
-				Log.i("loading", "3");
 				handler.post(new Runnable() {
 					@Override
 					public void run() {

@@ -163,9 +163,9 @@ public class ItemController extends AbstractController {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		HashSet<Supplier> supplierCategories = new HashSet<Supplier>();
-		String supplierSql = "select supplierId,supplierName from tbl_supplier where distributorId=? order by supplierName asc";
-		String categorySql = "select categoryId,categoryName from tbl_category where supplierId=? and distributorId=? order by categoryName asc";
-		String itemSql = "select itemId,itemCode,itemDescription,price,packSize,stock from tbl_item where supplierId=? and distributorId=? and categoryId=? order by itemDescription asc";
+		String supplierSql = "select distinct supplierId,supplierName from tbl_supplier where distributorId=? order by supplierName asc";
+		String categorySql = "select distinct categoryId,categoryName from tbl_category where supplierId=? and distributorId=? order by categoryName asc";
+		String itemSql = "select distinct itemId,itemCode,itemDescription,price,packSize,stock from tbl_item where supplierId=? and distributorId=? and categoryId=? order by itemDescription asc";
 		Cursor supplierCursor = DbHandler.performRawQuery(database, supplierSql, new Object[]{distributorId});
 		for (supplierCursor.moveToFirst(); !supplierCursor.isAfterLast(); supplierCursor.moveToNext()) {
 			int supplierId;
@@ -203,7 +203,7 @@ public class ItemController extends AbstractController {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		String categorySql = "select distinct tc.categoryId, tc.categoryName from tbl_category as tc inner join tbl_supplier as ts on tc.distributorId = ts.distributorId where ts.distributorId=? order by tc.categoryName asc";
-		String itemSql = "select itemId,itemCode,itemDescription,price,packSize,stock from tbl_item where categoryId=? and distributorId=? order by itemDescription asc";
+		String itemSql = "select distinct itemId,itemCode,itemDescription,price,packSize,stock from tbl_item where categoryId=? and distributorId=? order by itemDescription asc";
 		Cursor categoryCursor = DbHandler.performRawQuery(database, categorySql, new Object[]{distributorId});
 		HashSet<Category> categories = new HashSet<Category>();
 		for (categoryCursor.moveToFirst(); !categoryCursor.isAfterLast(); categoryCursor.moveToNext()) {
@@ -232,7 +232,7 @@ public class ItemController extends AbstractController {
 	public static ArrayList<Item> loadItemsFromDb(Context context, int distributorId) {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
-		String itemSql = "select ti.itemId,ti.itemCode,ti.itemDescription,ti.price,packSize,stock from tbl_item as ti where distributorId=? order by ti.itemDescription asc";
+		String itemSql = "select distinct ti.itemId,ti.itemCode,ti.itemDescription,ti.price,packSize,stock from tbl_item as ti where distributorId=? order by ti.itemDescription asc";
 		HashSet<Item> items = new HashSet<Item>();
 		Cursor itemCursor = DbHandler.performRawQuery(database, itemSql, new Object[]{distributorId});
 		for (itemCursor.moveToFirst(); !itemCursor.isAfterLast(); itemCursor.moveToNext()) {
@@ -254,7 +254,7 @@ public class ItemController extends AbstractController {
 		SQLiteDatabaseHelper databaseHelper = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		ArrayList<Distributor> distributors = new ArrayList<Distributor>();
-		String distributorSql = "select distributorId,distributorName from tbl_distributor order by distributorName asc";
+		String distributorSql = "select distinct distributorId,distributorName from tbl_distributor order by distributorName asc";
 		Cursor distributorCursor = DbHandler.performRawQuery(database, distributorSql, null);
 		for (distributorCursor.moveToFirst(); !distributorCursor.isAfterLast(); distributorCursor.moveToNext()) {
 			distributors.add(new Distributor(
