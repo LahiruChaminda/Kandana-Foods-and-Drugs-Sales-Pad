@@ -58,10 +58,6 @@ public class ItemSelectActivity extends FragmentActivity {
 		return orderDetails;
 	}
 
-	Distributor getDistributor() {
-		return distributor;
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,9 +94,9 @@ public class ItemSelectActivity extends FragmentActivity {
 		};
 
 		itemSelectableFragments = new ArrayList<ItemSelectableFragment>();
-		itemSelectableFragments.add(new SelectItemFragment1());
-		itemSelectableFragments.add(new SelectItemFragment2());
-		itemSelectableFragments.add(new SelectItemFragment3());
+		itemSelectableFragments.add(new SupplierWiseItemSelection());
+		itemSelectableFragments.add(new CategoryWiseItemSelection());
+		itemSelectableFragments.add(new NormalItemSelection());
 		itemSelectableFragments.add(new SelectedItemsFragment());
 
 		viewPager.setAdapter(fragmentPagerAdapter);

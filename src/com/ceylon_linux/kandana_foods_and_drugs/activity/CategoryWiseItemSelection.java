@@ -20,7 +20,6 @@ import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
-import com.ceylon_linux.kandana_foods_and_drugs.model.Supplier;
 
 import java.util.ArrayList;
 
@@ -29,14 +28,12 @@ import java.util.ArrayList;
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class SelectItemFragment1 extends ItemSelectableFragment {
+public class CategoryWiseItemSelection extends ItemSelectableFragment {
 
-	public static ArrayList<Supplier> suppliers;
+	public static ArrayList<Category> categories;
 	private ExpandableListView itemList;
-	private Spinner supplerSpinner;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Category> categories = new ArrayList<Category>();
 	private ArrayList<Category> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
 
@@ -60,7 +57,7 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.select_items_page_method_one, null);
+		View rootView = inflater.inflate(R.layout.select_items_page_method_two, null);
 		initialize(rootView);
 		itemList.setAdapter(myExpandableListAdapter = new MyExpandableListAdapter());
 		itemList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -83,22 +80,6 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 				myExpandableListAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
-		supplerSpinner.setAdapter(new ArrayAdapter<Supplier>(getActivity(), android.R.layout.simple_list_item_1, suppliers));
-		supplerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				Supplier supplier = (Supplier) parent.getAdapter().getItem(position);
-				categories.clear();
-				fixedCategories.clear();
-				categories.addAll(supplier.getCategories());
-				fixedCategories.addAll(supplier.getCategories());
-				myExpandableListAdapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-			}
-		});
 		return rootView;
 	}
 
@@ -112,9 +93,9 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final Item item = categories.get(groupPosition).getItems().get(childPosition);
-		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
 		TextView txtUnitPrice = (TextView) dialog.findViewById(R.id.txtUnitPrice);
 		txtUnitPrice.setText(item.getPrice() + "");
+		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
 		Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
 		txtItemDescription.setText(item.getItemDescription());
 		inputRequestedQuantity.addTextChangedListener(new TextWatcher() {
@@ -170,7 +151,6 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 	private void initialize(View rootView) {
 		itemList = (ExpandableListView) rootView.findViewById(R.id.itemList);
 		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
-		supplerSpinner = (Spinner) rootView.findViewById(R.id.supplierSpinner);
 		btnClear = (ImageButton) rootView.findViewById(R.id.btnClear);
 		btnClear.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -197,8 +177,8 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 				return childViewHolder;
 			}
 		}
-		childViewHolder.txtStock.setText(item.getFIXED_STOCK() + "");
 		childViewHolder.txtFreeIssue.setText("0");
+		childViewHolder.txtStock.setText(item.getFIXED_STOCK() + "");
 		childViewHolder.txtQuantity.setText("0");
 		childViewHolder.imageView.setBackgroundDrawable(null);
 		return childViewHolder;
@@ -316,10 +296,10 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				String searchTerm;
+				String searchTerm = constraint.toString().toLowerCase();
 				FilterResults result = new FilterResults();
 				ArrayList<Category> filteredCategories = new ArrayList<Category>();
-				if (constraint != null && !(searchTerm = constraint.toString().toLowerCase()).isEmpty()) {
+				if (constraint != null && constraint.toString().length() > 0) {
 					for (Category category : fixedCategories) {
 						ArrayList<Item> items = new ArrayList<Item>();
 						for (Item item : category.getItems()) {
@@ -341,8 +321,7 @@ public class SelectItemFragment1 extends ItemSelectableFragment {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				categories.clear();
-				categories.addAll((ArrayList<Category>) results.values);
+				categories = (ArrayList<Category>) results.values;
 				notifyDataSetChanged();
 			}
 		}
