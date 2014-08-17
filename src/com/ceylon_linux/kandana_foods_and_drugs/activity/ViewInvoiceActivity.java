@@ -198,9 +198,9 @@ public class ViewInvoiceActivity extends Activity {
 				}
 				ItemController.updateStock(ViewInvoiceActivity.this, orderDetails);
 				//Free Up Unnecessary Memory
-				SupplierWiseItemSelection.suppliers = null;
-				CategoryWiseItemSelection.categories = null;
-				NormalItemSelection.items = null;
+				SupplierWiseItemFragment.suppliers = null;
+				CategoryWiseItemFragment.categories = null;
+				UnArrangedItemFragment.items = null;
 				order = null;
 				System.gc();
 

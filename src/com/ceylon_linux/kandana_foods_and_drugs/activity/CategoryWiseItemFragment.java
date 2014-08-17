@@ -17,32 +17,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
+import com.ceylon_linux.kandana_foods_and_drugs.model.Category;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Item;
 import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
  * @mobile +94711290392
  * @email supunlakshan.xfinity@gmail.com
  */
-public class NormalItemSelection extends ItemSelectableFragment {
+public class CategoryWiseItemFragment extends ItemSelectableFragment {
 
-	public static ArrayList<Item> items;
-	private ListView itemList;
+	public static ArrayList<Category> categories;
+	private ExpandableListView itemList;
 	private EditText inputSearch;
 	private ImageButton btnClear;
-	private ArrayList<Item> fixedItems;
-	private MyListAdapter listAdapter;
+	private ArrayList<Category> fixedCategories;
 	private ArrayList<OrderDetail> orderDetails;
+
+	private MyExpandableListAdapter myExpandableListAdapter;
 
 	@Override
 	public void updateUI() {
-		if (listAdapter != null) {
-			listAdapter.notifyDataSetChanged();
-			itemList.setAdapter(listAdapter);
+		if (myExpandableListAdapter != null) {
+			myExpandableListAdapter.notifyDataSetChanged();
+			itemList.setAdapter(myExpandableListAdapter);
 		}
 	}
 
@@ -51,23 +52,18 @@ public class NormalItemSelection extends ItemSelectableFragment {
 		super.onCreate(savedInstanceState);
 		ItemSelectActivity itemSelectActivity = (ItemSelectActivity) getActivity();
 		orderDetails = itemSelectActivity.getOrderDetails();
-		Collections.sort(items);
-		fixedItems = (ArrayList<Item>) items.clone();
+		fixedCategories = (ArrayList<Category>) categories.clone();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.select_items_page_method_three, null);
+		View rootView = inflater.inflate(R.layout.select_items_page_method_two, null);
 		initialize(rootView);
-		if (listAdapter != null) {
-			listAdapter.notifyDataSetChanged();
-			itemList.setAdapter(listAdapter);
-		}
-		itemList.setAdapter(listAdapter = new MyListAdapter());
-		itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		itemList.setAdapter(myExpandableListAdapter = new MyExpandableListAdapter());
+		itemList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int childPosition, long id) {
-				itemListItemClicked(parent, view, childPosition, id);
+			public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long id) {
+				return itemListOnChildClicked(expandableListView, view, groupPosition, childPosition, id);
 			}
 		});
 		inputSearch.addTextChangedListener(new TextWatcher() {
@@ -81,13 +77,13 @@ public class NormalItemSelection extends ItemSelectableFragment {
 
 			@Override
 			public void afterTextChanged(Editable s) {
-				listAdapter.getFilter().filter(inputSearch.getText());
+				myExpandableListAdapter.getFilter().filter(inputSearch.getText());
 			}
 		});
 		return rootView;
 	}
 
-	private void itemListItemClicked(AdapterView<?> parent, View view, int childPosition, long id) {
+	private boolean itemListOnChildClicked(ExpandableListView expandableListView, View view, final int groupPosition, int childPosition, long id) {
 		final Dialog dialog = new Dialog(getActivity());
 		dialog.setCanceledOnTouchOutside(false);
 		dialog.setTitle("Please Insert Quantity");
@@ -96,7 +92,7 @@ public class NormalItemSelection extends ItemSelectableFragment {
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
 		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
-		final Item item = items.get(childPosition);
+		final Item item = categories.get(groupPosition).getItems().get(childPosition);
 		TextView txtUnitPrice = (TextView) dialog.findViewById(R.id.txtUnitPrice);
 		txtUnitPrice.setText(item.getPrice() + "");
 		final TextView txtFreeQuantity = (TextView) dialog.findViewById(R.id.txtFreeQuantity);
@@ -133,7 +129,7 @@ public class NormalItemSelection extends ItemSelectableFragment {
 					if (item.getFIXED_STOCK() > (orderDetail.getQuantity() + orderDetail.getFreeIssue())) {
 						orderDetails.add(orderDetail);
 						item.setStock(item.getFIXED_STOCK() - orderDetail.getQuantity() + orderDetail.getFreeIssue());
-						listAdapter.notifyDataSetChanged();
+						myExpandableListAdapter.notifyDataSetChanged();
 					} else {
 						Toast.makeText(getActivity(), "Out of Quantity", Toast.LENGTH_LONG).show();
 					}
@@ -148,11 +144,12 @@ public class NormalItemSelection extends ItemSelectableFragment {
 			}
 		});
 		dialog.show();
+		return true;
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Initialize">
 	private void initialize(View rootView) {
-		itemList = (ListView) rootView.findViewById(R.id.itemList);
+		itemList = (ExpandableListView) rootView.findViewById(R.id.itemList);
 		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
 		btnClear = (ImageButton) rootView.findViewById(R.id.btnClear);
 		btnClear.setOnClickListener(new View.OnClickListener() {
@@ -181,10 +178,15 @@ public class NormalItemSelection extends ItemSelectableFragment {
 			}
 		}
 		childViewHolder.txtFreeIssue.setText("0");
+		childViewHolder.txtStock.setText(item.getFIXED_STOCK() + "");
 		childViewHolder.txtQuantity.setText("0");
-		childViewHolder.txtStock.setText(String.valueOf(item.getFIXED_STOCK()));
 		childViewHolder.imageView.setBackgroundDrawable(null);
 		return childViewHolder;
+	}
+
+	private static class GroupViewHolder {
+
+		TextView txtCategory;
 	}
 
 	private static class ChildViewHolder {
@@ -197,22 +199,37 @@ public class NormalItemSelection extends ItemSelectableFragment {
 		TextView txtStock;
 	}
 
-	private class MyListAdapter extends BaseAdapter implements Filterable {
+	private class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 		MyFilter myFilter;
 
 		@Override
-		public int getCount() {
-			return items.size();
+		public int getGroupCount() {
+			return categories.size();
 		}
 
 		@Override
-		public Item getItem(int position) {
-			return items.get(position);
+		public int getChildrenCount(int groupPosition) {
+			return categories.get(groupPosition).getItems().size();
 		}
 
 		@Override
-		public long getItemId(int position) {
-			return position;
+		public Category getGroup(int groupPosition) {
+			return categories.get(groupPosition);
+		}
+
+		@Override
+		public Item getChild(int groupPosition, int childPosition) {
+			return categories.get(groupPosition).getItems().get(childPosition);
+		}
+
+		@Override
+		public long getGroupId(int groupPosition) {
+			return groupPosition;
+		}
+
+		@Override
+		public long getChildId(int groupPosition, int childPosition) {
+			return childPosition;
 		}
 
 		@Override
@@ -221,7 +238,23 @@ public class NormalItemSelection extends ItemSelectableFragment {
 		}
 
 		@Override
-		public View getView(int position, View view, ViewGroup parent) {
+		public View getGroupView(int groupPosition, boolean b, View view, ViewGroup viewGroup) {
+			GroupViewHolder groupViewHolder;
+			if (view == null) {
+				LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+				view = layoutInflater.inflate(R.layout.category_item_view, null);
+				groupViewHolder = new GroupViewHolder();
+				groupViewHolder.txtCategory = (TextView) view.findViewById(R.id.txtCategory);
+				view.setTag(groupViewHolder);
+			} else {
+				groupViewHolder = (GroupViewHolder) view.getTag();
+			}
+			groupViewHolder.txtCategory.setText(getGroup(groupPosition).getCategoryDescription());
+			return view;
+		}
+
+		@Override
+		public View getChildView(int groupPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
 			ChildViewHolder childViewHolder;
 			if (view == null) {
 				LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
@@ -237,8 +270,8 @@ public class NormalItemSelection extends ItemSelectableFragment {
 			} else {
 				childViewHolder = (ChildViewHolder) view.getTag();
 			}
-			Item item = getItem(position);
-			view.setBackgroundColor((position % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
+			Item item = getChild(groupPosition, childPosition);
+			view.setBackgroundColor((childPosition % 2 == 0) ? Color.parseColor("#E6E6E6") : Color.parseColor("#FFFFFF"));
 			if (item.getFIXED_STOCK() == 0) {
 				view.setBackgroundColor(Color.parseColor("#FF0000"));
 			}
@@ -247,8 +280,16 @@ public class NormalItemSelection extends ItemSelectableFragment {
 		}
 
 		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			return true;
+		}
+
+		@Override
 		public Filter getFilter() {
-			return (myFilter == null) ? myFilter = new MyFilter() : myFilter;
+			if (myFilter == null) {
+				myFilter = new MyFilter();
+			}
+			return myFilter;
 		}
 
 		private class MyFilter extends Filter {
@@ -257,24 +298,30 @@ public class NormalItemSelection extends ItemSelectableFragment {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				String searchTerm = constraint.toString().toLowerCase();
 				FilterResults result = new FilterResults();
-				ArrayList<Item> filteredItems = new ArrayList<Item>();
+				ArrayList<Category> filteredCategories = new ArrayList<Category>();
 				if (constraint != null && constraint.toString().length() > 0) {
-					for (Item item : fixedItems) {
-						if (item.getItemDescription().toLowerCase().startsWith(searchTerm)) {
-							filteredItems.add(item);
+					for (Category category : fixedCategories) {
+						ArrayList<Item> items = new ArrayList<Item>();
+						for (Item item : category.getItems()) {
+							if (item.getItemDescription().toLowerCase().startsWith(searchTerm)) {
+								items.add(item);
+							}
+						}
+						if (items.size() != 0) {
+							filteredCategories.add(new Category(category.getCategoryId(), category.getCategoryDescription(), items));
 						}
 					}
 				} else {
-					filteredItems = fixedItems;
+					filteredCategories = fixedCategories;
 				}
-				result.count = filteredItems.size();
-				result.values = filteredItems;
+				result.count = filteredCategories.size();
+				result.values = filteredCategories;
 				return result;
 			}
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				items = (ArrayList<Item>) results.values;
+				categories = (ArrayList<Category>) results.values;
 				notifyDataSetChanged();
 			}
 		}

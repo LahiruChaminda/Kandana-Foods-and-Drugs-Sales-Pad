@@ -94,9 +94,9 @@ public class ItemSelectActivity extends FragmentActivity {
 		};
 
 		itemSelectableFragments = new ArrayList<ItemSelectableFragment>();
-		itemSelectableFragments.add(new SupplierWiseItemSelection());
-		itemSelectableFragments.add(new CategoryWiseItemSelection());
-		itemSelectableFragments.add(new NormalItemSelection());
+		itemSelectableFragments.add(new SupplierWiseItemFragment());
+		itemSelectableFragments.add(new CategoryWiseItemFragment());
+		itemSelectableFragments.add(new UnArrangedItemFragment());
 		itemSelectableFragments.add(new SelectedItemsFragment());
 
 		viewPager.setAdapter(fragmentPagerAdapter);

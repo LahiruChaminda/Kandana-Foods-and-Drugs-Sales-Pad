@@ -228,9 +228,9 @@ public class LoadAddInvoiceActivity extends Activity {
 					}
 				});
 				int distributorId = ((Distributor) distributorAuto.getSelectedItem()).getDistributorId();
-				SupplierWiseItemSelection.suppliers = ItemController.loadSuppliersFromDb(LoadAddInvoiceActivity.this, distributorId);
-				CategoryWiseItemSelection.categories = ItemController.loadCategoriesFromDb(LoadAddInvoiceActivity.this, distributorId);
-				NormalItemSelection.items = ItemController.loadItemsFromDb(LoadAddInvoiceActivity.this, distributorId);
+				SupplierWiseItemFragment.suppliers = ItemController.loadSuppliersFromDb(LoadAddInvoiceActivity.this, distributorId);
+				CategoryWiseItemFragment.categories = ItemController.loadCategoriesFromDb(LoadAddInvoiceActivity.this, distributorId);
+				UnArrangedItemFragment.items = ItemController.loadItemsFromDb(LoadAddInvoiceActivity.this, distributorId);
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
