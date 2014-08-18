@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 abstract class WebServiceURL {
 
-	private static final String webServiceURL = "http://192.168.1.119/kandana/andr_manager/";
+	private static final String webServiceURL = "http://123.231.15.146/andr_manager/";
 
 	protected WebServiceURL() {
 	}
@@ -47,7 +47,7 @@ abstract class WebServiceURL {
 
 		public static final String GET_DISTRIBUTORS = webServiceURL + "getDistributors.php";
 		public static final String GET_SUPPLIERS = webServiceURL + "getSuppliers";
-		public static final String GET_CATEGORIES = webServiceURL + "getItemCategory.php?supplierId=5";
+		public static final String GET_CATEGORIES = webServiceURL + "getItemCategory";
 		public static final String GET_ITEMS = webServiceURL + "getProducts";
 	}
 
@@ -66,10 +66,15 @@ abstract class WebServiceURL {
 			return parameters;
 		}
 
+		public static final HashMap<String, Object> getRepTargetParameters(int userId) {
+			HashMap<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("userId", userId);
+			return parameters;
+		}
+
 		public static final String LOGIN = webServiceURL + "login";
-
-
-		public static final String MESSAGE_BROADCAST = webServiceURL + "messages";
+		public static final String MESSAGE_BROADCAST = webServiceURL + "getMessages";
+		public static final String REP_TARGET = webServiceURL + "getTarget";
 
 	}
 

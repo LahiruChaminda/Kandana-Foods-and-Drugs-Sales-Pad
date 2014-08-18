@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,11 +107,54 @@ public class UserController extends AbstractController {
 
 	public static ArrayList<String> getMessages(Context context) throws IOException, JSONException {
 		ArrayList<String> messages = new ArrayList<String>();
-		JSONArray jsonArray = getJsonArray(UserURLPack.MESSAGE_BROADCAST, UserURLPack.getMessageBroadcastParameters(getAuthorizedUser(context).getUserId()), context);
-		for (int i = 0, MESSAGES_LENGTH = jsonArray.length(); i < MESSAGES_LENGTH; i++) {
-			String message = jsonArray.getString(i);
-			messages.add(message);
+		JSONObject json = getJsonObject(UserURLPack.MESSAGE_BROADCAST, UserURLPack.getMessageBroadcastParameters(getAuthorizedUser(context).getUserId()), context);
+		if (json.getBoolean("result")) {
+			JSONArray messageCollection = json.getJSONArray("message");
+			for (int i = 0, MESSAGES_LENGTH = messageCollection.length(); i < MESSAGES_LENGTH; i++) {
+				messages.add(messageCollection.getJSONObject(i).getString("m_message"));
+			}
 		}
 		return messages;
+	}
+
+	public static RepTarget getTarget(Context context) throws IOException, JSONException, ParseException {
+		JSONObject json = getJsonObject(UserURLPack.REP_TARGET, UserURLPack.getRepTargetParameters(getAuthorizedUser(context).getUserId()), context);
+		return json.getBoolean("result") ? RepTarget.parseRepTarget((JSONObject) json.getJSONArray("target").get(0)) : null;
+	}
+
+	public static class RepTarget {
+		private Date startDate;
+		private Date endDate;
+		private double targetAmount;
+		private double archivedAmount;
+
+		private RepTarget() {
+		}
+
+		private static RepTarget parseRepTarget(JSONObject repTargetJson) throws JSONException, ParseException {
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+			RepTarget repTarget = new RepTarget();
+			repTarget.startDate = dateFormatter.parse(repTargetJson.getString("trg_fdate"));
+			repTarget.endDate = dateFormatter.parse(repTargetJson.getString("trg_tdate"));
+			repTarget.targetAmount = repTargetJson.getDouble("trg_amount");
+			repTarget.archivedAmount = repTargetJson.getDouble("total");
+			return repTarget;
+		}
+
+		public Date getStartDate() {
+			return startDate;
+		}
+
+		public Date getEndDate() {
+			return endDate;
+		}
+
+		public double getTargetAmount() {
+			return targetAmount;
+		}
+
+		public double getArchivedAmount() {
+			return archivedAmount;
+		}
 	}
 }

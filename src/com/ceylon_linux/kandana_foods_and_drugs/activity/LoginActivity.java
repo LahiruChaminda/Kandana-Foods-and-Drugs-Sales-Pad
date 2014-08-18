@@ -75,7 +75,7 @@ public class LoginActivity extends Activity {
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				progressDialog = ProgressDialog.show(LoginActivity.this, null, "Downloading Data...", false);
+				progressDialog = ProgressDialog.show(LoginActivity.this, null, "Downloading Data... Please Wait", false);
 			}
 
 			@Override

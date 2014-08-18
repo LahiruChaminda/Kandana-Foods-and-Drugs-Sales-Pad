@@ -27,6 +27,9 @@ import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -39,6 +42,10 @@ public class HomeActivity extends Activity {
 	private Button btnStart;
 	private TextView txtName;
 	private TextView txtAddress;
+	private TextView txtRepTarget;
+	private TextView txtAchievedTarget;
+	private TextView txtOriginDate;
+	private TextView txtDueDate;
 	private Button btnSignOut;
 	private LinearLayout newsFeed;
 
@@ -127,6 +134,10 @@ public class HomeActivity extends Activity {
 		btnSignOut = (Button) findViewById(R.id.btnSignOut);
 		txtName = (TextView) findViewById(R.id.txtName);
 		txtAddress = (TextView) findViewById(R.id.txtAddress);
+		txtRepTarget = (TextView) findViewById(R.id.txtRepTarget);
+		txtOriginDate = (TextView) findViewById(R.id.txtOriginDate);
+		txtDueDate = (TextView) findViewById(R.id.txtDueDate);
+		txtAchievedTarget = (TextView) findViewById(R.id.txtAchievedTarget);
 		newsFeed = (LinearLayout) findViewById(R.id.newsFeed);
 		btnStart.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -156,6 +167,7 @@ public class HomeActivity extends Activity {
 			private Handler handler = new Handler();
 			private ProgressDialog progressDialog;
 			private ArrayList<String> messages;
+			private UserController.RepTarget repTarget;
 
 			@Override
 			public void run() {
@@ -167,9 +179,12 @@ public class HomeActivity extends Activity {
 				});
 				try {
 					messages = UserController.getMessages(HomeActivity.this);
+					repTarget = UserController.getTarget(HomeActivity.this);
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 				handler.post(new Runnable() {
@@ -188,6 +203,16 @@ public class HomeActivity extends Activity {
 								textView.setBackgroundColor((colour = !colour) ? Color.parseColor("#B2B2FF") : Color.parseColor("#E6E6FF"));
 								newsFeed.addView(textView);
 							}
+						}
+						if (repTarget != null) {
+							NumberFormat numberFormat = NumberFormat.getInstance();
+							numberFormat.setMaximumFractionDigits(2);
+							numberFormat.setMinimumFractionDigits(2);
+							txtRepTarget.setText("Rs " + numberFormat.format(repTarget.getTargetAmount()));
+							txtAchievedTarget.setText("Rs " + numberFormat.format(repTarget.getArchivedAmount()));
+							SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, dd MMM, yyyy");
+							txtOriginDate.setText(dateFormatter.format(repTarget.getStartDate()));
+							txtDueDate.setText(dateFormatter.format(repTarget.getEndDate()));
 						}
 					}
 				});

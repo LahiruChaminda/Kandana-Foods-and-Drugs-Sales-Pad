@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.db.DbHandler;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.*;
@@ -34,6 +35,7 @@ public class ItemController extends AbstractController {
 
 	public static void downloadItems(Context context, int userId) throws IOException, JSONException {
 		JSONObject responseJson = getJsonObject(DistributorURLPack.GET_DISTRIBUTORS, null, context);
+		Log.i("itemController", "distributor");
 		JSONArray distributorJsonArray = responseJson.getJSONArray("distributor");
 		ArrayList<Distributor> distributors = new ArrayList<Distributor>();
 		for (int i = 0, DISTRIBUTOR_LENGTH = distributorJsonArray.length(); i < DISTRIBUTOR_LENGTH; i++) {
@@ -44,6 +46,7 @@ public class ItemController extends AbstractController {
 		}
 		for (Distributor distributor : distributors) {
 			JSONObject distributorJsonInstance = getJsonObject(DistributorURLPack.GET_SUPPLIERS, DistributorURLPack.getSuppliersParameters(userId), context);
+			Log.i("itemController", "distributor-supplier");
 			if (distributorJsonInstance.getBoolean("result")) {
 				JSONArray supplierJsonCollection = distributorJsonInstance.getJSONArray("supplier");
 				HashSet<Supplier> suppliers = new HashSet<Supplier>();
@@ -55,6 +58,7 @@ public class ItemController extends AbstractController {
 				}
 				for (Supplier supplier : suppliers) {
 					JSONObject categoryJsonInstance = getJsonObject(DistributorURLPack.GET_CATEGORIES, DistributorURLPack.getCategoryParameters(supplier.getSupplierId()), context);
+					Log.i("itemController", "distributor-supplier-category");
 					HashSet<Category> categories = new HashSet<Category>();
 					if (categoryJsonInstance.getBoolean("result")) {
 						JSONArray categoryJsonCollection = categoryJsonInstance.getJSONArray("category");
@@ -68,6 +72,7 @@ public class ItemController extends AbstractController {
 					}
 					for (Category category : categories) {
 						JSONObject itemJsonInstance = getJsonObject(DistributorURLPack.GET_ITEMS, DistributorURLPack.getProductsParameters(category.getCategoryId(), distributor.getDistributorId()), context);
+						Log.i("itemController", "distributor-supplier-category-product");
 						HashSet<Item> items = new HashSet<Item>();
 						if (itemJsonInstance.getBoolean("result")) {
 							JSONArray itemCollection = itemJsonInstance.getJSONArray("product");
@@ -84,6 +89,7 @@ public class ItemController extends AbstractController {
 				distributor.setSupplierCategories(new ArrayList<Supplier>(suppliers));
 			}
 		}
+		Log.i("download", "done");
 		saveDistributorsToDb(distributors, context);
 	}
 

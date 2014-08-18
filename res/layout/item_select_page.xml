@@ -15,5 +15,5 @@
             android:layout_height="wrap_content"
             android:textSize="25dp"
             android:text="Finish Bill"
-            android:id="@+id/finishButton"/>
+            android:id="@+id/finishButton" android:background="@drawable/splash"/>
 </LinearLayout>
