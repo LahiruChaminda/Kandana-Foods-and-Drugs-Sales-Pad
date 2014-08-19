@@ -10,8 +10,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +22,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.controller.OutletController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.db.SQLiteDatabaseHelper;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
+import com.ceylon_linux.kandana_foods_and_drugs.util.InternetObserver;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -69,68 +70,86 @@ public class LoginActivity extends Activity {
 	}
 
 	private void btnLoginClicked(View view) {
-		new AsyncTask<Void, String, User>() {
+		new Thread() {
+			private Handler handler = new Handler();
 			private ProgressDialog progressDialog;
+			private User user;
+			private volatile boolean internetAvailability;
 
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				progressDialog = ProgressDialog.show(LoginActivity.this, null, "Downloading Data... Please Wait", false);
-			}
-
-			@Override
-			protected User doInBackground(Void... voids) {
-				User user;
-				try {
-					SQLiteDatabaseHelper.dropDatabase(LoginActivity.this);
-					publishProgress("Authenticating...");
-					user = UserController.authenticate(LoginActivity.this, inputUserName.getText().toString().trim(), inputPassword.getText().toString().trim());
-					if (user != null && user.isValidUser()) {
-						UserController.setAuthorizedUser(LoginActivity.this, user);
-						publishProgress("Authenticated");
-						OutletController.downloadOutlets(LoginActivity.this, user.getUserId());
-						publishProgress("Outlets Downloaded Successfully");
-						ItemController.downloadItems(LoginActivity.this, user.getUserId());
-						publishProgress("Items Downloaded Successfully");
+			public void run() {
+				internetAvailability = InternetObserver.isConnectedToInternet(LoginActivity.this);
+				if (internetAvailability) {
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							progressDialog = ProgressDialog.show(LoginActivity.this, null, "Download Data...", false);
+						}
+					});
+					try {
+						SQLiteDatabaseHelper.dropDatabase(LoginActivity.this);
+						publishProgress("Authenticating...");
+						user = UserController.authenticate(LoginActivity.this, inputUserName.getText().toString().trim(), inputPassword.getText().toString().trim());
+						if (user != null && user.isValidUser()) {
+							UserController.setAuthorizedUser(LoginActivity.this, user);
+							publishProgress("Authenticated");
+							OutletController.downloadOutlets(LoginActivity.this, user.getUserId());
+							publishProgress("Outlets Downloaded Successfully");
+							ItemController.downloadItems(LoginActivity.this, user.getUserId());
+							publishProgress("Items Downloaded Successfully");
+						}
+					} catch (Exception e) {
+						UserController.clearAuthentication(LoginActivity.this);
+						e.printStackTrace();
 					}
-					return user;
-				} catch (Exception e) {
-					UserController.clearAuthentication(LoginActivity.this);
-					e.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			protected void onProgressUpdate(String... values) {
-				super.onProgressUpdate(values);
-				Toast.makeText(LoginActivity.this, values[0], Toast.LENGTH_SHORT).show();
-			}
-
-			@Override
-			protected void onPostExecute(User user) {
-				super.onPostExecute(user);
-				if (progressDialog != null && progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
-				if (user == null) {
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LoginActivity.this);
-					alertDialogBuilder.setTitle(R.string.app_name);
-					alertDialogBuilder.setMessage("No Active Internet Connection Found");
-					alertDialogBuilder.setPositiveButton("Ok", null);
-					alertDialogBuilder.show();
-				} else if (user.isValidUser()) {
-					Intent homeActivity = new Intent(LoginActivity.this, HomeActivity.class);
-					startActivity(homeActivity);
-					finish();
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							if (progressDialog != null && progressDialog.isShowing()) {
+								progressDialog.dismiss();
+							}
+							if (user == null) {
+								AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+								alertDialogBuilder.setTitle(R.string.app_name);
+								alertDialogBuilder.setMessage("Web Error");
+								alertDialogBuilder.setPositiveButton("Ok", null);
+								alertDialogBuilder.show();
+							} else if (user.isValidUser()) {
+								Intent homeActivity = new Intent(LoginActivity.this, HomeActivity.class);
+								startActivity(homeActivity);
+								finish();
+							} else {
+								AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+								alertDialogBuilder.setTitle(R.string.app_name);
+								alertDialogBuilder.setMessage("Incorrect UserName Password Combination");
+								alertDialogBuilder.setPositiveButton("Ok", null);
+								alertDialogBuilder.show();
+							}
+						}
+					});
 				} else {
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LoginActivity.this);
-					alertDialogBuilder.setTitle(R.string.app_name);
-					alertDialogBuilder.setMessage("Incorrect UserName Password Combination");
-					alertDialogBuilder.setPositiveButton("Ok", null);
-					alertDialogBuilder.show();
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+							alertDialogBuilder.setTitle(R.string.app_name);
+							alertDialogBuilder.setMessage("No Internet Connection");
+							alertDialogBuilder.setPositiveButton("Ok", null);
+							alertDialogBuilder.show();
+						}
+					});
 				}
 			}
-		}.execute();
+
+			private void publishProgress(final String message) {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+
+		}.start();
 	}
 }
