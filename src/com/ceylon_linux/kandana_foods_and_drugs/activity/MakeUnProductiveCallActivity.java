@@ -7,10 +7,11 @@ package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -21,7 +22,6 @@ import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
 import com.ceylon_linux.kandana_foods_and_drugs.model.UnProductiveCall;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
 import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
-import com.ceylon_linux.kandana_foods_and_drugs.util.InternetObserver;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -41,39 +41,37 @@ public class MakeUnProductiveCallActivity extends Activity {
 	private int outletId;
 
 	private Location lastKnownLocation;
-	private final AsyncTask<Void, Void, Void> GPS_CHECKER = new AsyncTask<Void, Void, Void>() {
+	private GpsReceiver gpsReceiver;
+	private final Thread GPS_CHECKER = new Thread() {
 		private ProgressDialog progressDialog;
+		private Handler handler = new Handler();
 
 		@Override
-		protected void onPreExecute() {
-			progressDialog = new ProgressDialog(MakeUnProductiveCallActivity.this);
-			progressDialog.setMessage("Waiting for GPS Location...");
-			progressDialog.setCanceledOnTouchOutside(false);
-			progressDialog.show();
-		}
-
-		@Override
-		protected Void doInBackground(Void... arg0) {
+		public void run() {
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					progressDialog = ProgressDialog.show(MakeUnProductiveCallActivity.this, null, "Waiting for GPS Location...", false);
+				}
+			});
 			do {
 				lastKnownLocation = gpsReceiver.getLastKnownLocation();
 				try {
-					Thread.sleep(1000);//delay 1 sec
+					Thread.sleep(500);//delay 0.5 sec
 				} catch (InterruptedException ex) {
 					ex.printStackTrace();
 				}
 			} while (lastKnownLocation == null);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			if (progressDialog != null && progressDialog.isShowing()) {
-				progressDialog.dismiss();
-			}
-			btnUnProductiveCallSubmit.setEnabled(true);
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if (progressDialog != null && progressDialog.isShowing()) {
+						progressDialog.dismiss();
+					}
+				}
+			});
 		}
 	};
-	private GpsReceiver gpsReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +83,12 @@ public class MakeUnProductiveCallActivity extends Activity {
 		ArrayList<Outlet> outlets = OutletController.getOutlets(this);
 		ArrayAdapter<Outlet> outletAdapter = new ArrayAdapter<Outlet>(this, android.R.layout.simple_dropdown_item_1line, outlets);
 		unProductiveCallOutletAuto.setAdapter(outletAdapter);
-		GPS_CHECKER.execute();
+		GPS_CHECKER.start();
 	}
 
 	@Override
 	public void onBackPressed() {
-		Intent unProductiveCall = new Intent(this, UnProductiveCallActivity.class);
-		startActivity(unProductiveCall);
+		setResult(RESULT_CANCELED);
 		finish();
 	}
 
@@ -101,7 +98,6 @@ public class MakeUnProductiveCallActivity extends Activity {
 		txtMakeUnProductiveCallReason = (EditText) findViewById(R.id.txtMakeUnProductiveCallReason);
 		btnUnProductiveCallSubmit = (Button) findViewById(R.id.btnUnProductiveCallSubmit);
 		btnUnProductiveCallSync = (Button) findViewById(R.id.btnUnProductiveCallSync);
-		btnUnProductiveCallSubmit.setEnabled(false);
 		unProductiveCallOutletAuto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -119,30 +115,51 @@ public class MakeUnProductiveCallActivity extends Activity {
 			}
 		});
 	}
-	// </editor-fold>
 
 	private void btnUnProductiveCallSyncClicked(View view) {
-		UnProductiveCall unProductiveCall = new UnProductiveCall(
-			outletId,
-			txtMakeUnProductiveCallReason.getText().toString(),
-			lastKnownLocation.getTime(),
-			lastKnownLocation.getLongitude(),
-			lastKnownLocation.getLatitude(),
-			BatteryUtility.getBatteryLevel(this),
-			UserController.getAuthorizedUser(this).getUserId()
-		);
-		if (InternetObserver.isConnectedToInternet(this)) {
-			try {
-				UnProductiveCallController.syncUnProductiveCall(this, unProductiveCall);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (JSONException e) {
-				e.printStackTrace();
+		new AsyncTask<Void, Void, Boolean>() {
+			private ProgressDialog progressDialog;
+
+			@Override
+			protected void onPreExecute() {
+				progressDialog = ProgressDialog.show(MakeUnProductiveCallActivity.this, null, "Syncing", false);
 			}
-		} else {
-			UnProductiveCallController.saveUnProductiveCall(this, unProductiveCall);
-		}
+
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				UnProductiveCall unProductiveCall = new UnProductiveCall(
+					outletId,
+					txtMakeUnProductiveCallReason.getText().toString(),
+					lastKnownLocation.getTime(),
+					lastKnownLocation.getLongitude(),
+					lastKnownLocation.getLatitude(),
+					BatteryUtility.getBatteryLevel(MakeUnProductiveCallActivity.this),
+					UserController.getAuthorizedUser(MakeUnProductiveCallActivity.this).getUserId()
+				);
+				boolean response = false;
+				try {
+					response = UnProductiveCallController.syncUnProductiveCall(MakeUnProductiveCallActivity.this, unProductiveCall);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				UnProductiveCallController.saveUnProductiveCall(MakeUnProductiveCallActivity.this, unProductiveCall);
+				return response;
+			}
+
+			@Override
+			protected void onPostExecute(Boolean response) {
+				if (progressDialog != null && progressDialog.isShowing()) {
+					progressDialog.dismiss();
+				}
+				Toast.makeText(MakeUnProductiveCallActivity.this, (response) ? "Unproductive Call Synced" : "Unproductive Call saved in local database", Toast.LENGTH_LONG).show();
+				setResult(RESULT_OK);
+				finish();
+			}
+		}.execute();
 	}
+	// </editor-fold>
 
 	private void unProductiveCallOutletAutoItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
 		Outlet outlet = (Outlet) adapterView.getAdapter().getItem(position);
@@ -160,5 +177,10 @@ public class MakeUnProductiveCallActivity extends Activity {
 			UserController.getAuthorizedUser(this).getUserId()
 		);
 		UnProductiveCallController.saveUnProductiveCall(this, unProductiveCall);
+		Log.i("MAKE", "sd");
+		setResult(RESULT_OK);
+		finish();
 	}
+
+
 }

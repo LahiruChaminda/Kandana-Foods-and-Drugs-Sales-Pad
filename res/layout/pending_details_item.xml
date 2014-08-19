@@ -15,42 +15,42 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Invoice No"
-                android:textSize="25dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Bill No"
-                android:textSize="25dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Date"
-                android:textSize="25dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Time"
-                android:textSize="25dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Invoice Amount"
-                android:textSize="25dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Paid"
-                android:textSize="25dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Balance"
-                android:textSize="25dp"/>
+                android:textSize="@dimen/small"/>
     </LinearLayout>
 </LinearLayout>

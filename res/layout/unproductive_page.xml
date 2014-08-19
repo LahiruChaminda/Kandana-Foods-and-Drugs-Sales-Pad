@@ -13,10 +13,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add New Unproductive Call"
-            android:id="@+id/btnAddUnProductiveCall" android:layout_gravity="center_horizontal" android:layout_weight="1" android:textSize="25dp"/>
+            android:id="@+id/btnAddUnProductiveCall" android:layout_gravity="center_horizontal" android:layout_weight="1" android:textSize="@dimen/small"
+            android:background="@drawable/rounded_button"/>
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Back"
-            android:id="@+id/btnBack" android:layout_gravity="center_horizontal" android:textSize="25dp" android:singleLine="false"/>
+            android:id="@+id/btnBack" android:layout_gravity="center_horizontal" android:textSize="@dimen/small" android:singleLine="false"
+            android:background="@drawable/rounded_button"/>
 </LinearLayout>

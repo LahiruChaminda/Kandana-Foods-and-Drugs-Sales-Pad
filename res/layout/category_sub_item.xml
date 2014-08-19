@@ -11,7 +11,7 @@
             android:layout_weight="6.10"
             android:text="Item Description"
             android:id="@+id/txtItemDescription"
-            android:textSize="20dp" android:paddingLeft="10dp"/>
+            android:textSize="@dimen/small" android:paddingLeft="10dp"/>
 
     <ImageView
             android:layout_width="25dp"
@@ -24,7 +24,7 @@
             android:gravity="right"
             android:layout_weight="1.57"
             android:id="@+id/txtQuantity"
-            android:textSize="20dp"/>
+            android:textSize="@dimen/small"/>
     <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
             android:gravity="right"
             android:layout_weight="1.92"
             android:id="@+id/txtFreeIssue"
-            android:textSize="20dp"/>
+            android:textSize="@dimen/small"/>
     <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             android:gravity="right"
             android:layout_weight="1.57"
             android:id="@+id/txtPackSize"
-            android:textSize="20dp"/>
+            android:textSize="@dimen/small"/>
     <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,5 +48,5 @@
             android:gravity="right"
             android:layout_weight="1.57"
             android:id="@+id/txtStock"
-            android:textSize="20dp"/>
+            android:textSize="@dimen/small"/>
 </LinearLayout>

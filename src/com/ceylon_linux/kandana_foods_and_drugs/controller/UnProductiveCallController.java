@@ -31,7 +31,7 @@ public class UnProductiveCallController extends AbstractController {
 		try {
 			SQLiteDatabase database = databaseInstance.getWritableDatabase();
 			SQLiteStatement unproductiveCallStatement = database.compileStatement("insert into tbl_unproductive_call(outletId,batteryLevel,repId,reason,longitude,latitude,time) values(?,?,?,?,?,?,?)");
-			DbHandler.performExecuteInsert(unproductiveCallStatement, new Object[]{
+			long insertedId = DbHandler.performExecuteInsert(unproductiveCallStatement, new Object[]{
 				unProductiveCall.getOutletId(),
 				unProductiveCall.getBatteryLevel(),
 				unProductiveCall.getRepId(),
@@ -40,7 +40,7 @@ public class UnProductiveCallController extends AbstractController {
 				unProductiveCall.getLatitude(),
 				unProductiveCall.getTimestamp()
 			});
-			return true;
+			return insertedId > 0;
 		} finally {
 			databaseInstance.close();
 		}

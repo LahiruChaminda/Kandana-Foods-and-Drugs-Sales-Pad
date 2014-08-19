@@ -10,7 +10,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="6.41"
             android:text="Item Description"
-            android:textSize="20dp"
+            android:textSize="@dimen/small"
             android:paddingLeft="10dp"
             android:id="@+id/txtItemDescription"/>
     <ImageButton
@@ -25,14 +25,14 @@
             android:text="Quantity"
             android:gravity="right"
             android:layout_weight="1.57"
-            android:textSize="20dp" android:id="@+id/txtQuantity"/>
+            android:textSize="@dimen/small" android:id="@+id/txtQuantity"/>
     <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Free Issue"
             android:gravity="right"
             android:layout_weight="1.92"
-            android:textSize="20dp" android:id="@+id/txtFreeIssue"/>
+            android:textSize="@dimen/small" android:id="@+id/txtFreeIssue"/>
     <ImageButton
             android:layout_width="25dp"
             android:layout_height="25dp"

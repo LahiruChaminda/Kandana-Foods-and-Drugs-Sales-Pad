@@ -39,13 +39,14 @@ import java.util.ArrayList;
  */
 public class HomeActivity extends Activity {
 
-	private Button btnStart;
 	private TextView txtName;
 	private TextView txtAddress;
 	private TextView txtRepTarget;
 	private TextView txtAchievedTarget;
 	private TextView txtOriginDate;
 	private TextView txtDueDate;
+	private Button btnStart;
+	private Button btnUnProductiveCall;
 	private Button btnSignOut;
 	private LinearLayout newsFeed;
 
@@ -131,6 +132,7 @@ public class HomeActivity extends Activity {
 	// <editor-fold defaultstate="collapsed" desc="Initialize">
 	private void initialize() {
 		btnStart = (Button) findViewById(R.id.btnStart);
+		btnUnProductiveCall = (Button) findViewById(R.id.btnUnProductiveCall);
 		btnSignOut = (Button) findViewById(R.id.btnSignOut);
 		txtName = (TextView) findViewById(R.id.txtName);
 		txtAddress = (TextView) findViewById(R.id.txtAddress);
@@ -145,6 +147,12 @@ public class HomeActivity extends Activity {
 				btnStartClicked(view);
 			}
 		});
+		btnUnProductiveCall.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				btnUnProductiveCallClicked(view);
+			}
+		});
 		btnSignOut.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -153,6 +161,12 @@ public class HomeActivity extends Activity {
 		});
 	}
 	// </editor-fold>
+
+	private void btnUnProductiveCallClicked(View view) {
+		Intent unProductiveCallActivity = new Intent(HomeActivity.this, UnProductiveCallActivity.class);
+		startActivity(unProductiveCallActivity);
+		finish();
+	}
 
 	private void btnStartClicked(View view) {
 		Intent loadAddInvoiceActivity = new Intent(HomeActivity.this, LoadAddInvoiceActivity.class);

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UnProductiveCallController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.UnProductiveCall;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 public class UnProductiveCallActivity extends Activity {
 	private final int ADD_UNPRODUCTIVE_CALL_OPTION = 0;
 	private final int UPDATE_UNPRODUCTIVE_CALL_OPTION = 1;
+
 	private ListView listView;
 	private Button btnAddUnProductiveCall;
 	private Button btnBack;
@@ -67,15 +69,19 @@ public class UnProductiveCallActivity extends Activity {
 		switch (requestCode) {
 			case ADD_UNPRODUCTIVE_CALL_OPTION:
 				if (resultCode == RESULT_OK) {
-					unProductiveCalls.clear();
-					unProductiveCalls.addAll(UnProductiveCallController.getUnProductiveCalls(UnProductiveCallActivity.this));
+					Toast.makeText(UnProductiveCallActivity.this, "Unproductive Call Added", Toast.LENGTH_LONG).show();
 				}
 				break;
 			case UPDATE_UNPRODUCTIVE_CALL_OPTION:
 				if (resultCode == RESULT_OK) {
-					//do something
+					Toast.makeText(UnProductiveCallActivity.this, "Unproductive Call Updated", Toast.LENGTH_LONG).show();
 				}
 				break;
+		}
+		if (resultCode == RESULT_OK) {
+			unProductiveCalls.clear();
+			unProductiveCalls.addAll(UnProductiveCallController.getUnProductiveCalls(UnProductiveCallActivity.this));
+			adapter.notifyDataSetChanged();
 		}
 	}
 
@@ -83,7 +89,6 @@ public class UnProductiveCallActivity extends Activity {
 		listView = (ListView) findViewById(R.id.listView);
 		btnAddUnProductiveCall = (Button) findViewById(R.id.btnAddUnProductiveCall);
 		btnBack = (Button) findViewById(R.id.btnBack);
-
 		btnAddUnProductiveCall.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -94,7 +99,8 @@ public class UnProductiveCallActivity extends Activity {
 		btnBack.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				setResult(RESULT_CANCELED);
+				finish();
 			}
 		});
 	}

@@ -8,29 +8,29 @@
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+
             android:text="Outlet Name"
-            android:textSize="25dp" android:padding="5dp"/>
+            android:textSize="@dimen/small" android:padding="5dp"/>
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/unProductiveCallOutlet" android:textSize="25dp" android:padding="5dp"/>
+            android:id="@+id/unProductiveCallOutlet" android:textSize="@dimen/small" android:padding="5dp"/>
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+
             android:text="Reason"
-            android:textSize="25dp" android:padding="5dp"/>
+            android:textSize="@dimen/small" android:padding="5dp"/>
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/txtViewUnProductiveCallReason"
-            android:textSize="25dp" android:padding="5dp"/>
+            android:textSize="@dimen/small" android:padding="5dp"/>
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Sync"
-            android:id="@+id/btnUnProductiveCallSync" android:textSize="25dp" android:padding="5dp"/>
+            android:id="@+id/btnUnProductiveCallSync" android:textSize="@dimen/small" android:padding="5dp"/>
 </LinearLayout>

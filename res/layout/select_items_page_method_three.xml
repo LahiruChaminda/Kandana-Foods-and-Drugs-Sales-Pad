@@ -15,7 +15,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/inputSearch"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:layout_weight="1"
                 android:hint="Search"/>
         <ImageButton
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="6.10"
                 android:text="Item Description"
-                android:textSize="20dp" android:paddingLeft="10dp"/>
+                android:textSize="@dimen/small" android:paddingLeft="10dp"/>
 
         <ImageView
                 android:layout_width="25dp"
@@ -46,28 +46,28 @@
                 android:text="Qty"
                 android:gravity="right"
                 android:layout_weight="1.57"
-                android:textSize="20dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="F.Qty"
                 android:gravity="right"
                 android:layout_weight="1.92"
-                android:textSize="20dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="P.Size"
                 android:gravity="right"
                 android:layout_weight="1.57"
-                android:textSize="20dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Stock"
                 android:gravity="right"
                 android:layout_weight="1.57"
-                android:textSize="20dp"/>
+                android:textSize="@dimen/small"/>
     </LinearLayout>
     <ListView
             android:layout_width="match_parent"

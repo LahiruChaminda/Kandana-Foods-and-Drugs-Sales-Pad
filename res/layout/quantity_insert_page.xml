@@ -10,7 +10,7 @@
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:textSize="25dp"
+            android:textSize="@dimen/small"
             android:layout_weight="1"
             android:padding="3dp"
             android:text="Item Description"
@@ -18,9 +18,10 @@
             android:gravity="center"/>
     <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:weightSum="2" android:layout_weight="1" android:padding="3dp"
                   android:orientation="horizontal">
-        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:textSize="25dp" android:text="Unit Price"
+        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:textSize="@dimen/small"
+                  android:text="Unit Price"
                   android:gravity="center_vertical"/>
-        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:textSize="25dp"
+        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:textSize="@dimen/small"
                   android:gravity="center_vertical" android:id="@+id/txtUnitPrice"/>
     </LinearLayout>
     <LinearLayout
@@ -34,13 +35,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:text="Quantity" android:gravity="center_vertical"/>
         <EditText
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:textSize="25dp" android:id="@+id/inputRequestedQuantity" android:inputType="number"/>
+                android:textSize="@dimen/small" android:id="@+id/inputRequestedQuantity" android:inputType="number"/>
     </LinearLayout>
     <LinearLayout
             android:layout_width="match_parent"
@@ -53,13 +54,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:text="Salable Returns" android:gravity="center_vertical"/>
         <EditText
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:textSize="25dp" android:id="@+id/inputSalableReturnQuantity" android:inputType="number"/>
+                android:textSize="@dimen/small" android:id="@+id/inputSalableReturnQuantity" android:inputType="number"/>
     </LinearLayout>
     <LinearLayout
             android:layout_width="match_parent"
@@ -72,14 +73,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:text="Free Quantity" android:gravity="center_vertical"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|right"
                 android:layout_weight="1"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:text="0" android:id="@+id/txtFreeQuantity"/>
     </LinearLayout>
     <LinearLayout
@@ -93,14 +94,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnOk"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:text="OK"
                 android:layout_weight="1" android:background="@drawable/rounded_button"/>
         <Button
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnCancel"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:text="Cancel"
                 android:layout_weight="1" android:background="@drawable/rounded_button"/>
     </LinearLayout>

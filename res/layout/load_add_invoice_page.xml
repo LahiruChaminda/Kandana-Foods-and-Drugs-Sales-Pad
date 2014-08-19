@@ -22,7 +22,7 @@
                             android:layout_height="0dp"
                             android:gravity="center"
                             android:text="New Invoice"
-                            android:textSize="25dp"
+                            android:textSize="@dimen/small"
                             android:layout_weight="1" android:background="#65aaff"/>
                     <LinearLayout
                             android:orientation="horizontal"
@@ -35,11 +35,11 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="match_parent"
                                 android:text="Date"
-                                android:textSize="25dp" android:gravity="center_vertical"/>
+                                android:textSize="@dimen/small" android:gravity="center_vertical"/>
                         <TextView
                                 android:layout_width="0dp"
                                 android:layout_weight="4"
-                                android:textSize="25dp"
+                                android:textSize="@dimen/small"
                                 android:layout_height="wrap_content"
                                 android:text="Date"
                                 android:id="@+id/txtDate"/>
@@ -55,11 +55,11 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="match_parent"
                                 android:text="Time"
-                                android:textSize="25dp" android:gravity="center_vertical"/>
+                                android:textSize="@dimen/small" android:gravity="center_vertical"/>
                         <TextView
                                 android:layout_width="0dp"
                                 android:layout_weight="4"
-                                android:textSize="25dp"
+                                android:textSize="@dimen/small"
                                 android:layout_height="wrap_content"
                                 android:text="Time"
                                 android:id="@+id/txtTime"/>
@@ -75,7 +75,7 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="match_parent"
                                 android:text="Distributor"
-                                android:textSize="25dp" android:gravity="center_vertical"/>
+                                android:textSize="@dimen/small" android:gravity="center_vertical"/>
                         <Spinner
                                 android:layout_width="0dp"
                                 android:layout_weight="4"
@@ -93,7 +93,7 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="match_parent"
                                 android:text="District"
-                                android:textSize="25dp" android:gravity="center_vertical"/>
+                                android:textSize="@dimen/small" android:gravity="center_vertical"/>
                         <Spinner
                                 android:layout_width="0dp"
                                 android:layout_weight="4"
@@ -111,7 +111,7 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="match_parent"
                                 android:text="Route"
-                                android:textSize="25dp" android:gravity="center_vertical"/>
+                                android:textSize="@dimen/small" android:gravity="center_vertical"/>
                         <Spinner
                                 android:layout_width="0dp"
                                 android:layout_weight="4"
@@ -129,7 +129,7 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="match_parent"
                                 android:text="Outlet"
-                                android:textSize="25dp" android:gravity="center_vertical"/>
+                                android:textSize="@dimen/small" android:gravity="center_vertical"/>
                         <LinearLayout
                                 android:orientation="horizontal"
                                 android:layout_width="0dp"
@@ -140,7 +140,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_weight="1"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/outletAuto" android:hint="Select Outlet" android:textSize="20dp"/>
+                                    android:id="@+id/outletAuto" android:hint="Select Outlet" android:textSize="@dimen/small"/>
                             <ImageButton
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"
@@ -156,6 +156,6 @@
                 android:text="Next"
                 android:id="@+id/btnNext"
                 android:clickable="true"
-                android:textSize="25dp" android:background="@drawable/rounded_button"/>
+                android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
     </LinearLayout>
 </ScrollView>

@@ -8,7 +8,7 @@
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/inputSearch" android:padding="5dp" android:textSize="25dp" android:hint="Search"/>
+            android:id="@+id/inputSearch" android:padding="5dp" android:textSize="@dimen/small" android:hint="Search"/>
     <LinearLayout
             android:orientation="horizontal"
             android:weightSum="10"
@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="6.41"
                 android:text="Item Description"
-                android:textSize="20dp" android:paddingLeft="10dp"/>
+                android:textSize="@dimen/small" android:paddingLeft="10dp"/>
         <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
@@ -30,14 +30,14 @@
                 android:text="Quantity"
                 android:gravity="right"
                 android:layout_weight="1.57"
-                android:textSize="20dp"/>
+                android:textSize="@dimen/small"/>
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Free Issue"
                 android:gravity="right"
                 android:layout_weight="1.92"
-                android:textSize="20dp"/>
+                android:textSize="@dimen/small"/>
         <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"

@@ -9,7 +9,7 @@
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="30dp"
+                android:textSize="@dimen/normal"
                 android:gravity="center"
                 android:text="Welcome"
                 />
@@ -21,14 +21,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:text="Name"
                     />
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:id="@+id/txtName"
                     />
         </LinearLayout>
@@ -40,14 +40,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:text="Address"
                     />
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:id="@+id/txtAddress"
                     />
         </LinearLayout>
@@ -59,14 +59,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:text="Origin"
                     />
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:id="@+id/txtOriginDate"
                     />
         </LinearLayout>
@@ -78,14 +78,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:text="Due Date"
                     />
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:id="@+id/txtDueDate"
                     />
         </LinearLayout>
@@ -97,14 +97,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:text="Target"
                     />
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:id="@+id/txtRepTarget"
                     />
         </LinearLayout>
@@ -116,21 +116,21 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:text="Achieved"
                     />
             <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3.5"
-                    android:textSize="25dp"
+                    android:textSize="@dimen/small"
                     android:id="@+id/txtAchievedTarget"
                     />
         </LinearLayout>
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="30dp"
+                android:textSize="@dimen/normal"
                 android:gravity="center"
                 android:text="Messages"
                 />
@@ -141,15 +141,21 @@
         </LinearLayout>
         <Button
                 android:layout_width="match_parent"
-                android:text="Start"
+                android:text="Make Sales Order"
                 android:id="@+id/btnStart"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
+                android:layout_height="wrap_content" android:background="@drawable/rounded_button"/>
+        <Button
+                android:layout_width="match_parent"
+                android:text="Make UnProductive Call"
+                android:id="@+id/btnUnProductiveCall"
+                android:textSize="@dimen/small"
                 android:layout_height="wrap_content" android:background="@drawable/rounded_button"/>
         <Button
                 android:layout_width="match_parent"
                 android:text="Sign Out"
                 android:id="@+id/btnSignOut"
-                android:textSize="25dp"
+                android:textSize="@dimen/small"
                 android:layout_height="wrap_content" android:background="@drawable/rounded_button"/>
     </LinearLayout>
 </ScrollView>

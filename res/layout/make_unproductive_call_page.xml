@@ -8,34 +8,32 @@
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Outlet Name"
-            android:textSize="25dp"/>
+            android:textSize="@dimen/small"/>
     <AutoCompleteTextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/unProductiveCallOutletAuto" android:textSize="25dp"/>
+            android:id="@+id/unProductiveCallOutletAuto" android:textSize="@dimen/small"/>
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Reason"
-            android:textSize="25dp"/>
+            android:textSize="@dimen/small"/>
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/txtMakeUnProductiveCallReason"
-            android:textSize="25dp"/>
+            android:textSize="@dimen/small"/>
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Sync"
-            android:id="@+id/btnUnProductiveCallSync" android:textSize="25dp"/>
+            android:id="@+id/btnUnProductiveCallSync" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Submit"
-            android:id="@+id/btnUnProductiveCallSubmit" android:textSize="25dp"/>
+            android:id="@+id/btnUnProductiveCallSubmit" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
 </LinearLayout>
