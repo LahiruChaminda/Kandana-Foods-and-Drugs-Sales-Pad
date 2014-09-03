@@ -6,6 +6,7 @@
 
 package com.ceylon_linux.kandana_foods_and_drugs.model;
 
+import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -84,6 +85,7 @@ public class Order implements Serializable {
 		}
 		invoiceParams.put("invoiceItems", orderDetailsJsonArray);
 		orderJsonParams.put("Invoice", new JSONObject(invoiceParams));
+		Log.i("qwerty", new JSONObject(orderJsonParams).toString());
 		return new JSONObject(orderJsonParams);
 	}
 

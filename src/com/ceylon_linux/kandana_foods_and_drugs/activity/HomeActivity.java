@@ -22,7 +22,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
+import com.ceylon_linux.kandana_foods_and_drugs.controller.UnProductiveCallController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
+import com.ceylon_linux.kandana_foods_and_drugs.model.UnProductiveCall;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
 import org.json.JSONException;
 
@@ -70,7 +72,7 @@ public class HomeActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		new AsyncTask<Void, Void, Boolean>() {
+		new AsyncTask<Void, String, Boolean>() {
 			ProgressDialog progressDialog;
 
 			@Override
@@ -79,13 +81,21 @@ public class HomeActivity extends Activity {
 				progressDialog = new ProgressDialog(HomeActivity.this);
 				progressDialog.setCanceledOnTouchOutside(false);
 				progressDialog.setCancelable(false);
-				progressDialog.setMessage("Syncing Orders");
+				progressDialog.setMessage("Syncing Orders and Unproductive Calls...");
 				progressDialog.show();
 			}
 
 			@Override
 			protected Boolean doInBackground(Void... params) {
 				try {
+					ArrayList<UnProductiveCall> unProductiveCalls = UnProductiveCallController.getUnProductiveCalls(HomeActivity.this);
+					for (UnProductiveCall unProductiveCall : unProductiveCalls) {
+						if (!unProductiveCall.isSynced()) {
+							UnProductiveCallController.syncUnProductiveCall(HomeActivity.this, unProductiveCall);
+						}
+
+					}
+
 					return OrderController.syncUnSyncedOrders(HomeActivity.this);
 				} catch (IOException ex) {
 					ex.printStackTrace();
@@ -102,7 +112,7 @@ public class HomeActivity extends Activity {
 					progressDialog.dismiss();
 				}
 				if (response) {
-					Toast.makeText(HomeActivity.this, "Orders Synced Successfully", Toast.LENGTH_LONG).show();
+					Toast.makeText(HomeActivity.this, "Orders and Unproductive Calls Synced Successfully", Toast.LENGTH_LONG).show();
 				} else {
 					Toast.makeText(HomeActivity.this, "Unable to Sync Orders", Toast.LENGTH_LONG).show();
 				}

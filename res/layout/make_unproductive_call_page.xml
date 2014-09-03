@@ -22,7 +22,6 @@
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/txtMakeUnProductiveCallReason"
             android:textSize="@dimen/small"/>
@@ -31,9 +30,9 @@
             android:layout_height="wrap_content"
             android:text="Sync"
             android:id="@+id/btnUnProductiveCallSync" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
-    <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Submit"
-            android:id="@+id/btnUnProductiveCallSubmit" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
+    <!-- <Button
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:text="Submit"
+             android:id="@+id/btnUnProductiveCallSubmit" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>-->
 </LinearLayout>

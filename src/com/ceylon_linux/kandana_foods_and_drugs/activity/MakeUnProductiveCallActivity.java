@@ -11,7 +11,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -36,12 +35,26 @@ public class MakeUnProductiveCallActivity extends Activity {
 
 	private AutoCompleteTextView unProductiveCallOutletAuto;
 	private EditText txtMakeUnProductiveCallReason;
-	private Button btnUnProductiveCallSubmit;
+	//	private Button btnUnProductiveCallSubmit;
 	private Button btnUnProductiveCallSync;
 	private int outletId;
 
 	private Location lastKnownLocation;
 	private GpsReceiver gpsReceiver;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		gpsReceiver = GpsReceiver.getGpsReceiver(getApplicationContext());
+		setContentView(R.layout.make_unproductive_call_page);
+		initialize();
+
+		ArrayList<Outlet> outlets = OutletController.getOutlets(this);
+		ArrayAdapter<Outlet> outletAdapter = new ArrayAdapter<Outlet>(this, android.R.layout.simple_dropdown_item_1line, outlets);
+		unProductiveCallOutletAuto.setAdapter(outletAdapter);
+		GPS_CHECKER.start();
+	}
+
 	private final Thread GPS_CHECKER = new Thread() {
 		private ProgressDialog progressDialog;
 		private Handler handler = new Handler();
@@ -74,19 +87,6 @@ public class MakeUnProductiveCallActivity extends Activity {
 	};
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		gpsReceiver = GpsReceiver.getGpsReceiver(getApplicationContext());
-		setContentView(R.layout.make_unproductive_call_page);
-		initialize();
-
-		ArrayList<Outlet> outlets = OutletController.getOutlets(this);
-		ArrayAdapter<Outlet> outletAdapter = new ArrayAdapter<Outlet>(this, android.R.layout.simple_dropdown_item_1line, outlets);
-		unProductiveCallOutletAuto.setAdapter(outletAdapter);
-		GPS_CHECKER.start();
-	}
-
-	@Override
 	public void onBackPressed() {
 		setResult(RESULT_CANCELED);
 		finish();
@@ -96,7 +96,7 @@ public class MakeUnProductiveCallActivity extends Activity {
 	private void initialize() {
 		unProductiveCallOutletAuto = (AutoCompleteTextView) findViewById(R.id.unProductiveCallOutletAuto);
 		txtMakeUnProductiveCallReason = (EditText) findViewById(R.id.txtMakeUnProductiveCallReason);
-		btnUnProductiveCallSubmit = (Button) findViewById(R.id.btnUnProductiveCallSubmit);
+//		btnUnProductiveCallSubmit = (Button) findViewById(R.id.btnUnProductiveCallSubmit);
 		btnUnProductiveCallSync = (Button) findViewById(R.id.btnUnProductiveCallSync);
 		unProductiveCallOutletAuto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -104,11 +104,11 @@ public class MakeUnProductiveCallActivity extends Activity {
 				unProductiveCallOutletAutoItemSelected(adapterView, view, position, id);
 			}
 		});
-		btnUnProductiveCallSubmit.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				btnUnProductiveCallSubmitClicked(view);
-			}
-		});
+//		btnUnProductiveCallSubmit.setOnClickListener(new View.OnClickListener() {
+//			public void onClick(View view) {
+//				btnUnProductiveCallSubmitClicked(view);
+//			}
+//		});
 		btnUnProductiveCallSync.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				btnUnProductiveCallSyncClicked(view);
@@ -144,7 +144,7 @@ public class MakeUnProductiveCallActivity extends Activity {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				UnProductiveCallController.saveUnProductiveCall(MakeUnProductiveCallActivity.this, unProductiveCall);
+				UnProductiveCallController.saveUnProductiveCall(MakeUnProductiveCallActivity.this, unProductiveCall, response);
 				return response;
 			}
 
@@ -176,8 +176,7 @@ public class MakeUnProductiveCallActivity extends Activity {
 			BatteryUtility.getBatteryLevel(this),
 			UserController.getAuthorizedUser(this).getUserId()
 		);
-		UnProductiveCallController.saveUnProductiveCall(this, unProductiveCall);
-		Log.i("MAKE", "sd");
+		UnProductiveCallController.saveUnProductiveCall(this, unProductiveCall, false);
 		setResult(RESULT_OK);
 		finish();
 	}

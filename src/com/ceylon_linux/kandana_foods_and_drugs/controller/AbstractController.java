@@ -7,6 +7,7 @@
 package com.ceylon_linux.kandana_foods_and_drugs.controller;
 
 import android.content.Context;
+import android.util.Log;
 import com.ceylon_linux.kandana_foods_and_drugs.util.InternetObserver;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
 
 /**
  * AbstractController - Performs Basic network operations
@@ -41,7 +43,7 @@ abstract class AbstractController extends WebServiceURL {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(url);
 			// Uncomment following line to use gzip
-			//postRequest.addHeader("Accept-Encoding", "gzip");
+			postRequest.addHeader("Accept-Encoding", "gzip");
 			if (parameters != null) {
 				MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 				for (String parameter : parameters.keySet()) {
@@ -70,12 +72,13 @@ abstract class AbstractController extends WebServiceURL {
 					return null;
 				}
 				// Uncomment following line to use gzip
-				//bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(content)));
-				bufferedReader = new BufferedReader(new InputStreamReader(content));
+				bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(content)));
+				//bufferedReader = new BufferedReader(new InputStreamReader(content));
 				String currentLine;
 				while ((currentLine = bufferedReader.readLine()) != null) {
 					responseString.append(currentLine + lineSeparator);
 				}
+				Log.i("response", responseString.toString());
 				return new JSONObject(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {
@@ -91,7 +94,7 @@ abstract class AbstractController extends WebServiceURL {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(url);
 			// Uncomment following line to use gzip
-			// postRequest.addHeader("Accept-Encoding", "gzip");
+			postRequest.addHeader("Accept-Encoding", "gzip");
 			if (parameters != null) {
 				MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 				for (String parameter : parameters.keySet()) {
@@ -120,12 +123,13 @@ abstract class AbstractController extends WebServiceURL {
 					return null;
 				}
 				// Uncomment following line to use gzip
-				// bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(content)));
-				bufferedReader = new BufferedReader(new InputStreamReader(content));
+				bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(content)));
+				//bufferedReader = new BufferedReader(new InputStreamReader(content));
 				String currentLine;
 				while ((currentLine = bufferedReader.readLine()) != null) {
 					responseString.append(currentLine + lineSeparator);
 				}
+				Log.i("response", responseString.toString());
 				return new JSONArray(responseString.toString());
 			} finally {
 				if (bufferedReader != null) {

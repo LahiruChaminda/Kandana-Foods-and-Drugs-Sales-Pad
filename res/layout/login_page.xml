@@ -23,7 +23,6 @@
                 android:hint="User Name"
                 android:textSize="@dimen/small"
                 android:layout_marginLeft="5dp"
-                style="@android:style/Widget.EditText"
                 android:layout_marginRight="5dp"/>
         <TextView
                 android:layout_width="match_parent"
@@ -38,11 +37,11 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/inputPassword"
                 android:hint="Password"
-                style="@android:style/Widget.EditText"
                 android:padding="5dp"
                 android:textSize="@dimen/small"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" android:inputType="textPassword"/>
+                android:layout_marginRight="5dp"
+                android:inputType="textPassword"/>
         <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,18 +49,16 @@
                 android:id="@+id/btnLogin"
                 android:padding="5dp"
                 android:textSize="@dimen/small"
-                style="@android:style/Widget.Button"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:layout_marginRight="5dp" android:background="@drawable/rounded_button"/>
         <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Exit"
                 android:id="@+id/btnExit"
-                style="@android:style/Widget.Button"
                 android:padding="5dp"
                 android:textSize="@dimen/small"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:layout_marginRight="5dp" android:background="@drawable/rounded_button"/>
     </LinearLayout>
 </ScrollView>

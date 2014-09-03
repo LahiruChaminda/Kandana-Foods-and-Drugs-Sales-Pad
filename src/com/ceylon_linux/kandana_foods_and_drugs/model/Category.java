@@ -23,6 +23,13 @@ public class Category implements Serializable, Comparable {
 	private ArrayList<Item> items;
 	private String categoryDescription;
 	private int categoryId;
+	private int supplierId;
+
+	public Category(String categoryDescription, int categoryId, int supplierId) {
+		this.categoryDescription = categoryDescription;
+		this.categoryId = categoryId;
+		this.supplierId = supplierId;
+	}
 
 	public Category(int categoryId, String categoryDescription, ArrayList<Item> items) {
 		this.items = items;
@@ -38,9 +45,9 @@ public class Category implements Serializable, Comparable {
 			return null;
 		}
 		return new Category(
-			categoryJsonInstance.getInt("categoryId"),
 			categoryJsonInstance.getString("categoryName"),
-			null
+			categoryJsonInstance.getInt("categoryId"),
+			categoryJsonInstance.getInt("supplierId")
 		);
 	}
 
@@ -95,5 +102,13 @@ public class Category implements Serializable, Comparable {
 	public int compareTo(Object another) {
 		Category anotherItem = (Category) another;
 		return categoryDescription.compareTo(anotherItem.getCategoryDescription());
+	}
+
+	public int getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
 	}
 }

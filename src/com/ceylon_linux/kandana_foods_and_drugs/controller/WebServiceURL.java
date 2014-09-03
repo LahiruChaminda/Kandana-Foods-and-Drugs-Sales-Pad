@@ -32,23 +32,22 @@ abstract class WebServiceURL {
 			return parameters;
 		}
 
-		public static final HashMap<String, Object> getCategoryParameters(int supplierId) {
+		public static final HashMap<String, Object> getItemCategoryParameters(int userId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("supplierId", supplierId);
+			parameters.put("userId", userId);
 			return parameters;
 		}
 
-		public static final HashMap<String, Object> getProductsParameters(int categoryId, int distributorId) {
+		public static final HashMap<String, Object> getProductsParameters(int distributorId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("categoryId", categoryId);
 			parameters.put("disId", distributorId);
 			return parameters;
 		}
 
 		public static final String GET_DISTRIBUTORS = webServiceURL + "getDistributors.php";
 		public static final String GET_SUPPLIERS = webServiceURL + "getSuppliers";
-		public static final String GET_CATEGORIES = webServiceURL + "getItemCategory";
-		public static final String GET_ITEMS = webServiceURL + "getProducts";
+		public static final String GET_ITEM_CATEGORIES = webServiceURL + "getItemCategory";
+		public static final String GET_PRODUCTS = webServiceURL + "getProducts";
 	}
 
 	protected static final class UserURLPack {
@@ -105,11 +104,11 @@ abstract class WebServiceURL {
 
 		public static final HashMap<String, Object> getUnProductiveCallParameters(JSONObject unProductiveCallJson, int userId) {
 			HashMap<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("unproductiveCall", unProductiveCallJson);
+			parameters.put("data", unProductiveCallJson);
 			parameters.put("userId", userId);
 			return parameters;
 		}
 
-		public static final String SYNC_UN_PRODUCTIVE_CALL = webServiceURL + "insertInvoiceDetails";
+		public static final String SYNC_UN_PRODUCTIVE_CALL = webServiceURL + "unproductiveCall";
 	}
 }

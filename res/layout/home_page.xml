@@ -147,7 +147,7 @@
                 android:layout_height="wrap_content" android:background="@drawable/rounded_button"/>
         <Button
                 android:layout_width="match_parent"
-                android:text="Make UnProductive Call"
+                android:text="UnProductive Call"
                 android:id="@+id/btnUnProductiveCall"
                 android:textSize="@dimen/small"
                 android:layout_height="wrap_content" android:background="@drawable/rounded_button"/>

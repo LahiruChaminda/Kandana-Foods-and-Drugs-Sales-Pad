@@ -26,11 +26,11 @@ import java.util.ArrayList;
  */
 public class UnProductiveCallController extends AbstractController {
 
-	public static boolean saveUnProductiveCall(Context context, UnProductiveCall unProductiveCall) throws SQLException {
+	public static boolean saveUnProductiveCall(Context context, UnProductiveCall unProductiveCall, boolean synced) throws SQLException {
 		SQLiteDatabaseHelper databaseInstance = SQLiteDatabaseHelper.getDatabaseInstance(context);
 		try {
 			SQLiteDatabase database = databaseInstance.getWritableDatabase();
-			SQLiteStatement unproductiveCallStatement = database.compileStatement("insert into tbl_unproductive_call(outletId,batteryLevel,repId,reason,longitude,latitude,time) values(?,?,?,?,?,?,?)");
+			SQLiteStatement unproductiveCallStatement = database.compileStatement("insert into tbl_unproductive_call(outletId,batteryLevel,repId,reason,longitude,latitude,time,syncStatus) values(?,?,?,?,?,?,?,?)");
 			long insertedId = DbHandler.performExecuteInsert(unproductiveCallStatement, new Object[]{
 				unProductiveCall.getOutletId(),
 				unProductiveCall.getBatteryLevel(),
@@ -38,7 +38,8 @@ public class UnProductiveCallController extends AbstractController {
 				unProductiveCall.getReason(),
 				unProductiveCall.getLongitude(),
 				unProductiveCall.getLatitude(),
-				unProductiveCall.getTimestamp()
+				unProductiveCall.getTimestamp(),
+				synced ? 1 : 0
 			});
 			return insertedId > 0;
 		} finally {
@@ -65,6 +66,7 @@ public class UnProductiveCallController extends AbstractController {
 					cursor.getInt(7),
 					cursor.getInt(8)
 				);
+				unProductiveCall.setSyncStatus(cursor.getInt(9) == 1);
 				unProductiveCalls.add(unProductiveCall);
 			}
 			return unProductiveCalls;
@@ -75,6 +77,13 @@ public class UnProductiveCallController extends AbstractController {
 
 	public static boolean syncUnProductiveCall(Context context, UnProductiveCall unProductiveCall) throws SQLException, IOException, JSONException {
 		JSONObject response = getJsonObject(UnProductiveCallURLPack.SYNC_UN_PRODUCTIVE_CALL, UnProductiveCallURLPack.getUnProductiveCallParameters(unProductiveCall.getUnProductiveCallAsJson(), UserController.getAuthorizedUser(context).getUserId()), context);
-		return response.getBoolean("response");
+		SQLiteDatabaseHelper databaseInstance = SQLiteDatabaseHelper.getDatabaseInstance(context);
+		SQLiteDatabase database = databaseInstance.getWritableDatabase();
+		SQLiteStatement statement = database.compileStatement("update tbl_unproductive_call set syncStatus=1 where unProductiveCallId=?");
+		if (response != null && response.getBoolean("result")) {
+			DbHandler.performExecute(statement, new Object[]{unProductiveCall.getUnProductiveCallId()});
+		}
+		databaseInstance.close();
+		return response != null && response.getBoolean("result");
 	}
 }

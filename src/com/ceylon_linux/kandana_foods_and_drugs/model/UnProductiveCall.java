@@ -8,7 +8,8 @@ package com.ceylon_linux.kandana_foods_and_drugs.model;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -18,6 +19,8 @@ import java.util.HashMap;
  */
 public class UnProductiveCall implements Serializable {
 
+	private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	private static SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 	private int unProductiveCallId;
 	private int outletId;
 	private int repId;
@@ -158,13 +161,15 @@ public class UnProductiveCall implements Serializable {
 
 	public JSONObject getUnProductiveCallAsJson() {
 		HashMap<String, Object> unProductiveCallJson = new HashMap<String, Object>();
-		unProductiveCallJson.put("outletId", outletId);
-		unProductiveCallJson.put("reason", reason);
-		unProductiveCallJson.put("timestamp", new Timestamp(timestamp).toString());
-		unProductiveCallJson.put("longitude", longitude);
-		unProductiveCallJson.put("latitude", latitude);
+		unProductiveCallJson.put("shopcode", outletId);
+		unProductiveCallJson.put("remarks", reason);
+		Date date = new Date(timestamp);
+		unProductiveCallJson.put("date", dateFormatter.format(date));
+		unProductiveCallJson.put("time", timeFormatter.format(date));
+		unProductiveCallJson.put("gpslng", longitude);
+		unProductiveCallJson.put("gpslat", latitude);
 		unProductiveCallJson.put("repId", repId);
-		unProductiveCallJson.put("batteryLevel", batteryLevel);
+		unProductiveCallJson.put("blevel", batteryLevel);
 		return new JSONObject(unProductiveCallJson);
 	}
 

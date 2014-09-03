@@ -108,7 +108,7 @@ public class UserController extends AbstractController {
 	public static ArrayList<String> getMessages(Context context) throws IOException, JSONException {
 		ArrayList<String> messages = new ArrayList<String>();
 		JSONObject json = getJsonObject(UserURLPack.MESSAGE_BROADCAST, UserURLPack.getMessageBroadcastParameters(getAuthorizedUser(context).getUserId()), context);
-		if (json.getBoolean("result")) {
+		if (json != null && json.getBoolean("result")) {
 			JSONArray messageCollection = json.getJSONArray("message");
 			for (int i = 0, MESSAGES_LENGTH = messageCollection.length(); i < MESSAGES_LENGTH; i++) {
 				messages.add(messageCollection.getJSONObject(i).getString("m_message"));
@@ -119,7 +119,7 @@ public class UserController extends AbstractController {
 
 	public static RepTarget getTarget(Context context) throws IOException, JSONException, ParseException {
 		JSONObject json = getJsonObject(UserURLPack.REP_TARGET, UserURLPack.getRepTargetParameters(getAuthorizedUser(context).getUserId()), context);
-		return json.getBoolean("result") ? RepTarget.parseRepTarget((JSONObject) json.getJSONArray("target").get(0)) : null;
+		return json != null && json.getBoolean("result") ? RepTarget.parseRepTarget((JSONObject) json.getJSONArray("target").get(0)) : null;
 	}
 
 	public static class RepTarget {

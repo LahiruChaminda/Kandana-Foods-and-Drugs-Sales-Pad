@@ -29,18 +29,22 @@ public class OrderDetail implements Serializable {
 	private int freeIssue;
 	private double price;
 	private int salableReturns;
+	private int rp_id;
+	private int stock;
 	private Item item;
 
-	public OrderDetail(int itemId, String itemDescription, int quantity, double price, int freeIssue, int salableReturns) {
+	public OrderDetail(int itemId, String itemDescription, int quantity, double price, int freeIssue, int salableReturns, int rp_id, int stock) {
 		this.itemId = itemId;
 		this.itemDescription = itemDescription;
 		this.quantity = quantity;
 		this.price = price;
 		this.freeIssue = freeIssue;
 		this.salableReturns = salableReturns;
+		this.rp_id = rp_id;
+		this.stock = stock;
 	}
 
-	public OrderDetail(Item item, int quantity, int freeIssue, int salableReturns) {
+	public OrderDetail(Item item, int quantity, int freeIssue, int salableReturns, int rp_id, int stock) {
 		this.item = item;
 		this.itemId = item.getItemId();
 		this.itemDescription = item.getItemDescription();
@@ -48,6 +52,8 @@ public class OrderDetail implements Serializable {
 		this.price = item.getPrice();
 		this.freeIssue = freeIssue;
 		this.salableReturns = salableReturns;
+		this.rp_id = rp_id;
+		this.stock = stock;
 	}
 
 	public static OrderDetail getOrderDetail(Item item, int quantity, int salableReturns, Context context) {
@@ -67,8 +73,18 @@ public class OrderDetail implements Serializable {
 			item,
 			quantity,
 			freeIssue,
-			salableReturns
+			salableReturns,
+			item.getRp_id(),
+			item.getStock() - quantity
 		);
+	}
+
+	public int getRp_id() {
+		return rp_id;
+	}
+
+	public int getStock() {
+		return stock;
 	}
 
 	public Item getItem() {
@@ -134,6 +150,8 @@ public class OrderDetail implements Serializable {
 		orderDetailsParams.put("price", price);
 		orderDetailsParams.put("freeIssue", freeIssue);
 		orderDetailsParams.put("salableReturns", salableReturns);
+		orderDetailsParams.put("rpId", rp_id);
+		orderDetailsParams.put("balanceQty", stock);
 		return new JSONObject(orderDetailsParams);
 	}
 

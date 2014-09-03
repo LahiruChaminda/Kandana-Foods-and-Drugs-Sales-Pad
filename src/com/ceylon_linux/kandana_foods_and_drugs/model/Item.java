@@ -41,8 +41,11 @@ public class Item implements Serializable, Comparable {
 	private int stock;
 	private boolean selected;
 	private String freeIssueJsonArrayString;
+	private int rp_id;
+	private int supplierId;
+	private int categoryId;
 
-	public Item(int itemId, String itemCode, String itemDescription, double price, String packSize, int stock) {
+	public Item(int itemId, String itemCode, String itemDescription, double price, String packSize, int stock, int rp_id) {
 		this.itemId = itemId;
 		this.itemCode = itemCode;
 		this.itemDescription = itemDescription;
@@ -50,9 +53,10 @@ public class Item implements Serializable, Comparable {
 		this.packSize = packSize;
 		this.stock = stock;
 		this.FIXED_STOCK = stock;
+		this.rp_id = rp_id;
 	}
 
-	public Item(int itemId, String itemCode, String itemDescription, double price, JSONArray freeIssueJsonArray, String packSize, int stock) {
+	public Item(int itemId, String itemCode, String itemDescription, double price, JSONArray freeIssueJsonArray, String packSize, int stock, int rp_id) {
 		this.itemId = itemId;
 		this.itemCode = itemCode;
 		this.itemDescription = itemDescription;
@@ -61,6 +65,7 @@ public class Item implements Serializable, Comparable {
 		this.packSize = packSize;
 		this.stock = stock;
 		this.FIXED_STOCK = stock;
+		this.rp_id = rp_id;
 	}
 
 	public static final Item parseItem(JSONObject itemJsonInstance) throws JSONException {
@@ -69,15 +74,27 @@ public class Item implements Serializable, Comparable {
 		}
 		double price = itemJsonInstance.getDouble("price");
 		price = Double.parseDouble(NUMBER_FORMATTER.format(price));
-		return new Item(
+		Item item = new Item(
 			itemJsonInstance.getInt("itemId"),//int itemId
 			itemJsonInstance.getString("itemCode"),//int itemCode
 			itemJsonInstance.getString("itemName"),//itemDescription
 			price, //unitPrice
 			itemJsonInstance.getJSONArray("freeIssues"),
 			itemJsonInstance.getString("packSize"),
-			itemJsonInstance.getInt("stock")
+			itemJsonInstance.getInt("stock"),
+			itemJsonInstance.getInt("rp_id")
 		);
+		item.setSupplierId(itemJsonInstance.getInt("supp_id"));
+		item.setCategoryId(itemJsonInstance.getInt("cat_id"));
+		return item;
+	}
+
+	public int getRp_id() {
+		return rp_id;
+	}
+
+	public void setRp_id(int rp_id) {
+		this.rp_id = rp_id;
 	}
 
 	public int getItemId() {
@@ -171,5 +188,21 @@ public class Item implements Serializable, Comparable {
 	public int compareTo(Object another) {
 		Item anotherItem = (Item) another;
 		return itemDescription.compareTo(anotherItem.getItemDescription());
+	}
+
+	public int getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
+	}
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
 	}
 }

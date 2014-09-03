@@ -7,18 +7,19 @@ package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UnProductiveCallController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.UnProductiveCall;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * @author Supun Lakshan Wanigarathna Dissanayake
@@ -34,12 +35,15 @@ public class UnProductiveCallActivity extends Activity {
 	private Button btnBack;
 	private BaseAdapter adapter;
 	private ArrayList<UnProductiveCall> unProductiveCalls = new ArrayList<UnProductiveCall>();
+	private SimpleDateFormat simpleDateFormatter = new SimpleDateFormat("EEEE, dd MMMM, yyyy");
+	private UnProductiveCall selectedUnProductiveCall;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.unproductive_page);
 		initialize();
+		unProductiveCalls.addAll(UnProductiveCallController.getUnProductiveCalls(UnProductiveCallActivity.this));
 		adapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
@@ -58,15 +62,38 @@ public class UnProductiveCallActivity extends Activity {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				return null;
+				ViewHolder viewHolder;
+				if (convertView == null) {
+					LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+					convertView = inflater.inflate(R.layout.un_productive_call_item, null);
+					convertView.setTag(viewHolder = new ViewHolder());
+					viewHolder.txtDateTime = (TextView) convertView.findViewById(R.id.txtDateTme);
+					viewHolder.txtOutletName = (TextView) convertView.findViewById(R.id.txtOutletName);
+					viewHolder.txtReason = (TextView) convertView.findViewById(R.id.txtReason);
+				} else {
+					viewHolder = (ViewHolder) convertView.getTag();
+				}
+				UnProductiveCall unProductiveCall = getItem(position);
+				viewHolder.txtOutletName.setText(unProductiveCall.getOutletName());
+				viewHolder.txtDateTime.setText(simpleDateFormatter.format(new Date(unProductiveCall.getTimestamp())));
+				viewHolder.txtReason.setText(unProductiveCall.getReason());
+				convertView.setBackgroundColor((unProductiveCall.isSynced()) ? Color.GREEN : Color.RED);
+				return convertView;
 			}
 		};
 		listView.setAdapter(adapter);
 	}
 
 	@Override
+	public void onBackPressed() {
+		Intent homeActivity = new Intent(UnProductiveCallActivity.this, HomeActivity.class);
+		startActivity(homeActivity);
+		finish();
+	}
+
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
+		/*switch (requestCode) {
 			case ADD_UNPRODUCTIVE_CALL_OPTION:
 				if (resultCode == RESULT_OK) {
 					Toast.makeText(UnProductiveCallActivity.this, "Unproductive Call Added", Toast.LENGTH_LONG).show();
@@ -77,7 +104,7 @@ public class UnProductiveCallActivity extends Activity {
 					Toast.makeText(UnProductiveCallActivity.this, "Unproductive Call Updated", Toast.LENGTH_LONG).show();
 				}
 				break;
-		}
+		}*/
 		if (resultCode == RESULT_OK) {
 			unProductiveCalls.clear();
 			unProductiveCalls.addAll(UnProductiveCallController.getUnProductiveCalls(UnProductiveCallActivity.this));
@@ -87,6 +114,13 @@ public class UnProductiveCallActivity extends Activity {
 
 	private void initialize() {
 		listView = (ListView) findViewById(R.id.listView);
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				selectedUnProductiveCall = (UnProductiveCall) parent.getAdapter().getItem(position);
+				return true;
+			}
+		});
 		btnAddUnProductiveCall = (Button) findViewById(R.id.btnAddUnProductiveCall);
 		btnBack = (Button) findViewById(R.id.btnBack);
 		btnAddUnProductiveCall.setOnClickListener(new View.OnClickListener() {
@@ -99,9 +133,16 @@ public class UnProductiveCallActivity extends Activity {
 		btnBack.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setResult(RESULT_CANCELED);
+				Intent homeActivity = new Intent(UnProductiveCallActivity.this, HomeActivity.class);
+				startActivity(homeActivity);
 				finish();
 			}
 		});
+	}
+
+	private static class ViewHolder {
+		TextView txtOutletName;
+		TextView txtDateTime;
+		TextView txtReason;
 	}
 }

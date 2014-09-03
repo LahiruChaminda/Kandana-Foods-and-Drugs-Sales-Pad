@@ -51,6 +51,7 @@ CREATE TABLE tbl_item (
     price DECIMAL(10 , 2) NOT NULL DEFAULT 0,
     packSize Text,
     stock int default 0,
+    rp_id INTEGER,
     unique (itemId,categoryId,supplierId,distributorId)
 );
 
@@ -98,7 +99,7 @@ CREATE TABLE tbl_order (
 
 CREATE TABLE tbl_order_detail (
     orderId INTEGER NOT NULL REFERENCES tbl_order (orderId) ON UPDATE CASCADE,
-    itemId INTEGER NOT NULL REFERENCES tbl_item (itemId) ON UPDATE CASCADE,
+    itemId INTEGER,
     price DECIMAL(10 , 2 ) NOT NULL,
     discount REAL,
     quantity INT,
@@ -106,6 +107,8 @@ CREATE TABLE tbl_order_detail (
     returnQuantity INT DEFAULT 0,
     replaceQuantity INT DEFAULT 0,
     sampleQuantity INT DEFAULT 0,
+    rp_id INT DEFAULT -1,
+    stock INT DEFAULT 0,
     PRIMARY KEY (orderId , itemId)
 );
 
@@ -121,7 +124,7 @@ CREATE TABLE tbl_unproductive_call (
     outletId           INT     NOT NULL REFERENCES tbl_outlet (outletId) ON UPDATE CASCADE,
     batteryLevel       INT     NOT NULL,
     repId              INT     NOT NULL,
-    reason             REAL    NOT NULL,
+    reason             TEXT    NOT NULL,
     longitude          REAL    NOT NULL,
     latitude           REAL    NOT NULL,
     time               LONG    NOT NULL,
