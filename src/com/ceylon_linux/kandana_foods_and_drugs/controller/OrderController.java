@@ -51,15 +51,21 @@ public class OrderController extends AbstractController {
 			});
 			SQLiteStatement orderDetailInsertStatement = database.compileStatement(orderDetailInsertSQL);
 			for (OrderDetail orderDetail : order.getOrderDetails()) {
+				//orderId, itemId, price, discount, quantity, freeQuantity, returnQuantity, replaceQuantity, sampleQuantity, rp_id, stock
 				DbHandler.performExecuteInsert(orderDetailInsertStatement, new Object[]{
 					orderId,
 					orderDetail.getItemId(),
 					orderDetail.getPrice(),
 					0,
 					orderDetail.getQuantity(),
+					orderDetail.getFreeIssue(),
+					0,
+					0,
+					0,
 					orderDetail.getRp_id(),
 					orderDetail.getStock()
 				});
+//				Log.i("read-write", "orderId=" + orderId + " itemId=" + orderDetail.getItemId() + " price=" + orderDetail.getPrice() + " discount=" + 0 + " quantity=" + orderDetail.getQuantity() + " freeQuantity=" + orderDetail.getFreeIssue() + " returnQuantity=" + 0 + " replaceQuantity=" + 0 + " sampleQuantity=" + 0 + " rp_id=" + orderDetail.getRp_id() + " stock=" + orderDetail.getStock());
 			}
 			database.setTransactionSuccessful();
 		} catch (SQLException ex) {
@@ -80,7 +86,7 @@ public class OrderController extends AbstractController {
 		SQLiteDatabase database = databaseHelper.getWritableDatabase();
 		try {
 			String orderSelectSql = "select tbl_order.orderId, tbl_order.outletId, tbl_order.routeId, tbl_order.positionId, tbl_order.invoiceTime, tbl_order.total, tbl_order.batteryLevel, tbl_order.longitude, tbl_order.latitude, tbl_outlet.outletType, distributorId from tbl_order inner join tbl_outlet on tbl_outlet.outletId=tbl_order.outletId";
-			String orderDetailSelectSql = "select tbl_order_detail.itemId, tbl_order_detail.price, tbl_order_detail.discount, tbl_order_detail.quantity, tbl_order_detail.freeQuantity, tbl_item.itemDescription, tbl_order_detail.returnQuantity, tbl_order_detail.replaceQuantity, tbl_order_detail.sampleQuantity, tbl_order_detail.rp_id, tbl_order_detail.stock from tbl_order_detail inner join tbl_item on tbl_item.itemId=tbl_order_detail.itemId where orderId=?";
+			String orderDetailSelectSql = "select distinct tod.itemId, tod.price, tod.discount, tod.quantity, tod.freeQuantity, ti.itemDescription, tod.returnQuantity, tod.replaceQuantity, tod.sampleQuantity, tod.rp_id, tod.stock from tbl_order_detail as tod inner join tbl_item as ti on ti.itemId=tod.itemId where orderId=?";
 			Cursor orderCursor = DbHandler.performRawQuery(database, orderSelectSql, null);
 			ArrayList<Order> orders = new ArrayList<Order>();
 			for (orderCursor.moveToFirst(); !orderCursor.isAfterLast(); orderCursor.moveToNext()) {
@@ -89,7 +95,7 @@ public class OrderController extends AbstractController {
 				int routeId = orderCursor.getInt(2);
 				int positionId = orderCursor.getInt(3);
 				long invoiceTime = orderCursor.getLong(4);
-				double total = orderCursor.getDouble(5);
+//				double total = orderCursor.getDouble(5);
 				int batteryLevel = orderCursor.getInt(6);
 				double longitude = orderCursor.getDouble(7);
 				double latitude = orderCursor.getDouble(8);
@@ -106,6 +112,7 @@ public class OrderController extends AbstractController {
 					int rp_id = orderDetailsCursor.getInt(9);
 					int stock = orderDetailsCursor.getInt(10);
 					OrderDetail orderDetail = new OrderDetail(itemId, itemDescription, quantity, price, freeQuantity, returnQuantity, rp_id, stock);
+//					Log.i("read", "itemid=" + itemId + " description=" + itemDescription + " qty=" + quantity + " price=" + price + " free=" + freeQuantity + " ret=" + returnQuantity + " rp=" + rp_id + " stock=" + stock);
 					orderDetails.add(orderDetail);
 				}
 				orderDetailsCursor.close();
