@@ -12,7 +12,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.*;
@@ -72,52 +71,70 @@ public class HomeActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		new AsyncTask<Void, String, Boolean>() {
-			ProgressDialog progressDialog;
+		new Thread() {
+			private Handler handler = new Handler();
+			private ProgressDialog progressDialog;
+			private int response;
+
+			private final int UNABLE_TO_SYNC_ORDERS = 1;
+			private final int UNABLE_TO_SYNC_UNPRODUCTIVE_CALLS = 2;
+			private final int ORDERS_AND_UNPRODUCTIVE_CALLS_SYNCED_SUCCESSFULLY = 3;
 
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				progressDialog = new ProgressDialog(HomeActivity.this);
-				progressDialog.setCanceledOnTouchOutside(false);
-				progressDialog.setCancelable(false);
-				progressDialog.setMessage("Syncing Orders and Unproductive Calls...");
-				progressDialog.show();
-			}
-
-			@Override
-			protected Boolean doInBackground(Void... params) {
-				try {
-					ArrayList<UnProductiveCall> unProductiveCalls = UnProductiveCallController.getUnProductiveCalls(HomeActivity.this);
-					for (UnProductiveCall unProductiveCall : unProductiveCalls) {
-						if (!unProductiveCall.isSynced()) {
-							UnProductiveCallController.syncUnProductiveCall(HomeActivity.this, unProductiveCall);
+			public void run() {
+				synchronized (HomeActivity.this) {
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							progressDialog = ProgressDialog.show(HomeActivity.this, null, "Syncing Orders and Unproductive Calls...");
 						}
-
+					});
+					try {
+						ArrayList<UnProductiveCall> unProductiveCalls = UnProductiveCallController.getUnProductiveCalls(HomeActivity.this);
+						for (UnProductiveCall unProductiveCall : unProductiveCalls) {
+							if (!unProductiveCall.isSynced()) {
+								boolean syncResponse = UnProductiveCallController.syncUnProductiveCall(HomeActivity.this, unProductiveCall);
+								if (!syncResponse) {
+									response = UNABLE_TO_SYNC_UNPRODUCTIVE_CALLS;
+									break;
+								}
+							}
+						}
+						if (response == 0) {
+							response = OrderController.syncUnSyncedOrders(HomeActivity.this) ? ORDERS_AND_UNPRODUCTIVE_CALLS_SYNCED_SUCCESSFULLY : UNABLE_TO_SYNC_ORDERS;
+						}
+					} catch (IOException ex) {
+						ex.printStackTrace();
+						response = -1;
+					} catch (JSONException ex) {
+						ex.printStackTrace();
+						response = -1;
 					}
 
-					return OrderController.syncUnSyncedOrders(HomeActivity.this);
-				} catch (IOException ex) {
-					ex.printStackTrace();
-					return false;
-				} catch (JSONException ex) {
-					ex.printStackTrace();
-					return false;
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							if (progressDialog != null && progressDialog.isShowing()) {
+								progressDialog.dismiss();
+							}
+							String message = "";
+							switch (response) {
+								case UNABLE_TO_SYNC_ORDERS:
+									message = "Unable to sync orders";
+									break;
+								case UNABLE_TO_SYNC_UNPRODUCTIVE_CALLS:
+									message = "Unable to sync unproductive calls";
+									break;
+								case ORDERS_AND_UNPRODUCTIVE_CALLS_SYNCED_SUCCESSFULLY:
+									message = "Orders and unproductive calls synced successfully";
+									break;
+							}
+							Toast.makeText(HomeActivity.this, message, Toast.LENGTH_LONG).show();
+						}
+					});
 				}
 			}
-
-			@Override
-			protected void onPostExecute(Boolean response) {
-				if (progressDialog != null && progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
-				if (response) {
-					Toast.makeText(HomeActivity.this, "Orders and Unproductive Calls Synced Successfully", Toast.LENGTH_LONG).show();
-				} else {
-					Toast.makeText(HomeActivity.this, "Unable to Sync Orders", Toast.LENGTH_LONG).show();
-				}
-			}
-		}.execute();
+		}.start();
 		return true;
 	}
 
@@ -125,14 +142,78 @@ public class HomeActivity extends Activity {
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
 		builder.setTitle(R.string.app_name);
-		builder.setMessage("You are about to sign out from sales pad\nIf you continue your un-synced data will be lost");
+		builder.setMessage("You are about to sign out from sales pad\nAre you sure that you won't to continue?");
 		builder.setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				UserController.clearAuthentication(HomeActivity.this);
-				Intent loginActivity = new Intent(HomeActivity.this, LoginActivity.class);
-				startActivity(loginActivity);
-				finish();
+				new Thread() {
+					private Handler handler = new Handler();
+					private ProgressDialog progressDialog;
+					private int response;
+
+					private final int UNABLE_TO_SYNC_ORDERS = 1;
+					private final int UNABLE_TO_SYNC_UNPRODUCTIVE_CALLS = 2;
+					private final int ORDERS_AND_UNPRODUCTIVE_CALLS_SYNCED_SUCCESSFULLY = 3;
+
+					@Override
+					public void run() {
+						synchronized (HomeActivity.this) {
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									progressDialog = ProgressDialog.show(HomeActivity.this, null, "Syncing Orders and Unproductive Calls...");
+								}
+							});
+							try {
+								ArrayList<UnProductiveCall> unProductiveCalls = UnProductiveCallController.getUnProductiveCalls(HomeActivity.this);
+								for (UnProductiveCall unProductiveCall : unProductiveCalls) {
+									if (!unProductiveCall.isSynced()) {
+										boolean syncResponse = UnProductiveCallController.syncUnProductiveCall(HomeActivity.this, unProductiveCall);
+										if (!syncResponse) {
+											response = UNABLE_TO_SYNC_UNPRODUCTIVE_CALLS;
+											break;
+										}
+									}
+								}
+								if (response == 0) {
+									response = OrderController.syncUnSyncedOrders(HomeActivity.this) ? ORDERS_AND_UNPRODUCTIVE_CALLS_SYNCED_SUCCESSFULLY : UNABLE_TO_SYNC_ORDERS;
+								}
+							} catch (IOException ex) {
+								ex.printStackTrace();
+								response = -1;
+							} catch (JSONException ex) {
+								ex.printStackTrace();
+								response = -1;
+							}
+
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									if (progressDialog != null && progressDialog.isShowing()) {
+										progressDialog.dismiss();
+									}
+									String message = "";
+									switch (response) {
+										case UNABLE_TO_SYNC_ORDERS:
+											message = "Unable to sync orders";
+											break;
+										case UNABLE_TO_SYNC_UNPRODUCTIVE_CALLS:
+											message = "Unable to sync unproductive calls";
+											break;
+										case ORDERS_AND_UNPRODUCTIVE_CALLS_SYNCED_SUCCESSFULLY:
+											message = "Orders and unproductive calls synced successfully";
+											UserController.clearAuthentication(HomeActivity.this);
+											Intent loginActivity = new Intent(HomeActivity.this, LoginActivity.class);
+											startActivity(loginActivity);
+											finish();
+											break;
+									}
+									Toast.makeText(HomeActivity.this, message, Toast.LENGTH_LONG).show();
+								}
+							});
+						}
+					}
+				}.start();
 			}
 		});
 		builder.setNegativeButton("Cancel", null);

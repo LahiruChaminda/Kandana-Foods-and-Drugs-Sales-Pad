@@ -221,10 +221,11 @@ public class LoadAddInvoiceActivity extends Activity {
 
 			@Override
 			public void run() {
+
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
-						progressDialog = ProgressDialog.show(LoadAddInvoiceActivity.this, null, "Loading Items...", false);
+						progressDialog = ProgressDialog.show(LoadAddInvoiceActivity.this, null, "Loading Items...");
 					}
 				});
 				int distributorId = ((Distributor) distributorAuto.getSelectedItem()).getDistributorId();
