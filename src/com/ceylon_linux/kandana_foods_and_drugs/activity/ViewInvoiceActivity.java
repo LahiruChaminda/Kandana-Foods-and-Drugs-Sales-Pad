@@ -12,8 +12,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.ItemController;
 import com.ceylon_linux.kandana_foods_and_drugs.controller.OrderController;
@@ -40,10 +42,10 @@ public class ViewInvoiceActivity extends Activity {
 	private TextView txtTime;
 	private TextView txtInvoiceTotal;
 	private TextView txtNoOfItems;
-	private ListView listView;
 	private Button btnFinish;
 	private Button btnCancel;
 	private Button btnBack;
+	private LinearLayout listView;
 	private ArrayList<OrderDetail> orderDetails;
 	private Distributor distributor;
 	private Outlet outlet;
@@ -70,47 +72,23 @@ public class ViewInvoiceActivity extends Activity {
 			invoiceTotal += (orderDetail.getPrice() * orderDetail.getQuantity());
 		}
 		txtInvoiceTotal.setText(String.valueOf(invoiceTotal));
-		listView.setAdapter(new BaseAdapter() {
-			@Override
-			public int getCount() {
-				return orderDetails.size();
-			}
+		for (OrderDetail orderDetail : orderDetails) {
+			LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+			View convertView = inflater.inflate(R.layout.category_sub_item, null);
+			TextView txtItemDescription = (TextView) convertView.findViewById(R.id.txtItemDescription);
+			TextView txtFreeIssue = (TextView) convertView.findViewById(R.id.txtFreeIssue);
+			TextView txtQuantity = (TextView) convertView.findViewById(R.id.txtQuantity);
+			TextView txtStock = (TextView) convertView.findViewById(R.id.txtStock);
+			TextView txtPackSize = (TextView) convertView.findViewById(R.id.txtPackSize);
 
-			@Override
-			public OrderDetail getItem(int position) {
-				return orderDetails.get(position);
-			}
+			txtStock.setText(orderDetail.getItem().getStock() + "");
+			txtItemDescription.setText(orderDetail.getItemDescription());
+			txtPackSize.setText(orderDetail.getItem().getPackSize());
+			txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
+			txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
 
-			@Override
-			public long getItemId(int position) {
-				return position;
-			}
-
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				ChildViewHolder childViewHolder;
-				if (convertView == null) {
-					childViewHolder = new ChildViewHolder();
-					LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-					convertView = inflater.inflate(R.layout.category_sub_item, null);
-					childViewHolder.txtItemDescription = (TextView) convertView.findViewById(R.id.txtItemDescription);
-					childViewHolder.txtFreeIssue = (TextView) convertView.findViewById(R.id.txtFreeIssue);
-					childViewHolder.txtQuantity = (TextView) convertView.findViewById(R.id.txtQuantity);
-					childViewHolder.txtStock = (TextView) convertView.findViewById(R.id.txtStock);
-					childViewHolder.txtPackSize = (TextView) convertView.findViewById(R.id.txtPackSize);
-					convertView.setTag(childViewHolder);
-				} else {
-					childViewHolder = (ChildViewHolder) convertView.getTag();
-				}
-				OrderDetail orderDetail = getItem(position);
-				childViewHolder.txtStock.setText(orderDetail.getItem().getStock() + "");
-				childViewHolder.txtItemDescription.setText(orderDetail.getItemDescription());
-				childViewHolder.txtPackSize.setText(orderDetail.getItem().getPackSize());
-				childViewHolder.txtFreeIssue.setText(Integer.toString(orderDetail.getFreeIssue()));
-				childViewHolder.txtQuantity.setText(Integer.toString(orderDetail.getQuantity()));
-				return convertView;
-			}
-		});
+			listView.addView(convertView);
+		}
 	}
 
 	private void initialize() {
@@ -119,7 +97,7 @@ public class ViewInvoiceActivity extends Activity {
 		txtTime = (TextView) findViewById(R.id.txtTime);
 		txtInvoiceTotal = (TextView) findViewById(R.id.txtInvoiceTotal);
 		txtNoOfItems = (TextView) findViewById(R.id.txtNoOfItems);
-		listView = (ListView) findViewById(R.id.listView);
+		listView = (LinearLayout) findViewById(R.id.listView);
 		btnBack = (Button) findViewById(R.id.btnBack);
 		btnCancel = (Button) findViewById(R.id.btnCancel);
 		btnFinish = (Button) findViewById(R.id.btnFinish);
@@ -213,14 +191,5 @@ public class ViewInvoiceActivity extends Activity {
 
 	private void btnBackClicked(View v) {
 		onBackPressed();
-	}
-
-	private static class ChildViewHolder {
-
-		TextView txtItemDescription;
-		TextView txtQuantity;
-		TextView txtFreeIssue;
-		TextView txtStock;
-		TextView txtPackSize;
 	}
 }

@@ -21,8 +21,8 @@ import android.os.BatteryManager;
 public class BatteryUtility {
 
 	public static int getBatteryLevel(Context context) {
-		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-		Intent batteryStatus = context.registerReceiver(null, ifilter);
+		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+		Intent batteryStatus = context.registerReceiver(null, intentFilter);
 		return batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 	}
 }

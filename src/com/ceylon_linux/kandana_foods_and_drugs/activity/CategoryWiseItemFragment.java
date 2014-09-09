@@ -91,7 +91,7 @@ public class CategoryWiseItemFragment extends ItemSelectableFragment {
 		Button btnOk = (Button) dialog.findViewById(R.id.btnOk);
 		TextView txtItemDescription = (TextView) dialog.findViewById(R.id.txtItemDescription);
 		final EditText inputRequestedQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
-		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputRequestedQuantity);
+		final EditText inputSalableReturnQuantity = (EditText) dialog.findViewById(R.id.inputSalableReturnQuantity);
 		final Item item = categories.get(groupPosition).getItems().get(childPosition);
 		TextView txtUnitPrice = (TextView) dialog.findViewById(R.id.txtUnitPrice);
 		txtUnitPrice.setText(item.getPrice() + "");

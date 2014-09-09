@@ -7,10 +7,13 @@ package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -20,7 +23,9 @@ import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
 import com.ceylon_linux.kandana_foods_and_drugs.model.UnProductiveCall;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
-import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
+import com.ceylon_linux.kandana_foods_and_drugs.util.BusProvider;
+import com.ceylon_linux.kandana_foods_and_drugs.util.LocationProviderService;
+import com.squareup.otto.Subscribe;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -38,53 +43,33 @@ public class MakeUnProductiveCallActivity extends Activity {
 	//	private Button btnUnProductiveCallSubmit;
 	private Button btnUnProductiveCallSync;
 	private int outletId;
+	private ProgressDialog progressDialog;
 
 	private Location lastKnownLocation;
-	private GpsReceiver gpsReceiver;
+	private ServiceConnection serviceConnection;
+	private boolean isBoundWithLocationProviderService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		gpsReceiver = GpsReceiver.getGpsReceiver(getApplicationContext());
 		setContentView(R.layout.make_unproductive_call_page);
 		initialize();
-
 		ArrayList<Outlet> outlets = OutletController.getOutlets(this);
 		ArrayAdapter<Outlet> outletAdapter = new ArrayAdapter<Outlet>(this, android.R.layout.simple_dropdown_item_1line, outlets);
 		unProductiveCallOutletAuto.setAdapter(outletAdapter);
-		GPS_CHECKER.start();
 	}
 
-	private final Thread GPS_CHECKER = new Thread() {
-		private ProgressDialog progressDialog;
-		private Handler handler = new Handler();
+	@Override
+	protected void onResume() {
+		super.onResume();
+		BusProvider.getInstance().register(MakeUnProductiveCallActivity.this);
+	}
 
-		@Override
-		public void run() {
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					progressDialog = ProgressDialog.show(MakeUnProductiveCallActivity.this, null, "Waiting for GPS Location...", false);
-				}
-			});
-			do {
-				lastKnownLocation = gpsReceiver.getLastKnownLocation();
-				try {
-					Thread.sleep(500);//delay 0.5 sec
-				} catch (InterruptedException ex) {
-					ex.printStackTrace();
-				}
-			} while (lastKnownLocation == null);
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					if (progressDialog != null && progressDialog.isShowing()) {
-						progressDialog.dismiss();
-					}
-				}
-			});
-		}
-	};
+	@Override
+	protected void onPause() {
+		super.onPause();
+		BusProvider.getInstance().unregister(MakeUnProductiveCallActivity.this);
+	}
 
 	@Override
 	public void onBackPressed() {
@@ -167,19 +152,70 @@ public class MakeUnProductiveCallActivity extends Activity {
 	}
 
 	private void btnUnProductiveCallSubmitClicked(View view) {
-		UnProductiveCall unProductiveCall = new UnProductiveCall(
-			outletId,
-			txtMakeUnProductiveCallReason.getText().toString(),
-			lastKnownLocation.getTime(),
-			lastKnownLocation.getLongitude(),
-			lastKnownLocation.getLatitude(),
-			BatteryUtility.getBatteryLevel(this),
-			UserController.getAuthorizedUser(this).getUserId()
-		);
-		UnProductiveCallController.saveUnProductiveCall(this, unProductiveCall, false);
-		setResult(RESULT_OK);
-		finish();
+		synchronized (MakeUnProductiveCallActivity.this) {
+			if (lastKnownLocation == null) {
+				progressDialog = ProgressDialog.show(MakeUnProductiveCallActivity.this, null, "Waiting for GPS …", false);
+				bindLocationProviderService();
+				return;
+			}
+			UnProductiveCall unProductiveCall = new UnProductiveCall(
+				outletId,
+				txtMakeUnProductiveCallReason.getText().toString(),
+				lastKnownLocation.getTime(),
+				lastKnownLocation.getLongitude(),
+				lastKnownLocation.getLatitude(),
+				BatteryUtility.getBatteryLevel(this),
+				UserController.getAuthorizedUser(this).getUserId()
+			);
+			UnProductiveCallController.saveUnProductiveCall(this, unProductiveCall, false);
+			setResult(RESULT_OK);
+			finish();
+		}
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		bindLocationProviderService();
+	}
 
+	@Override
+	protected void onStop() {
+		if (isBoundWithLocationProviderService) {
+			unbindService(serviceConnection);
+		}
+		super.onStop();
+	}
+
+	@Subscribe
+	public void onLocationUpdateReceived(Location location) {
+		synchronized (MakeUnProductiveCallActivity.this) {
+			this.lastKnownLocation = location;
+			if (progressDialog != null && progressDialog.isShowing()) {
+				progressDialog.dismiss();
+			}
+		}
+	}
+
+	private void bindLocationProviderService() {
+		Intent locationProviderService = new Intent(MakeUnProductiveCallActivity.this, LocationProviderService.class);
+		bindService(
+			locationProviderService,
+			serviceConnection = new ServiceConnection() {
+
+				@Override
+				public void onServiceConnected(ComponentName className, IBinder service) {
+					LocationProviderService.LocationBinder binder = (LocationProviderService.LocationBinder) service;
+					lastKnownLocation = binder.getLastKnownLocation();
+					isBoundWithLocationProviderService = true;
+				}
+
+				@Override
+				public void onServiceDisconnected(ComponentName arg0) {
+					isBoundWithLocationProviderService = false;
+				}
+			},
+			BIND_AUTO_CREATE
+		);
+	}
 }

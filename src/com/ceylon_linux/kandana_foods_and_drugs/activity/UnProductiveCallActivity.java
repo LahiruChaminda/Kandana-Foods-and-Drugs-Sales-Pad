@@ -27,8 +27,8 @@ import java.util.Date;
  * @email supunlakshan.xfinity@gmail.com
  */
 public class UnProductiveCallActivity extends Activity {
-	private final int ADD_UNPRODUCTIVE_CALL_OPTION = 0;
-	private final int UPDATE_UNPRODUCTIVE_CALL_OPTION = 1;
+	private final byte ADD_UNPRODUCTIVE_CALL_OPTION = 0;
+	private final byte UPDATE_UNPRODUCTIVE_CALL_OPTION = 1;
 
 	private ListView listView;
 	private Button btnAddUnProductiveCall;
