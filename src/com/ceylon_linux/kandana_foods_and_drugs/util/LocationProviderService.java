@@ -36,7 +36,6 @@ public class LocationProviderService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		//initializing
-		BusProvider.getInstance().register(LocationProviderService.this);
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationListener = new LocationListener() {
 
@@ -76,7 +75,6 @@ public class LocationProviderService extends Service {
 	@Override
 	public void onDestroy() {
 		locationManager.removeUpdates(locationListener);
-		BusProvider.getInstance().unregister(LocationProviderService.this);
 		super.onDestroy();
 	}
 
