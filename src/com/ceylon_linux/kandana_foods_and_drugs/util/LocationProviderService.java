@@ -13,10 +13,9 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Looper;
+import com.squareup.otto.Produce;
 
 /**
  * GpsReceiver - Receive and Provide GPS locations
@@ -29,7 +28,6 @@ public class LocationProviderService extends Service {
 
 	private final long MINIMUM_TIME_DIFFERENCE = 0;
 	private final float MINIMUM_DISTANCE_CHANGE = 0;
-	private final IBinder binder = new LocationBinder();
 	private LocationManager locationManager;
 	private LocationListener locationListener;
 	private Location lastKnownLocation;
@@ -37,8 +35,8 @@ public class LocationProviderService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
 		//initializing
+		BusProvider.getInstance().register(LocationProviderService.this);
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationListener = new LocationListener() {
 
@@ -48,7 +46,7 @@ public class LocationProviderService extends Service {
 				long currentTimeMillis = System.currentTimeMillis();
 				long timeDifference = Math.abs(time - currentTimeMillis);
 				if (timeDifference > AlarmManager.INTERVAL_HALF_HOUR) {
-					BusProvider.getInstance().post(location);
+					BusProvider.getInstance().post(lastKnownLocation = location);
 				}
 			}
 
@@ -66,27 +64,24 @@ public class LocationProviderService extends Service {
 		};
 
 		//request location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, locationListener, Looper.getMainLooper());
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, locationListener, Looper.getMainLooper());
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, locationListener);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MINIMUM_TIME_DIFFERENCE, MINIMUM_DISTANCE_CHANGE, locationListener);
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		return binder;
+		return null;
 	}
 
 	@Override
 	public void onDestroy() {
 		locationManager.removeUpdates(locationListener);
+		BusProvider.getInstance().unregister(LocationProviderService.this);
 		super.onDestroy();
 	}
 
-	public class LocationBinder extends Binder {
-		public Location getLastKnownLocation() {
-			if (lastKnownLocation == null) {
-				lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			}
-			return lastKnownLocation;
-		}
+	@Produce
+	public Location broadcastLocation() {
+		return lastKnownLocation;
 	}
 }

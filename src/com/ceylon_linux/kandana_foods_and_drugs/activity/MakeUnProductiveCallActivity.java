@@ -7,13 +7,11 @@ package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.View;
 import android.widget.*;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -66,6 +64,12 @@ public class MakeUnProductiveCallActivity extends Activity {
 	}
 
 	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		startLocationProviderService();
+	}
+
+	@Override
 	protected void onPause() {
 		super.onPause();
 		BusProvider.getInstance().unregister(MakeUnProductiveCallActivity.this);
@@ -102,6 +106,11 @@ public class MakeUnProductiveCallActivity extends Activity {
 	}
 
 	private void btnUnProductiveCallSyncClicked(View view) {
+		if (lastKnownLocation == null) {
+			progressDialog = ProgressDialog.show(MakeUnProductiveCallActivity.this, null, "Waiting for GPS…", false);
+			startLocationProviderService();
+			return;
+		}
 		new AsyncTask<Void, Void, Boolean>() {
 			private ProgressDialog progressDialog;
 
@@ -155,7 +164,7 @@ public class MakeUnProductiveCallActivity extends Activity {
 		synchronized (MakeUnProductiveCallActivity.this) {
 			if (lastKnownLocation == null) {
 				progressDialog = ProgressDialog.show(MakeUnProductiveCallActivity.this, null, "Waiting for GPS …", false);
-				bindLocationProviderService();
+				startLocationProviderService();
 				return;
 			}
 			UnProductiveCall unProductiveCall = new UnProductiveCall(
@@ -173,20 +182,6 @@ public class MakeUnProductiveCallActivity extends Activity {
 		}
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		bindLocationProviderService();
-	}
-
-	@Override
-	protected void onStop() {
-		if (isBoundWithLocationProviderService) {
-			unbindService(serviceConnection);
-		}
-		super.onStop();
-	}
-
 	@Subscribe
 	public void onLocationUpdateReceived(Location location) {
 		synchronized (MakeUnProductiveCallActivity.this) {
@@ -197,25 +192,8 @@ public class MakeUnProductiveCallActivity extends Activity {
 		}
 	}
 
-	private void bindLocationProviderService() {
+	private void startLocationProviderService() {
 		Intent locationProviderService = new Intent(MakeUnProductiveCallActivity.this, LocationProviderService.class);
-		bindService(
-			locationProviderService,
-			serviceConnection = new ServiceConnection() {
-
-				@Override
-				public void onServiceConnected(ComponentName className, IBinder service) {
-					LocationProviderService.LocationBinder binder = (LocationProviderService.LocationBinder) service;
-					lastKnownLocation = binder.getLastKnownLocation();
-					isBoundWithLocationProviderService = true;
-				}
-
-				@Override
-				public void onServiceDisconnected(ComponentName arg0) {
-					isBoundWithLocationProviderService = false;
-				}
-			},
-			BIND_AUTO_CREATE
-		);
+		startService(locationProviderService);
 	}
 }

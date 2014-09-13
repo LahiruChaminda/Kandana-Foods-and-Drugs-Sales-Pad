@@ -9,12 +9,9 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -51,8 +48,6 @@ public class ItemSelectActivity extends FragmentActivity {
 	private Button finishButton;
 	private ProgressDialog progressDialog;
 	private Distributor distributor;
-	private boolean isBoundWithLocationProviderService;
-	private ServiceConnection serviceConnection;
 
 	private ArrayList<ItemSelectableFragment> itemSelectableFragments;
 
@@ -146,6 +141,17 @@ public class ItemSelectActivity extends FragmentActivity {
 	}
 
 	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		startLocationProviderService();
+	}
+
+	private void startLocationProviderService() {
+		Intent locationProviderService = new Intent(ItemSelectActivity.this, LocationProviderService.class);
+		startService(locationProviderService);
+	}
+
+	@Override
 	protected void onPause() {
 		super.onPause();
 		BusProvider.getInstance().unregister(ItemSelectActivity.this);
@@ -170,7 +176,7 @@ public class ItemSelectActivity extends FragmentActivity {
 			}
 			if (location == null) {
 				progressDialog = ProgressDialog.show(ItemSelectActivity.this, null, "Waiting for GPS…", false);
-				bindLocationProviderService();
+				startLocationProviderService();
 				return;
 			}
 			Order order = new Order(outlet, UserController.getAuthorizedUser(ItemSelectActivity.this).getUserId(), BatteryUtility.getBatteryLevel(ItemSelectActivity.this), new Date().getTime(), location.getLongitude(), location.getLatitude(), orderDetails, distributor.getDistributorId());
@@ -181,20 +187,6 @@ public class ItemSelectActivity extends FragmentActivity {
 			startActivity(viewInvoiceActivity);
 			finish();
 		}
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		bindLocationProviderService();
-	}
-
-	@Override
-	protected void onStop() {
-		if (isBoundWithLocationProviderService) {
-			unbindService(serviceConnection);
-		}
-		super.onStop();
 	}
 
 	@Override
@@ -212,27 +204,5 @@ public class ItemSelectActivity extends FragmentActivity {
 				progressDialog.dismiss();
 			}
 		}
-	}
-
-	private void bindLocationProviderService() {
-		Intent locationProviderService = new Intent(ItemSelectActivity.this, LocationProviderService.class);
-		bindService(
-			locationProviderService,
-			serviceConnection = new ServiceConnection() {
-
-				@Override
-				public void onServiceConnected(ComponentName className, IBinder service) {
-					LocationProviderService.LocationBinder binder = (LocationProviderService.LocationBinder) service;
-					location = binder.getLastKnownLocation();
-					isBoundWithLocationProviderService = true;
-				}
-
-				@Override
-				public void onServiceDisconnected(ComponentName arg0) {
-					isBoundWithLocationProviderService = false;
-				}
-			},
-			BIND_AUTO_CREATE
-		);
 	}
 }
