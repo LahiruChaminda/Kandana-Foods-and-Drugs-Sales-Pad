@@ -98,7 +98,7 @@ CREATE TABLE tbl_order (
 );
 
 CREATE TABLE tbl_order_detail (
-    orderId INTEGER NOT NULL REFERENCES tbl_order (orderId) ON UPDATE CASCADE,
+    orderId INTEGER NOT NULL REFERENCES tbl_order (orderId) ON UPDATE CASCADE ON DELETE CASCADE,
     itemId INTEGER,
     price DECIMAL(10 , 2 ) NOT NULL,
     discount REAL,

@@ -12,6 +12,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -26,6 +27,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.model.OrderDetail;
 import com.ceylon_linux.kandana_foods_and_drugs.model.Outlet;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BatteryUtility;
 import com.ceylon_linux.kandana_foods_and_drugs.util.BusProvider;
+import com.ceylon_linux.kandana_foods_and_drugs.util.GpsReceiver;
 import com.ceylon_linux.kandana_foods_and_drugs.util.LocationProviderService;
 import com.squareup.otto.Subscribe;
 
@@ -48,6 +50,8 @@ public class ItemSelectActivity extends FragmentActivity {
 	private Button finishButton;
 	private ProgressDialog progressDialog;
 	private Distributor distributor;
+	private GpsReceiver gpsReceiver;
+
 
 	private ArrayList<ItemSelectableFragment> itemSelectableFragments;
 
@@ -60,6 +64,7 @@ public class ItemSelectActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.item_select_page);
 		viewPager = (ViewPager) findViewById(R.id.viewPager);
+		gpsReceiver = GpsReceiver.getGpsReceiver(ItemSelectActivity.this);
 		if (getIntent().hasExtra("editOrder")) {
 			orderDetails = ViewInvoiceActivity.order.getOrderDetails();
 		} else {
@@ -132,6 +137,25 @@ public class ItemSelectActivity extends FragmentActivity {
 				finishButtonClicked(view);
 			}
 		});
+
+		new Thread() {
+			private Handler handler = new Handler();
+
+			@Override
+			public void run() {
+				do {
+					location = gpsReceiver.getLastKnownLocation();
+				} while (location == null);
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (progressDialog != null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+					}
+				});
+			}
+		}.start();
 	}
 
 	@Override
