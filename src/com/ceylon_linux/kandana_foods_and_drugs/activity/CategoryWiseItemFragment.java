@@ -125,8 +125,9 @@ public class CategoryWiseItemFragment extends ItemSelectableFragment {
 				int salableReturnQuantity = Integer.parseInt((salableReturnQuantityString.isEmpty()) ? "0" : salableReturnQuantityString);
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
 				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
+				int i = 0;
 				if (orderDetail != null) {
-					if (item.getFIXED_STOCK() > (orderDetail.getQuantity() + orderDetail.getFreeIssue())) {
+					if (item.getFIXED_STOCK() >= (orderDetail.getQuantity() + orderDetail.getFreeIssue())) {
 						orderDetails.add(orderDetail);
 						item.setStock(item.getFIXED_STOCK() - orderDetail.getQuantity() + orderDetail.getFreeIssue());
 						myExpandableListAdapter.notifyDataSetChanged();

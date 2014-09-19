@@ -130,7 +130,7 @@ public class UnArrangedItemFragment extends ItemSelectableFragment {
 				int requestedQuantity = Integer.parseInt((requestedQuantityString.isEmpty()) ? "0" : requestedQuantityString);
 				OrderDetail orderDetail = OrderDetail.getOrderDetail(item, requestedQuantity, salableReturnQuantity, getActivity());
 				if (orderDetail != null) {
-					if (item.getFIXED_STOCK() > (orderDetail.getQuantity() + orderDetail.getFreeIssue())) {
+					if (item.getFIXED_STOCK() >= (orderDetail.getQuantity() + orderDetail.getFreeIssue())) {
 						orderDetails.add(orderDetail);
 						item.setStock(item.getFIXED_STOCK() - orderDetail.getQuantity() + orderDetail.getFreeIssue());
 						listAdapter.notifyDataSetChanged();
