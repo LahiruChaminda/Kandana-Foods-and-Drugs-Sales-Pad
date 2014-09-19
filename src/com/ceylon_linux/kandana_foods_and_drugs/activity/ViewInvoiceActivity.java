@@ -6,7 +6,9 @@
 package com.ceylon_linux.kandana_foods_and_drugs.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -132,9 +134,19 @@ public class ViewInvoiceActivity extends Activity {
 	}
 
 	private void btnCancelClicked(View v) {
-		Intent homeActivity = new Intent(ViewInvoiceActivity.this, HomeActivity.class);
-		startActivity(homeActivity);
-		finish();
+		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ViewInvoiceActivity.this);
+		alertBuilder.setMessage("Are you sure you want to CANCEL this order?");
+		alertBuilder.setTitle(R.string.msg_title);
+		alertBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Intent homeActivity = new Intent(ViewInvoiceActivity.this, HomeActivity.class);
+				startActivity(homeActivity);
+				finish();
+			}
+		});
+		alertBuilder.setNegativeButton("NO", null);
+		alertBuilder.show();
 	}
 
 	private void btnFinishClicked(View v) {

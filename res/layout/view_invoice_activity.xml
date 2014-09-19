@@ -103,13 +103,13 @@
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Back"
-            android:id="@+id/btnBack" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
+            android:text="Finish"
+            android:id="@+id/btnFinish" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Finish"
-            android:id="@+id/btnFinish" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
+            android:text="Back"
+            android:id="@+id/btnBack" android:textSize="@dimen/small" android:background="@drawable/rounded_button"/>
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
