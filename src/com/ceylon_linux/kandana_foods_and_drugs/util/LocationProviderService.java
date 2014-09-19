@@ -40,7 +40,6 @@ public class LocationProviderService extends Service {
 		BusProvider.getInstance().register(LocationProviderService.this);
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationListener = new LocationListener() {
-
 			@Override
 			public void onLocationChanged(Location location) {
 				long time = location.getTime();

@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.ceylon_linux.kandana_foods_and_drugs.R;
@@ -134,25 +133,6 @@ public class ItemSelectActivity extends FragmentActivity {
 				finishButtonClicked(view);
 			}
 		});
-
-		/*new Thread() {
-			private Handler handler = new Handler();
-
-			@Override
-			public void run() {
-				do {
-					location = gpsReceiver.getLastKnownLocation();
-				} while (location == null);
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						if (progressDialog != null && progressDialog.isShowing()) {
-							progressDialog.dismiss();
-						}
-					}
-				});
-			}
-		}.start();*/
 	}
 
 	@Override
@@ -221,7 +201,6 @@ public class ItemSelectActivity extends FragmentActivity {
 	public void onLocationUpdateReceived(Location location) {
 		synchronized (ItemSelectActivity.this) {
 			this.location = location;
-			Log.i("LocationProviderService", "onLocationUpdateReceived " + location.toString());
 			if (progressDialog != null && progressDialog.isShowing()) {
 				progressDialog.dismiss();
 			}
