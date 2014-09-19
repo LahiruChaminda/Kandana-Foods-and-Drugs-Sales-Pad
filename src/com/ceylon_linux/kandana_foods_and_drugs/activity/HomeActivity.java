@@ -25,6 +25,7 @@ import com.ceylon_linux.kandana_foods_and_drugs.controller.UnProductiveCallContr
 import com.ceylon_linux.kandana_foods_and_drugs.controller.UserController;
 import com.ceylon_linux.kandana_foods_and_drugs.model.UnProductiveCall;
 import com.ceylon_linux.kandana_foods_and_drugs.model.User;
+import com.ceylon_linux.kandana_foods_and_drugs.util.LocationProviderService;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -59,6 +60,13 @@ public class HomeActivity extends Activity {
 		User authorizedUser = UserController.getAuthorizedUser(this);
 		txtName.setText(authorizedUser.getName());
 		txtAddress.setText(authorizedUser.getAddress());
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		Intent locationProviderService = new Intent(HomeActivity.this, LocationProviderService.class);
+		startService(locationProviderService);
 	}
 
 	@Override

@@ -37,6 +37,7 @@ public class LocationProviderService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		//initializing
+		BusProvider.getInstance().register(LocationProviderService.this);
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationListener = new LocationListener() {
 
@@ -45,7 +46,7 @@ public class LocationProviderService extends Service {
 				long time = location.getTime();
 				long currentTimeMillis = System.currentTimeMillis();
 				long timeDifference = Math.abs(time - currentTimeMillis);
-				if (timeDifference > AlarmManager.INTERVAL_HALF_HOUR) {
+				if (timeDifference <= AlarmManager.INTERVAL_HALF_HOUR) {
 					BusProvider.getInstance().post(lastKnownLocation = location);
 				}
 			}
@@ -69,6 +70,12 @@ public class LocationProviderService extends Service {
 	}
 
 	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		super.onStartCommand(intent, flags, startId);
+		return START_STICKY;
+	}
+
+	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
@@ -76,11 +83,22 @@ public class LocationProviderService extends Service {
 	@Override
 	public void onDestroy() {
 		locationManager.removeUpdates(locationListener);
+		BusProvider.getInstance().unregister(LocationProviderService.this);
 		super.onDestroy();
 	}
 
 	@Produce
 	public Location broadcastLocation() {
+		if (lastKnownLocation == null) {
+			lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		}
+		long time = lastKnownLocation.getTime();
+		long currentTimeMillis = System.currentTimeMillis();
+		long timeDifference = Math.abs(time - currentTimeMillis);
+		if (timeDifference > AlarmManager.INTERVAL_HALF_HOUR) {
+			return lastKnownLocation = null;
+		}
 		return lastKnownLocation;
 	}
 }
